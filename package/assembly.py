@@ -201,7 +201,7 @@ def read_source(
 
     # Compile and return information.
     return {
-        "table_phenotypes": table_ukbiobank_variables,
+        "table_phenotypes": table_phenotypes,
         "table_scores_steroid_globulin_female": table_scores_steroid_globulin_female,
         "table_scores_steroid_globulin_male": table_scores_steroid_globulin_male,
         "table_scores_testosterone_female": table_scores_testosterone_female,
