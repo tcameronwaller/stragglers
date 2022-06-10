@@ -160,7 +160,7 @@ def read_source(
     )
     table_scores_steroid_globulin_female = pandas.read_csv(
         path_table_scores_steroid_globulin_female,
-        sep="\t", # "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype={
             "FID": "string",
@@ -170,7 +170,7 @@ def read_source(
     )
     table_scores_steroid_globulin_male = pandas.read_csv(
         path_table_scores_steroid_globulin_male,
-        sep="\t", # "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype={
             "FID": "string",
@@ -180,7 +180,7 @@ def read_source(
     )
     table_scores_testosterone_female = pandas.read_csv(
         path_table_scores_testosterone_female,
-        sep="\t", # "\s+"
+        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype={
             "FID": "string",
@@ -190,7 +190,7 @@ def read_source(
     )
     table_scores_testosterone_male = pandas.read_csv(
         path_table_scores_testosterone_male,
-        sep="\t", # "\s+"
+        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype={
             "FID": "string",
@@ -312,6 +312,10 @@ def merge_polygenic_scores_to_phenotypes(
         inplace=True,
         drop=False,
     )
+    table_scores_steroid_globulin_female["IID"].astype("string")
+    table_scores_steroid_globulin_male["IID"].astype("string")
+    table_scores_testosterone_female["IID"].astype("string")
+    table_scores_testosterone_male["IID"].astype("string")
     table_scores_steroid_globulin_female.dropna(
         axis="index",
         how="any",
@@ -336,10 +340,6 @@ def merge_polygenic_scores_to_phenotypes(
         subset=["IID"],
         inplace=True,
     )
-    table_scores_steroid_globulin_female["IID"].astype("string")
-    table_scores_steroid_globulin_male["IID"].astype("string")
-    table_scores_testosterone_female["IID"].astype("string")
-    table_scores_testosterone_male["IID"].astype("string")
     table_scores_steroid_globulin_female.set_index(
         "IID",
         append=False,
