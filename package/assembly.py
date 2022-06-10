@@ -144,12 +144,12 @@ def read_source(
     path_table_scores_testosterone_female = os.path.join(
         path_dock, "access", "mayo_bipolar_polygenic_scores",
         "testosterone_imputation_log_female_joint_1",
-        "steroid_globulin_imputation_log_female_joint_1.LDpred2.auto"
+        "testosterone_imputation_log_female_joint_1.LDpred2.auto"
     )
     path_table_scores_testosterone_male = os.path.join(
         path_dock, "access", "mayo_bipolar_polygenic_scores",
         "testosterone_imputation_log_male_joint_1",
-        "steroid_globulin_imputation_log_male_joint_1.LDpred2.auto"
+        "testosterone_imputation_log_male_joint_1.LDpred2.auto"
     )
     # Read information from file.
     table_phenotypes = pandas.read_csv(
@@ -1068,6 +1068,14 @@ def execute_procedure(
     )
 
     # Mege polygenic scores with information on phenotypes.
+    table = merge_polygenic_scores_to_phenotypes(
+        table_phenotypes=source["table_phenotypes"],
+        columns_accession=source["columns_accession"],
+        table_ukb_41826=source["table_ukb_41826"],
+        table_ukb_43878=source["table_ukb_43878"],
+        table_ukb_47488=source["table_ukb_47488"],
+        report=True,
+    )
 
 
     if False:
