@@ -158,6 +158,11 @@ def read_source(
         header=0,
         dtype="string",
     )
+    table_phenotypes.reset_index(
+        level=None,
+        inplace=True,
+        drop=True,
+    )
     table_scores_steroid_globulin_female = pandas.read_csv(
         path_table_scores_steroid_globulin_female,
         sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
@@ -167,6 +172,11 @@ def read_source(
             "IID": "string",
             "steroid_globulin_imputation_log_female_joint_1_auto": "float32",
         },
+    )
+    table_scores_steroid_globulin_female.reset_index(
+        level=None,
+        inplace=True,
+        drop=True,
     )
     table_scores_steroid_globulin_male = pandas.read_csv(
         path_table_scores_steroid_globulin_male,
@@ -178,6 +188,11 @@ def read_source(
             "steroid_globulin_imputation_log_male_joint_1_auto": "float32",
         },
     )
+    table_scores_steroid_globulin_male.reset_index(
+        level=None,
+        inplace=True,
+        drop=True,
+    )
     table_scores_testosterone_female = pandas.read_csv(
         path_table_scores_testosterone_female,
         sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
@@ -188,6 +203,11 @@ def read_source(
             "testosterone_imputation_log_female_joint_1_auto": "float32",
         },
     )
+    table_scores_testosterone_female.reset_index(
+        level=None,
+        inplace=True,
+        drop=True,
+    )
     table_scores_testosterone_male = pandas.read_csv(
         path_table_scores_testosterone_male,
         sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
@@ -197,6 +217,11 @@ def read_source(
             "IID": "string",
             "testosterone_imputation_log_male_joint_1_auto": "float32",
         },
+    )
+    table_scores_testosterone_male.reset_index(
+        level=None,
+        inplace=True,
+        drop=True,
     )
 
     # Compile and return information.
@@ -395,7 +420,7 @@ def merge_polygenic_scores_to_phenotypes(
         left_index=True,
         right_index=True,
         how="left", # keep only keys from left table
-        suffixes=("_main", "_score"),
+        suffixes=("_main", "_score"), # deprecated?
     )
     table = pandas.merge(
         table, # left table
@@ -405,7 +430,7 @@ def merge_polygenic_scores_to_phenotypes(
         left_index=True,
         right_index=True,
         how="left", # keep only keys from left table
-        suffixes=("_main", "_score"),
+        suffixes=("_main", "_score"), # deprecated?
     )
     table = pandas.merge(
         table, # left table
@@ -415,7 +440,7 @@ def merge_polygenic_scores_to_phenotypes(
         left_index=True,
         right_index=True,
         how="left", # keep only keys from left table
-        suffixes=("_main", "_score"),
+        suffixes=("_main", "_score"), # deprecated?
     )
     table = pandas.merge(
         table, # left table
@@ -425,7 +450,7 @@ def merge_polygenic_scores_to_phenotypes(
         left_index=True,
         right_index=True,
         how="left", # keep only keys from left table
-        suffixes=("_main", "_score"),
+        suffixes=("_main", "_score"), # deprecated?
     )
     # Return information.
     return table
