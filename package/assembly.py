@@ -1289,6 +1289,10 @@ def execute_procedure(
         report=True,
     )
 
+    utility.print_terminal_partition(level=2)
+    print("table_scores_steroid_globulin_female")
+    print(source["table_scores_steroid_globulin_female"])
+
     # Mege polygenic scores with information on phenotypes.
     table = merge_polygenic_scores_to_phenotypes(
         table_phenotypes=source["table_phenotypes"],
