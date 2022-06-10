@@ -390,40 +390,40 @@ def merge_polygenic_scores_to_phenotypes(
     table = pandas.merge(
         table, # left table
         table_scores_steroid_globulin_female, # right table
-        left_on="bib_id",
-        right_on="IID",
-        left_index=False,
-        right_index=False,
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
         how="left", # keep only keys from left table
         suffixes=("_main", "_score"),
     )
     table = pandas.merge(
         table, # left table
         table_scores_steroid_globulin_male, # right table
-        left_on="bib_id",
-        right_on="IID",
-        left_index=False,
-        right_index=False,
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
         how="left", # keep only keys from left table
         suffixes=("_main", "_score"),
     )
     table = pandas.merge(
         table, # left table
         table_scores_testosterone_female, # right table
-        left_on="bib_id",
-        right_on="IID",
-        left_index=False,
-        right_index=False,
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
         how="left", # keep only keys from left table
         suffixes=("_main", "_score"),
     )
     table = pandas.merge(
         table, # left table
         table_scores_testosterone_male, # right table
-        left_on="bib_id",
-        right_on="IID",
-        left_index=False,
-        right_index=False,
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
         how="left", # keep only keys from left table
         suffixes=("_main", "_score"),
     )
