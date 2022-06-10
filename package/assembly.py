@@ -291,6 +291,7 @@ def merge_polygenic_scores_to_phenotypes(
         drop=True,
         inplace=True
     )
+    print(table)
     # Organize table indices.
     table_scores_steroid_globulin_female.reset_index(
         level=None,
