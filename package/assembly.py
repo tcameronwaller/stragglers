@@ -86,7 +86,7 @@ def initialize_directories(
         utility.remove_directory(path=paths["assembly_bipolar"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["assembly"]
+        path=paths["assembly_bipolar"]
     )
     # Return information.
     return paths
@@ -1066,6 +1066,9 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
+
+    # Mege polygenic scores with information on phenotypes.
+
 
     if False:
         # Remove data columns for irrelevant variable instances.
