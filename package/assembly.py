@@ -1067,16 +1067,16 @@ def execute_procedure(
         report=True,
     )
 
-    # Mege polygenic scores with information on phenotypes.
-    table = merge_polygenic_scores_to_phenotypes(
-        table_phenotypes=source["table_phenotypes"],
-        columns_accession=source["columns_accession"],
-        table_ukb_41826=source["table_ukb_41826"],
-        table_ukb_43878=source["table_ukb_43878"],
-        table_ukb_47488=source["table_ukb_47488"],
-        report=True,
-    )
-
+    if False:
+        # Mege polygenic scores with information on phenotypes.
+        table = merge_polygenic_scores_to_phenotypes(
+            table_phenotypes=source["table_phenotypes"],
+            table_scores_steroid_globulin_female=source["table_scores_steroid_globulin_female"],
+            table_scores_steroid_globulin_male=source["table_scores_steroid_globulin_male"],
+            table_scores_testosterone_female=source["table_scores_testosterone_female"],
+            table_scores_testosterone_male=source["table_scores_testosterone_male"],
+            report=True,
+        )
 
     if False:
         # Remove data columns for irrelevant variable instances.
