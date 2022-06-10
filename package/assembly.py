@@ -1290,6 +1290,11 @@ def execute_procedure(
     )
 
     utility.print_terminal_partition(level=2)
+    print("table_phenotypes")
+    print(source["table_phenotypes"])
+    print(source["table_phenotypes"].columns.to_list()))
+
+    utility.print_terminal_partition(level=2)
     print("table_scores_steroid_globulin_female")
     print(source["table_scores_steroid_globulin_female"])
 
