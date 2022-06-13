@@ -670,7 +670,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.set_index(
         "identifier_genotype",
         append=False,
-        drop=True, # move regular column to index; remove original column
+        drop=False, # move regular column to index; remove original column
         inplace=True
     )
     # Iterate on tables for polygenic scores.
@@ -1624,6 +1624,13 @@ def execute_procedure(
         tables_scores=tables_polygenic_scores,
         report=True,
     )
+    # Define logical binary indicator variables for type of Bipolar Disorder
+    # diagnosis.
+    table = define_logical_binary_indicator_variables_bipolar_disorder_type(
+        table=table,
+        report=True,
+    )
+
 
     # "bib_id": phenotype identifier
     # "gender": gender
@@ -1638,13 +1645,13 @@ def execute_procedure(
     # Select relevant columns from table.
     columns_selection = [
         "bib_id",
+        "identifier_genotype",
         "gender",
         "pt_age",
         "BMI",
         "rc",
         "scid_dx",
         "database",
-        "identifier_genotype",
         "steroid_globulin_female",
         "steroid_globulin_male",
         "testosterone_female",
