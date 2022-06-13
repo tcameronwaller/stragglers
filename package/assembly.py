@@ -623,19 +623,19 @@ def merge_polygenic_scores_to_phenotypes(
     table_identifiers.reset_index(
         level=None,
         inplace=True,
-        drop=False,
+        drop=True, # remove index; do not move to regular columns
     )
     table_identifiers["bib_id"] = table_identifiers["bib_id"].astype("string")
     table_identifiers.set_index(
         "bib_id",
         append=False,
-        drop=True,
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     table_phenotypes.reset_index(
         level=None,
         inplace=True,
-        drop=False,
+        drop=True, # remove index; do not move to regular columns
     )
     table_phenotypes["bib_id"] = table_phenotypes["bib_id"].astype("string")
     table_phenotypes.set_index(
@@ -662,7 +662,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=False,
+        drop=False, # remove index; do not move to regular columns
     )
     table["identifier_genotype"] = (
         table["identifier_genotype"].astype("string")
@@ -679,7 +679,7 @@ def merge_polygenic_scores_to_phenotypes(
         table_score.reset_index(
             level=None,
             inplace=True,
-            drop=False,
+            drop=True, # remove index; do not move to regular columns
         )
         table_score["IID"] = table_score["IID"].astype("string")
         table_score.set_index(
@@ -705,7 +705,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=False,
+        drop=False, # remove index; do not move to regular columns
     )
     table.set_index(
         "bib_id",
