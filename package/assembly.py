@@ -629,7 +629,7 @@ def merge_polygenic_scores_to_phenotypes(
     table_identifiers.set_index(
         "bib_id",
         append=False,
-        drop=True, # move regular column to index; remove original column
+        drop=False, # move regular column to index; remove original column
         inplace=True
     )
     table_phenotypes.reset_index(
@@ -641,7 +641,7 @@ def merge_polygenic_scores_to_phenotypes(
     table_phenotypes.set_index(
         "bib_id",
         append=False,
-        drop=True,
+        drop=False, # move regular column to index; remove original column
         inplace=True
     )
     # Merge data tables using database-style join.
@@ -662,7 +662,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=False, # remove index; do not move to regular columns
+        drop=True, # remove index; do not move to regular columns
     )
     table["identifier_genotype"] = (
         table["identifier_genotype"].astype("string")
@@ -670,7 +670,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.set_index(
         "identifier_genotype",
         append=False,
-        drop=True,
+        drop=False, # move regular column to index; remove original column
         inplace=True
     )
     # Iterate on tables for polygenic scores.
@@ -685,7 +685,7 @@ def merge_polygenic_scores_to_phenotypes(
         table_score.set_index(
             "IID",
             append=False,
-            drop=True,
+            drop=True, # move regular column to index; remove original column
             inplace=True
         )
         # Merge data tables using database-style join.
@@ -705,12 +705,12 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=False, # remove index; do not move to regular columns
+        drop=True, # remove index; do not move to regular columns
     )
     table.set_index(
         "bib_id",
         append=False,
-        drop=True,
+        drop=False, # move regular column to index; remove original column
         inplace=True
     )
     # Report.
