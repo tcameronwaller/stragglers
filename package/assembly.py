@@ -331,6 +331,7 @@ def organize_table_polygenic_score_ldpred2(
 
 def drive_read_organize_tables_polygenic_scores(
     table_scores_parameters=None,
+    filter_inclusion=None,
     report=None,
 ):
     """
@@ -339,6 +340,8 @@ def drive_read_organize_tables_polygenic_scores(
     arguments:
         table_scores_parameters (object): Pandas data frame of parameters for
            reading and organizing separate tables for polygenic scores
+        filter_inclusion (bool): whether to filter records in polygenic scores
+            parameter table by logical binary "inclusion" variable
         report (bool): whether to print reports
 
     raises:
@@ -1715,6 +1718,7 @@ def execute_procedure(
     # Read and organize tables of polygenic scores.
     tables_polygenic_scores = drive_read_organize_tables_polygenic_scores(
         table_scores_parameters=source["table_scores_parameters"],
+        filter_inclusion=True,
         report=True,
     )
 
