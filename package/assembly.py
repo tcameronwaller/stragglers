@@ -1336,7 +1336,7 @@ def execute_procedure(
 
     # Select relevant columns from table.
     columns_selection = [
-        "bib_id",
+        #"bib_id",
         "gender",
         "pt_age",
         "BMI",
