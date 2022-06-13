@@ -500,7 +500,7 @@ def organize_table_phenotype_genotype_identifiers(
     table["gwas1_sampleid"] = table["gwas1_sampleid"].astype("string")
     table["gwas2_sampleid"] = table["gwas2_sampleid"].astype("string")
     # Prioritize identifiers from "GWAS1" set of genotypes.
-    table["genotype_priority"] = table.apply(
+    table["identifier_genotype"] = table.apply(
         lambda row:
             prioritize_genotype_identifiers(
                 phenotype_identifier=row["bib_id"],
@@ -515,7 +515,7 @@ def organize_table_phenotype_genotype_identifiers(
         numpy.nan,
         inplace=True,
     )
-    table["genotype_priority"].replace(
+    table["identifier_genotype"].replace(
         "",
         numpy.nan,
         inplace=True,
@@ -524,12 +524,12 @@ def organize_table_phenotype_genotype_identifiers(
     table.dropna(
         axis="index", # drop rows with missing values in columns
         how="any",
-        subset=["bib_id", "genotype_priority"],
+        subset=["bib_id", "identifier_genotype"],
         inplace=True,
     )
     # Convert identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
-    table["genotype_priority"] = table["genotype_priority"].astype("string")
+    table["identifier_genotype"] = table["identifier_genotype"].astype("string")
     # Return information.
     return table
 
@@ -575,27 +575,26 @@ def organize_table_phenotypes(
     return table
 
 
-
-
 ##########
 # Merge polygenic scores to phenotypes
 
 
 def merge_polygenic_scores_to_phenotypes(
+    table_identifiers=None,
     table_phenotypes=None,
-    table_scores_steroid_globulin_female=None,
-    table_scores_steroid_globulin_male=None,
-    table_scores_testosterone_female=None,
-    table_scores_testosterone_male=None,
+    tables_scores=None,
     report=None,
 ):
     """
     Removes irrelevant columns and rows from data.
 
     arguments:
+        table_identifiers (object): Pandas data frame of identifiers for
+            matching phenotype and genotype records
         table_phenotypes (object): Pandas data frame of information about
             phenotype variables
-        table_scores_... (object): Pandas data frame of polygenic scores
+        tables_scores (list<object>): collection of Pandas data frames of
+            polygenic scores
         report (bool): whether to print reports
 
     raises:
@@ -605,198 +604,132 @@ def merge_polygenic_scores_to_phenotypes(
 
     """
 
+    # 1. Introduce identifiers of genotype records to table of phenotype
+    # records.
     # Copy information.
-    table = table_phenotypes.copy(deep=True)
+    table_identifiers = table_identifiers.copy(deep=True)
+    table_phenotypes = table_phenotypes.copy(deep=True)
+    # Organize tables' indices.
+    table_identifiers.reset_index(
+        level=None,
+        inplace=True,
+        drop=False,
+    )
+    table_identifiers["bib_id"] = table_identifiers["bib_id"].astype("string")
+    table_identifiers.set_index(
+        "bib_id",
+        append=False,
+        drop=True,
+        inplace=True
+    )
+    table_phenotypes.reset_index(
+        level=None,
+        inplace=True,
+        drop=False,
+    )
+    table_phenotypes["bib_id"] = table_phenotypes["bib_id"].astype("string")
+    table_phenotypes.set_index(
+        "bib_id",
+        append=False,
+        drop=True,
+        inplace=True
+    )
+    # Merge data tables using database-style join.
+    # Alternative is to use DataFrame.join().
+    table = pandas.merge(
+        table_phenotypes, # left table
+        table_identifiers, # right table
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
+        how="left", # keep only keys from left table
+        suffixes=("_main", "_identifiers"), # deprecated?
+    )
 
-    # Translate names of columns.
-    #table = table.add_prefix("import_")
-    translations = dict()
-    translations["steroid_globulin_imputation_log_female_joint_1_auto"] = (
-        "steroid_globulin_female"
-    )
-    translations["steroid_globulin_imputation_log_male_joint_1_auto"] = (
-        "steroid_globulin_male"
-    )
-    translations["testosterone_imputation_log_female_joint_1_auto"] = (
-        "testosterone_female"
-    )
-    translations["testosterone_imputation_log_male_joint_1_auto"] = (
-        "testosterone_male"
-    )
-    table_scores_steroid_globulin_female.rename(
-        columns=translations,
-        inplace=True,
-    )
-    table_scores_steroid_globulin_male.rename(
-        columns=translations,
-        inplace=True,
-    )
-    table_scores_testosterone_female.rename(
-        columns=translations,
-        inplace=True,
-    )
-    table_scores_testosterone_male.rename(
-        columns=translations,
-        inplace=True,
-    )
-
-    # Organize table indices.
+    # 2. Introduce polygenic scores.
+    # Organize main table's index.
     table.reset_index(
         level=None,
         inplace=True,
         drop=False,
     )
-    table.dropna(
-        axis="index",
-        how="any",
-        subset=["bib_id"],
-        inplace=True,
+    table["identifier_genotype"] = (
+        table["identifier_genotype"].astype("string")
     )
-    table["bib_id"] = table["bib_id"].astype("string")
+    table.set_index(
+        "identifier_genotype",
+        append=False,
+        drop=True,
+        inplace=True
+    )
+    # Iterate on tables for polygenic scores.
+    for table_score in tables_scores:
+        # Organize score table's index.
+        table_score.reset_index(
+            level=None,
+            inplace=True,
+            drop=False,
+        )
+        table_score["IID"] = table_score["IID"].astype("string")
+        table_score.set_index(
+            "IID",
+            append=False,
+            drop=True,
+            inplace=True
+        )
+        # Merge data tables using database-style join.
+        # Alternative is to use DataFrame.join().
+        table = pandas.merge(
+            table, # left table
+            table_score, # right table
+            left_on=None, # "bib_id",
+            right_on=None, # "IID",
+            left_index=True,
+            right_index=True,
+            how="left", # keep only keys from left table
+            suffixes=("_main", "_score"), # deprecated?
+        )
+        pass
+    # Organize table's index.
+    table.reset_index(
+        level=None,
+        inplace=True,
+        drop=False,
+    )
     table.set_index(
         "bib_id",
         append=False,
         drop=True,
         inplace=True
     )
-    print(table)
-    # Organize table indices.
-    table_scores_steroid_globulin_female.reset_index(
-        level=None,
-        inplace=True,
-        drop=False,
-    )
-    table_scores_steroid_globulin_male.reset_index(
-        level=None,
-        inplace=True,
-        drop=False,
-    )
-    table_scores_testosterone_female.reset_index(
-        level=None,
-        inplace=True,
-        drop=False,
-    )
-    table_scores_testosterone_male.reset_index(
-        level=None,
-        inplace=True,
-        drop=False,
-    )
-    table_scores_steroid_globulin_female["IID"] = table_scores_steroid_globulin_female["IID"].astype("string")
-    table_scores_steroid_globulin_male["IID"] = table_scores_steroid_globulin_male["IID"].astype("string")
-    table_scores_testosterone_female["IID"] = table_scores_testosterone_female["IID"].astype("string")
-    table_scores_testosterone_male["IID"] = table_scores_testosterone_male["IID"].astype("string")
-    table_scores_steroid_globulin_female.dropna(
-        axis="index",
-        how="any",
-        subset=["IID"],
-        inplace=True,
-    )
-    table_scores_steroid_globulin_male.dropna(
-        axis="index",
-        how="any",
-        subset=["IID"],
-        inplace=True,
-    )
-    table_scores_testosterone_female.dropna(
-        axis="index",
-        how="any",
-        subset=["IID"],
-        inplace=True,
-    )
-    table_scores_testosterone_male.dropna(
-        axis="index",
-        how="any",
-        subset=["IID"],
-        inplace=True,
-    )
-    table_scores_steroid_globulin_female.set_index(
-        "IID",
-        append=False,
-        drop=True,
-        inplace=True
-    )
-    table_scores_steroid_globulin_male.set_index(
-        "IID",
-        append=False,
-        drop=True,
-        inplace=True
-    )
-    table_scores_testosterone_female.set_index(
-        "IID",
-        append=False,
-        drop=True,
-        inplace=True
-    )
-    table_scores_testosterone_male.set_index(
-        "IID",
-        append=False,
-        drop=True,
-        inplace=True
-    )
-    table_scores_steroid_globulin_female.drop(
-        labels=["FID"],
-        axis="columns",
-        inplace=True
-    )
-    table_scores_steroid_globulin_male.drop(
-        labels=["FID"],
-        axis="columns",
-        inplace=True
-    )
-    table_scores_testosterone_female.drop(
-        labels=["FID"],
-        axis="columns",
-        inplace=True
-    )
-    table_scores_testosterone_male.drop(
-        labels=["FID"],
-        axis="columns",
-        inplace=True
-    )
-    # Merge data tables using database-style join.
-    # Alternative is to use DataFrame.join().
-    table = pandas.merge(
-        table, # left table
-        table_scores_steroid_globulin_female, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
-        left_index=True,
-        right_index=True,
-        how="left", # keep only keys from left table
-        suffixes=("_main", "_score"), # deprecated?
-    )
-    table = pandas.merge(
-        table, # left table
-        table_scores_steroid_globulin_male, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
-        left_index=True,
-        right_index=True,
-        how="left", # keep only keys from left table
-        suffixes=("_main", "_score"), # deprecated?
-    )
-    table = pandas.merge(
-        table, # left table
-        table_scores_testosterone_female, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
-        left_index=True,
-        right_index=True,
-        how="left", # keep only keys from left table
-        suffixes=("_main", "_score"), # deprecated?
-    )
-    table = pandas.merge(
-        table, # left table
-        table_scores_testosterone_male, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
-        left_index=True,
-        right_index=True,
-        how="left", # keep only keys from left table
-        suffixes=("_main", "_score"), # deprecated?
-    )
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        print("merge_polygenic_scores_to_phenotypes()")
+        utility.print_terminal_partition(level=3)
+        print(table)
+        print("columns")
+        print(table.columns.to_list())
+        pass
     # Return information.
     return table
+
+
+##########
+# Organize table
+
+#    # Convert column types to float.
+#    columns_type = [
+#        "2784-0.0", "2794-0.0", "2804-0.0",
+#        "2814-0.0", "3536-0.0", "3546-0.0",
+#    ]
+#    table = utility.convert_table_columns_variables_types_float(
+#        columns=columns_type,
+#        table=table,
+#    )
+
 
 
 
@@ -1674,20 +1607,15 @@ def execute_procedure(
         table=source["table_phenotypes"],
         report=True,
     )
-
+    # Mege polygenic scores with information on phenotypes.
+    table = merge_polygenic_scores_to_phenotypes(
+        table_identifiers=table_identifiers,
+        table_phenotypes=table_phenotypes,
+        tables_scores=tables_polygenic_scores,
+        report=True,
+    )
 
     if False:
-
-        # Mege polygenic scores with information on phenotypes.
-        table = merge_polygenic_scores_to_phenotypes(
-            table_identifiers=table_identifiers,
-            table_phenotypes=table_phenotypes,
-            table_scores_steroid_globulin_female=source["table_scores_steroid_globulin_female"],
-            table_scores_steroid_globulin_male=source["table_scores_steroid_globulin_male"],
-            table_scores_testosterone_female=source["table_scores_testosterone_female"],
-            table_scores_testosterone_male=source["table_scores_testosterone_male"],
-            report=True,
-        )
 
         # "bib_id": phenotype identifier
         # "gender": gender
