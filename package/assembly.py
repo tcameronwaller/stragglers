@@ -1624,13 +1624,6 @@ def execute_procedure(
         tables_scores=tables_polygenic_scores,
         report=True,
     )
-    # Define logical binary indicator variables for type of Bipolar Disorder
-    # diagnosis.
-    table = define_logical_binary_indicator_variables_bipolar_disorder_type(
-        table=table,
-        report=True,
-    )
-
 
     # "bib_id": phenotype identifier
     # "gender": gender
@@ -1672,6 +1665,12 @@ def execute_procedure(
 
 
         table = table[[*columns_selection]]
+        # Define logical binary indicator variables for type of Bipolar Disorder
+        # diagnosis.
+        table = define_logical_binary_indicator_variables_bipolar_disorder_type(
+            table=table,
+            report=True,
+        )
 
 
     if False:
