@@ -1625,40 +1625,46 @@ def execute_procedure(
         report=True,
     )
 
+    # "bib_id": phenotype identifier
+    # "gender": gender
+    # "pt_age": age
+    # "BMI": body mass index
+    # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
+    # "scid_dx": Bipolar Disorder type I or II
+    # "database": name of source database for phenotype (clinical) records
+    # "SITE": assessment center?
+
+    # Organize table.
+    # Select relevant columns from table.
+    columns_selection = [
+        "bib_id",
+        "gender",
+        "pt_age",
+        "BMI",
+        "rc",
+        "scid_dx",
+        "database",
+        "identifier_genotype",
+        "steroid_globulin_female",
+        "steroid_globulin_male",
+        "testosterone_female",
+        "testosterone_male",
+    ]
+    table = table.loc[
+        :, table.columns.isin(columns_selection)
+    ]
+    utility.print_terminal_partition(level=2)
+    print("table after selection of columns")
+    print(table)
+    print("columns")
+    print(table.columns.to_list())
+
+
+
     if False:
 
-        # "bib_id": phenotype identifier
-        # "gender": gender
-        # "pt_age": age
-        # "BMI": body mass index
-        # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
-        # "scid_dx": Bipolar Disorder type I or II
-        # "database": name of source database for phenotype (clinical) records
-        # "SITE": assessment center?
 
-        # Select relevant columns from table.
-        columns_selection = [
-            #"bib_id",
-            "gender",
-            "pt_age",
-            "BMI",
-            "rc",
-            "scid_dx",
-            "database",
-            "steroid_globulin_female",
-            "steroid_globulin_male",
-            "testosterone_female",
-            "testosterone_male",
-        ]
-        table = table.loc[
-            :, table.columns.isin(columns_selection)
-        ]
         table = table[[*columns_selection]]
-        utility.print_terminal_partition(level=2)
-        print("table after selection of columns")
-        print(table)
-        print("index values")
-        print(table.index.to_list())
 
 
     if False:
