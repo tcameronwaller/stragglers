@@ -730,7 +730,8 @@ def write_product_assembly_bipolar(
     arguments:
         pail_write (dict): collection of information to write to file
         path_directory (str): path to parent directory
-            raises:
+
+    raises:
 
     returns:
 
