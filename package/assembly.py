@@ -448,7 +448,7 @@ def prioritize_genotype_identifiers(
             # Priority genotype record comes from a primary, priority set or
             # batch of genotypes.
             genotype_priority = str(
-                genotype_identifier_priority.copy(deep=True)
+                copy.deepcopy(genotype_identifier_priority)
             )
         elif (
             (not pandas.isna(genotype_identifier_spare)) and
@@ -458,7 +458,7 @@ def prioritize_genotype_identifiers(
             # Spare genotype record comes from a secondary, not priority set or
             # batch of genotypes.
             genotype_priority = str(
-                genotype_identifier_spare.copy(deep=True)
+                copy.deepcopy(genotype_identifier_spare)
             )
             pass
         else:
