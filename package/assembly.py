@@ -688,7 +688,7 @@ def merge_polygenic_scores_to_phenotypes(
             left_index=True,
             right_index=True,
             how="left", # keep only keys from left table
-            suffixes=("_main", "_score"), # deprecated?
+            #suffixes=("_main", "_score"), # deprecated?
         )
         pass
     # Organize table's index.
