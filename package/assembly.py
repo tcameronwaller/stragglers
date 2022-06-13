@@ -319,6 +319,13 @@ def organize_table_polygenic_score_ldpred2(
         columns=translations,
         inplace=True,
     )
+    # Convert scores to type float.
+    #table[name_score_new] = table[name_score_new].astype("float32")
+    table[name_score_new] = pandas.to_numeric(
+        table[name_score_new],
+        errors="coerce", # force any invalid values to missing or null
+        downcast="float",
+    )
     # Remove the column for the genotype family identifier ("FID").
     # This identifier is redundant and unnecessary.
     table.drop(
@@ -566,72 +573,6 @@ def organize_table_phenotypes(
     table["bib_id"] = table["bib_id"].astype("string")
     # Return information.
     return table
-
-
-def organize_tables_polygenic_scores(
-    table_scores_steroid_globulin_female=None,
-    table_scores_steroid_globulin_male=None,
-    table_scores_testosterone_female=None,
-    table_scores_testosterone_male=None,
-    report=None,
-):
-    """
-    Organizes tables of polygenic scores.
-
-    arguments:
-        table_scores_... (object): Pandas data frame of polygenic scores
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (dict<object>): collection of Pandas data frames of information about
-            polygenic scores
-
-    """
-
-    # Collect records of information for the organization of each table of
-    # polygenic scores.
-    records = list()
-
-    record = dict()
-    record["table"] = table_scores_steroid_globulin_female
-    record["name_score_old"] = (
-        "steroid_globulin_imputation_log_female_joint_1_auto"
-    )
-    record["name_score_new"] = "steroid_globulin_female"
-    records.append(record)
-
-    record = dict()
-    record["table"] = table_scores_steroid_globulin_male
-    record["name_score_old"] = (
-        "steroid_globulin_imputation_log_male_joint_1_auto"
-    )
-    record["name_score_new"] = "steroid_globulin_male"
-    records.append(record)
-
-    record = dict()
-    record["table"] = table_scores_testosterone_female
-    record["name_score_old"] = (
-        "testosterone_imputation_log_female_joint_1_auto"
-    )
-    record["name_score_new"] = "testosterone_female"
-    records.append(record)
-
-    record = dict()
-    record["table"] = table_scores_testosterone_male
-    record["name_score_old"] = (
-        "testosterone_imputation_log_male_joint_1_auto"
-    )
-    record["name_score_new"] = "testosterone_male"
-    records.append(record)
-
-    # organize_table_polygenic_scores_ldpred2
-
-
-    # Return information.
-    return table
-
 
 
 
@@ -1723,33 +1664,19 @@ def execute_procedure(
         report=True,
     )
 
-    utility.print_terminal_partition(level=2)
-    print("tables_polygenic_scores")
-    print(tables_polygenic_scores)
+    # Organize table of identifiers for phenotypes and genotypes.
+    table_identifiers = organize_table_phenotype_genotype_identifiers(
+        table=source["table_identifiers"],
+        report=True,
+    )
+    # Organize table of phenotypes.
+    table_phenotypes = organize_table_phenotypes(
+        table=source["table_phenotypes"],
+        report=True,
+    )
+
 
     if False:
-        utility.print_terminal_partition(level=2)
-        print("table_scores_steroid_globulin_female")
-        print(source["table_scores_steroid_globulin_female"])
-
-        # Organize table of identifiers for phenotypes and genotypes.
-        table_identifiers = organize_table_phenotype_genotype_identifiers(
-            table=source["table_identifiers"],
-            report=True,
-        )
-        # Organize table of phenotypes.
-        table_phenotypes = organize_table_phenotypes(
-            table=source["table_phenotypes"],
-            report=True,
-        )
-        # Organize tables of polygenic scores.
-        pail_tables_scores = organize_tables_polygenic_scores(
-            table_scores_steroid_globulin_female=source["table_scores_steroid_globulin_female"],
-            table_scores_steroid_globulin_male=source["table_scores_steroid_globulin_male"],
-            table_scores_testosterone_female=source["table_scores_testosterone_female"],
-            table_scores_testosterone_male=source["table_scores_testosterone_male"],
-            report=True,
-        )
 
         # Mege polygenic scores with information on phenotypes.
         table = merge_polygenic_scores_to_phenotypes(
