@@ -95,31 +95,6 @@ def initialize_directories(
 ##########
 # Read
 
-# 1. read and return the parameter table along with other main tables
-# 2. in separate read driver function ("read_organize_polygenic_score_tables")
-# ... 0. filter the parameter table by ("inclusion" == 1)
-# ... 1. iterate on records from the parameter table
-# ... 2. read the private parent directory using "with open as file, file.read()"
-# ... 3. define the full path to the file for the polygenic score table
-# ... 4. specify different read functions for LDPred2 or PRS-CSX tables (different formats)
-# ... 5. read the score table
-# ... 6. organize the score table, simplifying the name of the score variable's column, etc
-# ... 7. collect the separate score tables within a dictionary
-
-
-
-
-# TODO: TCW; 13 June 2022
-# TODO: write a .tsv parameter table
-# TODO: 1. parent directory of the polygenic score table (use locally-defined private paths)
-# TODO: - - with open as file
-# TODO:     file.read()
-# TODO: 2. file name of the polygenic score table
-# TODO: 3. score variable column name
-# TODO: 4. whether scores came from LDPred2 or PRS-CS (different formats and organization requirements)
-
-
-
 
 def read_source(
     path_dock=None,
@@ -728,7 +703,7 @@ def merge_polygenic_scores_to_phenotypes(
 
 
 ##########
-# Organize table
+# Organize phenotype variables
 
 #    # Convert column types to float.
 #    columns_type = [
@@ -741,754 +716,20 @@ def merge_polygenic_scores_to_phenotypes(
 #    )
 
 
-
-
-##########
-# Remove irrelevant field columns
-
-
-def parse_field_instance_columns_to_keep(
-    instances_raw=None,
-):
-    """
-    Parse the field's instances to keep.
-
-    arguments:
-        instances_raw (str): raw string of field's instances to keep
-
-    raises:
-
-    returns:
-        (list<str>): field's instances to keep
-
-    """
-
-    instances_simple = instances_raw.replace("\'", "")
-    instances_simple = instances_simple.replace("\"", "")
-    instances = list()
-    for instance_raw in instances_simple.split(";"):
-        instance = str(instance_raw).strip()
-        if len(instance) > 0:
-            instances.append(str(instance))
-            pass
-        pass
-    return instances
-
-
-def parse_ukbiobank_raw_column_field_instance_array(
-    name_column=None,
-):
-    """
-    Parse the information in a raw column name.
-
-    Format: [field]-[instance].[array index]
-    Examples: "20002-3.33", "20003-3.47"
-
-    arguments:
-        name_column (str): raw name of column in data table from UK Biobank
-
-    raises:
-
-    returns:
-        (dict<str>): information from column name
-
-    """
-
-    record = dict()
-    if (
-        ("-" in name_column) and
-        ("." in name_column)
-    ):
-        record["field"] = str(name_column.split("-")[0].strip())
-        record["instance"] = str(
-            name_column.split("-")[1].split(".")[0].strip()
-        )
-        record["array_index"] = str(
-            name_column.split("-")[1].split(".")[1].strip()
-        )
-    else:
-        record["field"] = ""
-        record["instance"] = ""
-        record["array_index"] = ""
-    return record
-
-
-def determine_keep_column_field_instance(
-    column=None,
-    table_ukbiobank_variables=None,
-    report=None,
-):
-    """
-    Determines whether to keep a column for UK Biobank field instance.
-
-    arguments:
-        column (str): column name from UK Biobank accessions
-        table_ukbiobank_variables (object): Pandas data frame of information
-            about UK Biobank phenotype variables
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (bool): whether to keep the column
-
-    """
-
-    # Parse information in the column name.
-    record = parse_ukbiobank_raw_column_field_instance_array(
-        name_column=column,
-    )
-    # Determine whether column matches format of an original accession
-    # data-field.
-    if (len(str(record["field"])) > 0):
-        # Initialize flag.
-        keep = False
-        # Organize information.
-        #array_collection = table_ukbiobank_variables.at[
-        #    int(record["field"]), "array_collection",
-        #]
-        instances_keep_raw = table_ukbiobank_variables.at[
-            int(record["field"]), "instances_keep",
-        ]
-        # Determine which instances to keep.
-        if not pandas.isna(instances_keep_raw):
-            # Organize field instances to keep.
-            instances_keep = parse_field_instance_columns_to_keep(
-                instances_raw=instances_keep_raw,
-            )
-            # Determine whether to keep column on basis of instance.
-            if str(record["instance"]) in instances_keep:
-                keep = True
-                # Report.
-                if (
-                    report and
-                    (str(record["field"]) in ["31", "50", "22009"])
-                ):
-                    utility.print_terminal_partition(level=4)
-                    print("report from: determine_keep_column_field_instance()")
-                    print("keep column: " + str(column))
-                pass
-            pass
-        pass
-    else:
-        # Column is not an original accession data-field.
-        # Keep the column.
-        keep = True
-    # Return information.
-    return keep
-
-
-def determine_ukbiobank_field_instance_columns_keep(
-    columns_accession=None,
-    table_ukbiobank_variables=None,
-    extra_names=None,
-    report=None,
-):
-    """
-    Organizes column names for variable fields and instances.
-
-    arguments:
-        columns_accession (list<str>): column names from UK Biobank accessions
-        table_ukbiobank_variables (object): Pandas data frame of information
-            about UK Biobank phenotype variables
-        extra_names (list<str>): extra names to include
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (list<str>): column names for variable fields and instances
-
-    """
-
-    # Copy data.
-    table_ukbiobank_variables = table_ukbiobank_variables.copy(deep=True)
-    # Organize information.
-    table_ukbiobank_variables = table_ukbiobank_variables.loc[
-        :, table_ukbiobank_variables.columns.isin([
-            "field", "array_collection", "instances_keep"
-        ])
-    ]
-    table_ukbiobank_variables["field"].astype("string")
-    table_ukbiobank_variables.set_index(
-        "field",
-        drop=True,
-        inplace=True,
-    )
-    # Iterate on actual column names from the accession table.
-    # Determine whether to keep column.
-    columns_keep = list()
-    columns_keep.extend(extra_names)
-    for column in columns_accession:
-        column = str(column)
-        # Determine whether to keep column.
-        keep = determine_keep_column_field_instance(
-            column=column,
-            table_ukbiobank_variables=table_ukbiobank_variables,
-            report=False,
-        )
-        if keep:
-            columns_keep.append(column)
-            pass
-        pass
-    # Return information.
-    return columns_keep
-
-
-def remove_table_irrelevant_field_instance_columns(
-    table_ukbiobank_variables=None,
-    columns_accession=None,
-    table_ukb_41826=None,
-    table_ukb_43878=None,
-    table_ukb_47488=None,
-    report=None,
-):
-    """
-    Removes irrelevant columns and rows from data.
-
-    arguments:
-        table_ukbiobank_variables (object): Pandas data frame of information
-            about UK Biobank phenotype variables
-        columns_accession (list<str>): column names from UK Biobank accessions
-        table_ukb_41826 (object): Pandas data frame of variables from UK
-            Biobank phenotype data accession 41826
-        table_ukb_43878 (object): Pandas data frame of variables from UK
-            Biobank phenotype data accession 43878
-        table_ukb_47488 (object): Pandas data frame of variables from UK
-            Biobank phenotype data accession 47488
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (dict<object>): collection of Pandas data frames after removal of
-            irrelevant columns and rows
-
-    """
-
-    # Copy data.
-    table_variables = table_ukbiobank_variables.copy(deep=True)
-    table_ukb_41826 = table_ukb_41826.copy(deep=True)
-    table_ukb_43878 = table_ukb_43878.copy(deep=True)
-    table_ukb_47488 = table_ukb_47488.copy(deep=True)
-    # Determine which columns to keep for UK Biobank fields and instances.
-    columns_keep = determine_ukbiobank_field_instance_columns_keep(
-        columns_accession=columns_accession,
-        table_ukbiobank_variables=table_variables,
-        extra_names=["IID", "eid"],
-        report=report,
-    )
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("columns to keep: " + str(len(columns_keep)))
-        #print(columns_keep[0:50])
-        print(columns_keep)
-        utility.print_terminal_partition(level=3)
-        print("...before pruning...")
-        print("table_ukb_41826 shape: " + str(table_ukb_41826.shape))
-        print("table_ukb_43878 shape: " + str(table_ukb_43878.shape))
-        print("table_ukb_47488 shape: " + str(table_ukb_47488.shape))
-        utility.print_terminal_partition(level=4)
-    # Remove all irrelevant columns.
-    table_ukb_41826 = table_ukb_41826.loc[
-        :, table_ukb_41826.columns.isin(columns_keep)
-    ]
-    table_ukb_43878 = table_ukb_43878.loc[
-        :, table_ukb_43878.columns.isin(columns_keep)
-    ]
-    table_ukb_47488 = table_ukb_47488.loc[
-        :, table_ukb_47488.columns.isin(columns_keep)
-    ]
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("...after pruning...")
-        print("table_ukb_41826 shape: " + str(table_ukb_41826.shape))
-        print("table_ukb_43878 shape: " + str(table_ukb_43878.shape))
-        print("table_ukb_47488 shape: " + str(table_ukb_47488.shape))
-        utility.print_terminal_partition(level=4)
-    # Collect information.
-    pail = dict()
-    pail["table_ukb_41826"] = table_ukb_41826
-    pail["table_ukb_43878"] = table_ukb_43878
-    pail["table_ukb_47488"] = table_ukb_47488
-    # Return information.
-    return pail
-
-
-##########
-# Organization
-
-
-def simplify_field_values_array_row(
-    row=None,
-    field=None,
-    columns_field=None,
-    delimiter=None,
-    report=None,
-):
-    """
-    Simplify field instances for array values.
-
-    arguments:
-        row (object): Pandas data frame row
-        field (str): identifier of UK Biobank field
-        columns_field (list<str>): names of columns that match the data-field
-        delimiter (str): delimiter for string representation of array values
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (str): text array with semicolon delimiters
-
-    """
-
-    # Copy Pandas series for row.
-    row = row.copy(deep=True)
-    # Convert Pandas series row to dictionary.
-    record_row = row.to_dict()
-    # Collect all non-missing values from the field's columns for instances.
-    values = list()
-    for column in columns_field:
-        # Parse information in the column name.
-        record_column = parse_ukbiobank_raw_column_field_instance_array(
-            name_column=column,
-        )
-        # Determine whether column matches format of an original accession
-        # data-field.
-        if (
-            (column in record_row.keys()) and
-            (len(str(record_column["field"])) > 0) and
-            (str(field) == str(record_column["field"]))
-        ):
-            value = record_row[column]
-            if (
-                (not pandas.isna(value)) and
-                (str(value) != "<NA>")
-            ):
-                # Collect all values regardless of whether they are unique.
-                values.append(str(value))
-                pass
-            pass
-        pass
-    # Select unique values.
-    values_unique = list(set(values)) # unique
-    # Combine values with text delimiter.
-    if len(values_unique) > 0:
-        text_array = delimiter.join(values_unique)
-    else:
-        text_array = ""
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=4)
-        print("matching fields to " + str(field) + " :")
-        print(columns_field)
-        print("unique values: " + str(len(values_unique)))
-    # Return information.
-    return text_array
-
-
-def simplify_field_values_array_columns(
-    table_ukbiobank_variables=None,
-    table_ukb_raw=None,
-    delimiter=None,
-    report=None,
-):
-    """
-    Simplify field instances for array values.
-
-    arguments:
-        table_ukbiobank_variables (object): Pandas data frame of information
-            about UK Biobank phenotype variables
-        table_ukb_raw (object): Pandas data frame of information from UK
-            Biobank
-        delimiter (str): delimiter for string representation of array values
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information from UK Biobank
-
-    """
-
-    # Copy and de-fragment information in table.
-    table_ukb = table_ukb_raw.copy(deep=True)
-    table_variables = table_ukbiobank_variables.copy(deep=True)
-    # Organize information.
-    table_variables["field"].astype("string")
-    table_variables = table_variables.loc[
-        :, table_variables.columns.isin(["field", "type", "array_collection"])
-    ]
-    table_variables["array_collection"] = table_variables.apply(
-        lambda row:
-            str(row["array_collection"]).strip().lower(),
-        axis="columns", # apply across rows
-    )
-    table_variables_array = table_variables.loc[
-        (
-            ~pandas.isna(table_variables["array_collection"]) &
-            (table_variables["array_collection"] == "yes")
-        ), :
-    ]
-    fields_array = table_variables_array["field"].to_list()
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("fields for arrays to simplify: " + str(len(fields_array)))
-        print(fields_array)
-    # Iterate on UK Biobank fields with array instances.
-    for field in fields_array:
-        # Find columns that match the data-field.
-        columns_field = list()
-        for column in table_ukb.columns.to_list():
-            # Parse information in the column name.
-            record = parse_ukbiobank_raw_column_field_instance_array(
-                name_column=column,
-            )
-            # Determine whether column matches format of an original accession
-            # data-field.
-            # Determine whether the column matches the data-field.
-            if (
-                (len(str(record["field"])) > 0) and
-                (str(field) == str(record["field"]))
-            ):
-                columns_field.append(column)
-                pass
-            pass
-        # Create new column with text array of all non-missing values from the
-        # field's original columns.
-        column_new = str(str(field) + "_array")
-        table_ukb[column_new] = table_ukb.apply(
-            lambda row:
-                simplify_field_values_array_row(
-                    row=row,
-                    field=field,
-                    columns_field=columns_field,
-                    delimiter=delimiter,
-                    report=False,
-                ),
-            axis="columns", # apply across rows
-        )
-        # Report.
-        if report:
-            utility.print_terminal_partition(level=3)
-            print("dropping columns for field: " + str(field))
-            print(columns_field)
-        # Drop columns.
-        table_ukb.drop(
-            labels=columns_field,
-            axis="columns",
-            inplace=True
-        )
-        pass
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("...after simplification of array fields...")
-        print("table_ukb shape: " + str(table_ukb.shape))
-        utility.print_terminal_partition(level=4)
-    # Return information.
-    return table_ukb
-
-
-def merge_table_variables_identifiers(
-    table_identifier_pairs=None,
-    table_ukb_41826=None,
-    table_ukb_43878=None,
-    table_ukb_47488=None,
-    report=None,
-):
-    """
-    Reads and organizes source information from file.
-
-    arguments:
-        table_identifier_pairs (object): Pandas data frame of associations
-            between "IID" and "eid"
-        table_ukb_41826 (object): Pandas data frame of variables from UK Biobank
-            phenotype accession 41826
-        table_ukb_43878 (object): Pandas data frame of variables from UK Biobank
-            phenotype accession 43878
-        table_ukb_47488 (object): Pandas data frame of variables from UK Biobank
-            phenotype accession 47488
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of phenotype variables across UK Biobank
-            cohort
-
-    """
-
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print(table_identifier_pairs)
-        utility.print_terminal_partition(level=2)
-        print(table_ukb_41826)
-        utility.print_terminal_partition(level=2)
-        print(table_ukb_43878)
-        utility.print_terminal_partition(level=2)
-        print(table_ukb_47488)
-    # Remove rows with null values of merge identifier.
-    table_identifier_pairs.dropna(
-        axis="index",
-        how="any",
-        subset=["eid"],
-        inplace=True,
-    )
-    table_ukb_41826.dropna(
-        axis="index",
-        how="any",
-        subset=["eid"],
-        inplace=True,
-    )
-    table_ukb_43878.dropna(
-        axis="index",
-        how="any",
-        subset=["eid"],
-        inplace=True,
-    )
-    table_ukb_47488.dropna(
-        axis="index",
-        how="any",
-        subset=["eid"],
-        inplace=True,
-    )
-    # Organize data.
-    table_identifier_pairs.astype("string")
-    table_identifier_pairs.set_index(
-        "eid",
-        drop=True,
-        inplace=True,
-    )
-    table_ukb_41826["eid"].astype("string")
-    table_ukb_41826.set_index(
-        "eid",
-        drop=True,
-        inplace=True,
-    )
-    table_ukb_43878["eid"].astype("string")
-    table_ukb_43878.set_index(
-        "eid",
-        drop=True,
-        inplace=True,
-    )
-    table_ukb_47488["eid"].astype("string")
-    table_ukb_47488.set_index(
-        "eid",
-        drop=True,
-        inplace=True,
-    )
-
-    # Merge data tables using database-style join.
-    # Alternative is to use DataFrame.join().
-    table_merge = table_identifier_pairs.merge(
-        table_ukb_41826,
-        how="outer",
-        left_on="eid",
-        right_on="eid",
-        suffixes=("_merge", "_41826"),
-    )
-    table_merge = table_merge.merge(
-        table_ukb_43878,
-        how="outer",
-        left_on="eid",
-        right_on="eid",
-        suffixes=("_merge", "_43878"),
-    )
-    table_merge = table_merge.merge(
-        table_ukb_47488,
-        how="outer",
-        left_on="eid",
-        right_on="eid",
-        suffixes=("_merge", "_47488"),
-    )
-    # Remove excess columns.
-
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print(table_merge)
-    # Return information.
-    return table_merge
-
-
-def exclude_persons_ukbiobank_consent(
-    exclusion_identifiers=None,
-    table=None,
-    report=None,
-):
-    """
-    Removes entries with specific identifiers from data.
-
-    arguments:
-        exclusion_identifiers (list<str>): identifiers of persons who withdrew
-            consent from UK Biobank
-        table (object): Pandas data frame of phenotype variables across UK
-            Biobank cohort
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of phenotype variables across UK Biobank
-            cohort
-
-    """
-
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("Initial table dimensions: " + str(table.shape))
-        utility.print_terminal_partition(level=4)
-        print("Exclusion of persons: " + str(len(exclusion_identifiers)))
-    # Copy data.
-    table = table.copy(deep=True)
-    # Filter data entries.
-    table_exclusion = table.loc[
-        ~table.index.isin(exclusion_identifiers), :
-    ]
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=4)
-        print("Final data dimensions: " + str(table_exclusion.shape))
-    # Return information.
-    return table_exclusion
-
-
-def drop_null_records_all_variables(
-    table=None,
-    columns_any=None,
-    report=None,
-):
-    """
-    Drops rows with null or missing values across all columns.
-
-    arguments:
-        table (object): Pandas data frame of information about UK Biobank
-            phenotype variables
-        columns_any (str): column names for which to drop rows with any missing
-            values
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information about UK Biobank phenotype
-            variables
-
-    """
-
-    # Copy data.
-    table = table.copy(deep=True)
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("...before dropping null records...")
-        print("table shape: " + str(table.shape))
-        print(table)
-        utility.print_terminal_partition(level=4)
-    # Remove rows with null values across all columns.
-    table.dropna(
-        axis="index",
-        how="all",
-        inplace=True,
-    )
-    table.dropna(
-        axis="index",
-        how="any",
-        subset=columns_any,
-        inplace=True,
-    )
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("...after dropping null records...")
-        print("table shape: " + str(table.shape))
-        print(table)
-        utility.print_terminal_partition(level=4)
-    # Return information.
-    return table
-
-
 ##########
 # Write
 
 
-def write_product_raw(
-    information=None,
-    path_parent=None,
+def write_product_assembly_bipolar(
+    pail_write=None,
+    path_directory=None,
 ):
     """
     Writes product information to file.
 
     arguments:
-        information (object): information to write to file
-        path_parent (str): path to parent directory
-            raises:
-
-    returns:
-
-    """
-
-    # Specify directories and files.
-    path_table_ukb_41826_text = os.path.join(
-        path_parent, "table_ukb_41826.tsv"
-    )
-    # Write information to file.
-    information["table_ukb_41826"].to_csv(
-        path_or_buf=path_table_ukb_41826_text,
-        sep="\t",
-        header=True,
-        index=True,
-    )
-    pass
-
-
-def write_product_inspection(
-    information=None,
-    path_parent=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        information (object): information to write to file
-        path_parent (str): path to parent directory
-            raises:
-
-    returns:
-
-    """
-
-    # Specify directories and files.
-    path_table_text = os.path.join(
-        path_parent, "table_phenotypes.tsv"
-    )
-    # Write information to file.
-    information["table_phenotypes"].to_csv(
-        path_or_buf=path_table_text,
-        sep="\t",
-        header=True,
-        index=True,
-    )
-    pass
-
-
-def write_product_assembly(
-    information=None,
-    path_parent=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        information (object): information to write to file
-        path_parent (str): path to parent directory
+        pail_write (dict): collection of information to write to file
+        path_directory (str): path to parent directory
             raises:
 
     returns:
@@ -1497,48 +738,33 @@ def write_product_assembly(
 
     # Specify directories and files.
     path_table_phenotypes = os.path.join(
-        path_parent, "table_phenotypes.pickle"
+        path_directory, "table_phenotypes.pickle"
     )
     path_table_phenotypes_text = os.path.join(
-        path_parent, "table_phenotypes.tsv"
-    )
-    path_table_kinship_pairs = os.path.join(
-        path_parent, "table_kinship_pairs.pickle"
-    )
-    path_table_kinship_pairs_text = os.path.join(
-        path_parent, "table_kinship_pairs.tsv"
+        path_directory, "table_phenotypes.tsv"
     )
     # Write information to file.
-    information["table_phenotypes"].to_pickle(
+    pail_write["table_phenotypes"].to_pickle(
         path_table_phenotypes
     )
-    information["table_phenotypes"].to_csv(
+    pail_write["table_phenotypes"].to_csv(
         path_or_buf=path_table_phenotypes_text,
         sep="\t",
         header=True,
         index=True,
     )
-    information["table_kinship_pairs"].to_pickle(
-        path_table_kinship_pairs
-    )
-    information["table_kinship_pairs"].to_csv(
-        path_or_buf=path_table_kinship_pairs_text,
-        sep="\t",
-        header=True,
-        index=False,
-    )
     pass
 
 
 def write_product(
-    information=None,
+    pail_write=None,
     paths=None,
 ):
     """
     Writes product information to file.
 
     arguments:
-        information (object): information to write to file
+        pail_write (dict): collection of information to write to file
         paths (dict<str>): collection of paths to directories for procedure's
             files
 
@@ -1548,22 +774,21 @@ def write_product(
 
     """
 
-    write_product_raw(
-        information=information["raw"],
-        path_parent=paths["raw"],
-    )
-    write_product_inspection(
-        information=information["inspection"],
-        path_parent=paths["inspection"],
-    )
-    write_product_assembly(
-        information=information["assembly"],
-        path_parent=paths["assembly"],
+    # Organization procedure main information.
+    write_product_assembly_bipolar(
+        pail_write=pail_write["assembly_bipolar"],
+        path_directory=paths["assembly_bipolar"],
     )
     pass
 
+
+
+
 ###############################################################################
 # Procedure
+
+# TODO: TCW; 13 June 2022
+# TODO: I need to read in the genetic sex and ancestry and or ethnicity ("European" or "Hispanic")
 
 
 def execute_procedure(
@@ -1625,44 +850,53 @@ def execute_procedure(
         report=True,
     )
 
-    # "bib_id": phenotype identifier
-    # "gender": gender
-    # "pt_age": age
-    # "BMI": body mass index
-    # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
-    # "scid_dx": Bipolar Disorder type I or II
-    # "database": name of source database for phenotype (clinical) records
-    # "SITE": assessment center?
-
-    # Organize table.
-    # Select relevant columns from table.
-    columns_selection = [
-        "bib_id",
-        "identifier_genotype",
-        "gender",
-        "pt_age",
-        "BMI",
-        "rc",
-        "scid_dx",
-        "database",
-        "steroid_globulin_female",
-        "steroid_globulin_male",
-        "testosterone_female",
-        "testosterone_male",
-    ]
-    table = table.loc[
-        :, table.columns.isin(columns_selection)
-    ]
-    utility.print_terminal_partition(level=2)
-    print("table after selection of columns")
-    print(table)
-    print("columns")
-    print(table.columns.to_list())
-
-
+    # Collect information.
+    pail_write = dict()
+    pail_write["assembly_bipolar"] = dict()
+    pail_write["assembly_bipolar"]["table_phenotypes"] = table
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
 
     if False:
 
+        # Organize phenotype variables.
+
+        # "bib_id": phenotype identifier
+        # "gender": gender
+        # "pt_age": age
+        # "BMI": body mass index
+        # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
+        # "scid_dx": Bipolar Disorder type I or II
+        # "database": name of source database for phenotype (clinical) records
+        # "SITE": assessment center?
+
+        # Organize table.
+        # Select relevant columns from table.
+        columns_selection = [
+            "bib_id",
+            "identifier_genotype",
+            "gender",
+            "pt_age",
+            "BMI",
+            "rc",
+            "scid_dx",
+            "database",
+            "steroid_globulin_female",
+            "steroid_globulin_male",
+            "testosterone_female",
+            "testosterone_male",
+        ]
+        table = table.loc[
+            :, table.columns.isin(columns_selection)
+        ]
+        utility.print_terminal_partition(level=2)
+        print("table after selection of columns")
+        print(table)
+        print("columns")
+        print(table.columns.to_list())
 
         table = table[[*columns_selection]]
         # Define logical binary indicator variables for type of Bipolar Disorder
@@ -1672,74 +906,6 @@ def execute_procedure(
             report=True,
         )
 
-
-    if False:
-        # Remove data columns for irrelevant variable instances.
-        prune = remove_table_irrelevant_field_instance_columns(
-            table_ukbiobank_variables=source["table_ukbiobank_variables"],
-            columns_accession=source["columns_accession"],
-            table_ukb_41826=source["table_ukb_41826"],
-            table_ukb_43878=source["table_ukb_43878"],
-            table_ukb_47488=source["table_ukb_47488"],
-            report=True,
-        )
-
-        # Simplify UK Biobank fields with multiple instances.
-        # Reduce these multiple field instance columns to arrays.
-        table_ukb_41826_simple = simplify_field_values_array_columns(
-            table_ukbiobank_variables=source["table_ukbiobank_variables"],
-            table_ukb_raw=prune["table_ukb_41826"],
-            delimiter=";",
-            report=True,
-        )
-
-        # Merge tables.
-        table_merge = merge_table_variables_identifiers(
-            table_identifier_pairs=source["table_identifier_pairs"],
-            table_ukb_41826=table_ukb_41826_simple,
-            table_ukb_43878=prune["table_ukb_43878"],
-            table_ukb_47488=prune["table_ukb_47488"],
-            report=True,
-        )
-
-        # Exclude persons who withdrew consent from the UK Biobank.
-        table_exclusion = exclude_persons_ukbiobank_consent(
-            exclusion_identifiers=source["exclusion_identifiers"],
-            table=table_merge,
-            report=True,
-        )
-        # Drop any records (persons) with null values across all variables.
-        table_valid = drop_null_records_all_variables(
-            table=table_exclusion,
-            columns_any=["31-0.0"], # "31-0.0": sex
-            report=True,
-        )
-
-        utility.print_terminal_partition(level=2)
-        print("table_kinship_pairs")
-        print(source["table_kinship_pairs"])
-
-        # Write out raw tables for inspection.
-        # Collect information.
-        information = dict()
-        information["raw"] = dict()
-        information["inspection"] = dict()
-        information["assembly"] = dict()
-        information["raw"]["table_ukb_41826"] = (
-            source["table_ukb_41826"].iloc[0:10000, :]
-        )
-        information["inspection"]["table_phenotypes"] = (
-            table_valid.iloc[0:10000, :]
-        )
-        information["assembly"]["table_phenotypes"] = table_valid
-        information["assembly"]["table_kinship_pairs"] = (
-            source["table_kinship_pairs"]
-        )
-        # Write product information to file.
-        write_product(
-            paths=paths,
-            information=information
-        )
     pass
 
 
