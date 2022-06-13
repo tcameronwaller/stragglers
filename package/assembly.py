@@ -381,7 +381,7 @@ def drive_read_organize_tables_polygenic_scores(
                 name_file_directory_parent=name_file_directory_parent,
                 path_directory=path_directory,
                 name_file=name_file,
-                name_column_score=name_column_score,
+                name_column_score=name_column_score_old,
                 report=report,
             )
             # Organize table.
