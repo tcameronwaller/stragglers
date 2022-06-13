@@ -239,8 +239,9 @@ def read_source_table_polygenic_score_ldpred2(
     """
 
     # Read private path to parent directory.
+    path_home_paths = os.path.expanduser("~/paths")
     path_file_directory_parent = os.path.join(
-        "~", "paths", name_file_directory_parent
+        path_home_paths, name_file_directory_parent
     )
     path_directory_parent = utility.read_file_text(
         path_file=path_file_directory_parent
