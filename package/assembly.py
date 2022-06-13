@@ -166,7 +166,7 @@ def read_source(
     table_identifiers.reset_index(
         level=None,
         inplace=True,
-        drop=True,
+        drop=True, # remove index; do not move to regular columns
     )
     table_phenotypes = pandas.read_csv(
         path_table_phenotypes,
@@ -177,7 +177,7 @@ def read_source(
     table_phenotypes.reset_index(
         level=None,
         inplace=True,
-        drop=True,
+        drop=True, # remove index; do not move to regular columns
     )
     table_scores_parameters = pandas.read_csv(
         path_table_scores_parameters,
@@ -196,7 +196,7 @@ def read_source(
     table_scores_parameters.reset_index(
         level=None,
         inplace=True,
-        drop=True,
+        drop=True, # remove index; do not move to regular columns
     )
     # Compile and return information.
     return {
@@ -264,7 +264,7 @@ def read_source_table_polygenic_score_ldpred2(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=True,
+        drop=True, # remove index; do not move to regular columns
     )
     # Compile and return information.
     return table
@@ -629,7 +629,7 @@ def merge_polygenic_scores_to_phenotypes(
     table_identifiers.set_index(
         "bib_id",
         append=False,
-        drop=False, # move regular column to index; remove original column
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     table_phenotypes.reset_index(
@@ -641,7 +641,7 @@ def merge_polygenic_scores_to_phenotypes(
     table_phenotypes.set_index(
         "bib_id",
         append=False,
-        drop=False, # move regular column to index; remove original column
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     # Merge data tables using database-style join.
@@ -662,7 +662,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=True, # remove index; do not move to regular columns
+        drop=False, # remove index; do not move to regular columns
     )
     table["identifier_genotype"] = (
         table["identifier_genotype"].astype("string")
@@ -670,7 +670,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.set_index(
         "identifier_genotype",
         append=False,
-        drop=False, # move regular column to index; remove original column
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     # Iterate on tables for polygenic scores.
@@ -705,12 +705,12 @@ def merge_polygenic_scores_to_phenotypes(
     table.reset_index(
         level=None,
         inplace=True,
-        drop=True, # remove index; do not move to regular columns
+        drop=False, # remove index; do not move to regular columns
     )
     table.set_index(
         "bib_id",
         append=False,
-        drop=False, # move regular column to index; remove original column
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     # Report.
