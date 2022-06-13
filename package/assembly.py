@@ -258,7 +258,7 @@ def read_source_table_polygenic_score_ldpred2(
         dtype={
             "FID": "string",
             "IID": "string",
-            [name_column_score]: "float32",
+            name_column_score: "float32",
         },
     )
     table.reset_index(
