@@ -26,8 +26,12 @@ echo "----------------------------------------------------------------------"
 echo "----------------------------------------------------------------------"
 
 
-# TODO: TCW; 10 June 2022
+# TODO: TCW; 13 June 2022
 # TODO: still need to complete this script...
+# TODO: arguments...
+# TODO: 1. path to Mayo Bipolar Phenotype source directory
+# TODO: 2. path to target directory
+
 
 ###########################################################################
 # Organize arguments.
