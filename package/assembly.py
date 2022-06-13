@@ -1354,6 +1354,8 @@ def execute_procedure(
     utility.print_terminal_partition(level=2)
     print("table after selection of columns")
     print(table)
+    print("index values")
+    print(table.index.to_list())
 
 
     # "bib_id": phenotype identifier that matches genotype "IID"
