@@ -404,6 +404,16 @@ def drive_read_organize_tables_polygenic_scores(
         elif (method == "PRS-CS"):
             print("still need to implement read and organize for PRS-CS...")
             pass
+        # Report.
+        if report:
+            utility.print_terminal_partition(level=2)
+            print("report: ")
+            print("drive_read_organize_tables_polygenic_scores()")
+            utility.print_terminal_partition(level=3)
+            print(table)
+            print("columns")
+            print(table.columns.to_list())
+            pass
     # Return information.
     return tables_polygenic_scores
 
