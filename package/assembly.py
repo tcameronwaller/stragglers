@@ -1334,6 +1334,38 @@ def execute_procedure(
         report=True,
     )
 
+    # Select relevant columns from table.
+    columns_selection = [
+        "bib_id",
+        "gender",
+        "pt_age",
+        "BMI",
+        "rc",
+        "scid_dx",
+        "steroid_globulin_female",
+        "steroid_globulin_male",
+        "testosterone_female",
+        "testosterone_male",
+    ]
+    table = table.loc[
+        :, table.columns.isin(columns_selection)
+    ]
+    table = table[[*columns_selection]]
+    utility.print_terminal_partition(level=2)
+    print("table after selection of columns")
+    print(table)
+
+
+    # "bib_id": phenotype identifier that matches genotype "IID"
+    # "gender": gender
+    # "pt_age": age
+    # "BMI": body mass index
+    # "rc" rapid cycling
+    # "scid_dx": Bipolar Disorder type I or II
+
+
+
+
     if False:
         # Remove data columns for irrelevant variable instances.
         prune = remove_table_irrelevant_field_instance_columns(
