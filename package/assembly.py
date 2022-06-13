@@ -245,7 +245,7 @@ def read_source_table_polygenic_score_ldpred2(
     )
     path_directory_parent = utility.read_file_text(
         path_file=path_file_directory_parent
-    )
+    ).rstrip("\n") # remove new line character from string
     # Specify directories and files.
     path_table = os.path.join(
         path_directory_parent, path_directory, name_file
