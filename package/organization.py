@@ -545,7 +545,7 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 # Write
 
 
-def write_product_bipolar_assembly(
+def write_product_bipolar_organization(
     pail_write=None,
     path_directory=None,
 ):
@@ -601,9 +601,9 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_bipolar_assembly(
-        pail_write=pail_write["bipolar_assembly"],
-        path_directory=paths["bipolar_assembly"],
+    write_product_bipolar_organization(
+        pail_write=pail_write["bipolar_organization"],
+        path_directory=paths["bipolar_organization"],
     )
     pass
 
@@ -613,9 +613,7 @@ def write_product(
 ###############################################################################
 # Procedure
 
-# TODO: TCW; 13 June 2022
-# TODO: 2. translate Bipolar Disorder diagnosis type
-# TODO: 3. clean up rapid cycling variable
+# TODO: TCW; 14 June 2022
 # TODO: 4. organize chronotype variables?
 
 
@@ -677,6 +675,17 @@ def execute_procedure(
         report=True,
     )
 
+    # Collect information.
+    pail_write = dict()
+    pail_write["bipolar_organization"] = dict()
+    pail_write["bipolar_organization"]["table_phenotypes"] = table
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
+
+
     if False:
 
         # Organize phenotype variables.
@@ -721,16 +730,6 @@ def execute_procedure(
 
 
         table = table[[*columns_selection]]
-
-        # Collect information.
-        pail_write = dict()
-        pail_write["bipolar_organization"] = dict()
-        pail_write["bipolar_organization"]["table_phenotypes"] = table
-        # Write product information to file.
-        write_product(
-            pail_write=pail_write,
-            paths=paths,
-        )
 
     pass
 

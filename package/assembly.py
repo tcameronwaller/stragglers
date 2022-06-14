@@ -790,10 +790,6 @@ def write_product(
 
 # TODO: TCW; 13 June 2022
 # TODO: 1. I need to read in the genetic sex and ancestry and or ethnicity ("European" or "Hispanic")
-# TODO: 2. translate Bipolar Disorder diagnosis type
-# TODO: 3. clean up rapid cycling variable
-# TODO: 4. organize chronotype variables?
-
 
 
 def execute_procedure(
