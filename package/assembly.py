@@ -80,13 +80,13 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["assembly_bipolar"] = os.path.join(path_dock, "assembly_bipolar")
+    paths["bipolar_assembly"] = os.path.join(path_dock, "bipolar_assembly")
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["assembly_bipolar"])
+        utility.remove_directory(path=paths["bipolar_assembly"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["assembly_bipolar"]
+        path=paths["bipolar_assembly"]
     )
     # Return information.
     return paths
@@ -720,7 +720,7 @@ def merge_polygenic_scores_to_phenotypes(
 # Write
 
 
-def write_product_assembly_bipolar(
+def write_product_bipolar_assembly(
     pail_write=None,
     path_directory=None,
 ):
@@ -776,9 +776,9 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_assembly_bipolar(
-        pail_write=pail_write["assembly_bipolar"],
-        path_directory=paths["assembly_bipolar"],
+    write_product_bipolar_assembly(
+        pail_write=pail_write["bipolar_assembly"],
+        path_directory=paths["bipolar_assembly"],
     )
     pass
 
@@ -789,7 +789,11 @@ def write_product(
 # Procedure
 
 # TODO: TCW; 13 June 2022
-# TODO: I need to read in the genetic sex and ancestry and or ethnicity ("European" or "Hispanic")
+# TODO: 1. I need to read in the genetic sex and ancestry and or ethnicity ("European" or "Hispanic")
+# TODO: 2. translate Bipolar Disorder diagnosis type
+# TODO: 3. clean up rapid cycling variable
+# TODO: 4. organize chronotype variables?
+
 
 
 def execute_procedure(
@@ -853,8 +857,8 @@ def execute_procedure(
 
     # Collect information.
     pail_write = dict()
-    pail_write["assembly_bipolar"] = dict()
-    pail_write["assembly_bipolar"]["table_phenotypes"] = table
+    pail_write["bipolar_assembly"] = dict()
+    pail_write["bipolar_assembly"]["table_phenotypes"] = table
     # Write product information to file.
     write_product(
         pail_write=pail_write,
