@@ -155,6 +155,33 @@ def stratify_phenotype_cohorts(
     return records
 
 
+def organize_dictionary_entries_stratification_cohorts(
+    records=None,
+):
+    """
+    Organizes information about cohorts.
+
+    arguments:
+        records (list<dict>): records with information about cohorts
+
+    raises:
+
+    returns:
+        (dict<dict>): entries with information about cohorts
+
+    """
+
+    # Copy information.
+    records = copy.deepcopy(records)
+    # Organize dictionary entries for cohorts.
+    entries = dict()
+    for record in records:
+        entries[record["name"]] = record
+        pass
+    # Return information
+    return entries
+
+
 ###############################################################################
 # Procedure
 # Currently, this module is not executable.

@@ -250,7 +250,7 @@ def stratify_cohorts_call_run_regressions(
         table=table,
     )
     entries_cohorts = (
-        ukb_strat.organize_dictionary_entries_stratification_cohorts(
+        bpd_strat.organize_dictionary_entries_stratification_cohorts(
             records=records_cohorts,
     ))
     # Call driver for regressions.
