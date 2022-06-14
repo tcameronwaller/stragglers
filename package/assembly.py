@@ -127,6 +127,10 @@ def read_source(
         path_dock, "access", "mayo_bipolar_phenotypes",
         "220513_BP_phenotypes.csv"
     )
+    path_table_genetic_sex = os.path.join(
+        path_dock, "access", "mayo_bipolar_phenotypes",
+        "MERGED.maf0.01.dosR20.8.noDups.fam"
+    )
     path_table_scores_parameters = os.path.join(
         path_dock, "parameters", "bipolar_biobank",
         "polygenic_scores", "table_polygenic_scores.tsv"
@@ -154,6 +158,26 @@ def read_source(
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
+    # https://www.cog-genomics.org/plink/2.0/formats#fam
+    table_genetic_sex = pandas.read_csv(
+        path_table_genetic_sex,
+        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        header=None,
+        names=["FID", "IID", "father", "mother", "sex", "control_case"],
+        dtype={
+            "FID": "string",
+            "IID": "string", # identifier of individual's genotype
+            "father": "string",
+            "mother": "string",
+            "sex_genetic_raw": "string", # 1: male; 2: female; 0: unknown
+            "control_case_raw": "string", # 1: control; 2: case; 0: unknown
+        },
+    )
+    table_genetic_sex.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
     table_scores_parameters = pandas.read_csv(
         path_table_scores_parameters,
         sep="\t", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
@@ -177,6 +201,7 @@ def read_source(
     return {
         "table_identifiers": table_identifiers,
         "table_phenotypes": table_phenotypes,
+        "table_genetic_sex": table_genetic_sex,
         "table_scores_parameters": table_scores_parameters,
     }
 
@@ -560,6 +585,56 @@ def organize_table_phenotypes(
     return table
 
 
+
+def organize_table_genetic_sex(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Convert all identifiers to type string.
+    table["IID"] = table["IID"].astype("string")
+    # Replace any empty identifier strings with missing values.
+    table["IID"].replace(
+        "",
+        numpy.nan,
+        inplace=True,
+    )
+    # Remove any records with missing identifiers.
+    table.dropna(
+        axis="index", # drop rows with missing values in columns
+        how="any",
+        subset=["IID",],
+        inplace=True,
+    )
+    # Convert identifiers to type string.
+    table["IID"] = table["IID"].astype("string")
+    # Remove the column for the genotype family identifier ("FID").
+    # Remove the columns for identifiers of parents.
+    # These identifiers are redundant and unnecessary.
+    table.drop(
+        labels=["FID", "father", "mother"],
+        axis="columns",
+        inplace=True
+    )
+    # Return information.
+    return table
+
+
 ##########
 # Merge polygenic scores to phenotypes
 
@@ -567,6 +642,7 @@ def organize_table_phenotypes(
 def merge_polygenic_scores_to_phenotypes(
     table_identifiers=None,
     table_phenotypes=None,
+    table_genetic_sex=None,
     tables_scores=None,
     report=None,
 ):
@@ -578,6 +654,9 @@ def merge_polygenic_scores_to_phenotypes(
             matching phenotype and genotype records
         table_phenotypes (object): Pandas data frame of information about
             phenotype variables
+        table_genetic_sex (object): Pandas data frame of information about
+            genetic sex and case-control status from file in PLINK2 ".fam"
+            format
         tables_scores (list<object>): collection of Pandas data frames of
             polygenic scores
         report (bool): whether to print reports
@@ -594,6 +673,7 @@ def merge_polygenic_scores_to_phenotypes(
     # Copy information in table.
     table_identifiers = table_identifiers.copy(deep=True)
     table_phenotypes = table_phenotypes.copy(deep=True)
+    table_genetic_sex = table_genetic_sex.copy(deep=True)
     # Organize tables' indices.
     table_identifiers.reset_index(
         level=None,
@@ -632,7 +712,48 @@ def merge_polygenic_scores_to_phenotypes(
         #suffixes=("_main", "_identifiers"), # deprecated?
     )
 
-    # 2. Introduce polygenic scores.
+    # 2. Introduce genetic sex and case-control.
+    # Organize tables' indices.
+    table.reset_index(
+        level=None,
+        inplace=True,
+        drop=False, # remove index; do not move to regular columns
+    )
+    table["identifier_genotype"] = (
+        table["identifier_genotype"].astype("string")
+    )
+    table.set_index(
+        "identifier_genotype",
+        append=False,
+        drop=False, # move regular column to index; remove original column
+        inplace=True
+    )
+    table_genetic_sex.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
+    table_genetic_sex["IID"] = table_genetic_sex["IID"].astype("string")
+    table_genetic_sex.set_index(
+        "IID",
+        append=False,
+        drop=True, # move regular column to index; remove original column
+        inplace=True
+    )
+    # Merge data tables using database-style join.
+    # Alternative is to use DataFrame.join().
+    table = pandas.merge(
+        table, # left table
+        table_genetic_sex, # right table
+        left_on=None, # "bib_id",
+        right_on=None, # "IID",
+        left_index=True,
+        right_index=True,
+        how="left", # keep only keys from left table
+        #suffixes=("_main", "_identifiers"), # deprecated?
+    )
+
+    # 3. Introduce polygenic scores.
     # Organize main table's index.
     table.reset_index(
         level=None,
@@ -843,10 +964,17 @@ def execute_procedure(
         table=source["table_phenotypes"],
         report=True,
     )
+    # Organize table of genetic sex (from PLINK2 file in ".fam" format).
+    # https://www.cog-genomics.org/plink/2.0/formats#fam
+    table_genetic_sex = organize_table_genetic_sex(
+        table=source["table_genetic_sex"],
+        report=True,
+    )
     # Mege polygenic scores with information on phenotypes.
     table = merge_polygenic_scores_to_phenotypes(
         table_identifiers=table_identifiers,
         table_phenotypes=table_phenotypes,
+        table_genetic_sex=table_genetic_sex,
         tables_scores=tables_polygenic_scores,
         report=True,
     )
@@ -860,52 +988,6 @@ def execute_procedure(
         pail_write=pail_write,
         paths=paths,
     )
-
-    if False:
-
-        # Organize phenotype variables.
-
-        # "bib_id": phenotype identifier
-        # "gender": gender
-        # "pt_age": age
-        # "BMI": body mass index
-        # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
-        # "scid_dx": Bipolar Disorder type I or II
-        # "database": name of source database for phenotype (clinical) records
-        # "SITE": assessment center?
-
-        # Organize table.
-        # Select relevant columns from table.
-        columns_selection = [
-            "bib_id",
-            "identifier_genotype",
-            "gender",
-            "pt_age",
-            "BMI",
-            "rc",
-            "scid_dx",
-            "database",
-            "steroid_globulin_female",
-            "steroid_globulin_male",
-            "testosterone_female",
-            "testosterone_male",
-        ]
-        table = table.loc[
-            :, table.columns.isin(columns_selection)
-        ]
-        utility.print_terminal_partition(level=2)
-        print("table after selection of columns")
-        print(table)
-        print("columns")
-        print(table.columns.to_list())
-
-        table = table[[*columns_selection]]
-        # Define logical binary indicator variables for type of Bipolar Disorder
-        # diagnosis.
-        table = define_logical_binary_indicator_variables_bipolar_disorder_type(
-            table=table,
-            report=True,
-        )
 
     pass
 
