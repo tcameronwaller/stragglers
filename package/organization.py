@@ -191,8 +191,6 @@ def interpret_bipolar_disorder_type_diagnosis(
     return value_product
 
 
-
-
 def define_logical_binary_indicator_variables_bipolar_disorder_type(
     table=None,
     report=None,
@@ -264,6 +262,83 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
     # Return information.
     return table
 
+
+##########
+# Stratification of cohorts
+
+
+def stratify_phenotype_cohorts(
+    table=None,
+    report=None,
+):
+    """
+    Organizes information and plots for sex hormones.
+
+    arguments:
+        table (object): Pandas data frame of phenotype variables across UK
+            Biobank cohort
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (list<dict>): records with information about cohorts
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Collect records of information about each cohort and model.
+    records = list()
+
+    # Sex.
+
+    record = dict()
+    record["name"] = "female"
+    record["table"] = table.loc[
+        (
+            (table["gender"] == 2)
+        ), :
+    ]
+    records.append(record)
+
+    record = dict()
+    record["name"] = "male"
+    record["table"] = table.loc[
+        (table["gender"] == 1), :
+    ]
+    records.append(record)
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "stratify_phenotype_cohorts()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_report_female = table.loc[
+            (
+                (table["gender"] == 2)
+            ), :
+        ]
+        table_report_male = table.loc[
+            (
+                (table["gender"] == 1)
+            ), :
+        ]
+        # Count.
+        count_female = table_report_female.shape[0]
+        count_male = table_report_male.shape[0]
+        utility.print_terminal_partition(level=5)
+        print("count female: " + str(count_female))
+        utility.print_terminal_partition(level=5)
+        print("count male: " + str(count_male))
+        pass
+    # Return information
+    return records
 
 
 
@@ -384,6 +459,12 @@ def execute_procedure(
     # diagnosis.
     table = define_logical_binary_indicator_variables_bipolar_disorder_type(
         table=source["table_phenotypes"],
+        report=True,
+    )
+
+    # Stratify phenotype records in cohorts.
+    stratify_phenotype_cohorts(
+        table=table,
         report=True,
     )
 
