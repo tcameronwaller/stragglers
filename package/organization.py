@@ -150,6 +150,269 @@ def read_source(
 #    )
 
 
+def interpret_biological_genetic_sex_y(
+    value_source=None,
+):
+    """
+    Intepret representation of biological sex.
+
+    The indication of genetic sex comes from a file in PLINK2 ".fam" format.
+    https://www.cog-genomics.org/plink/2.0/formats#fam
+    1: "male"
+    2: "female"
+    0: "unknown"
+
+    arguments:
+        value_source (str): raw value as character string
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: male, 0: female, NAN: missing, null)
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == "1"):
+            # 1: "male"
+            value_product = 1
+        elif (str(value_source) == "2"):
+            # 2: "female"
+            value_product = 0
+        elif (str(value_source) == "0"):
+            # 0: "unknown"
+            value_product = float("nan")
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value_product = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
+
+
+def interpret_biological_sex_text(
+    sex_y=None,
+):
+    """
+    Intepret textual representation of biological sex from logical binary
+    representation of presence of Y chromosome.
+
+    arguments:
+        sex_y (float): logical binary representation of presence of Y chromosome
+
+    raises:
+
+    returns:
+        (str): textual representation of biological sex
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(sex_y)) and
+        ((sex_y == 0) or (sex_y == 1))
+    ):
+        # The value is non-missing and hopefully interpretable.
+        if (sex_y == 0):
+            # sex_y: 0, "female"
+            sex_text = "female"
+        elif (sex_y == 1):
+            # sex_y: 1, "male"
+            sex_text = "male"
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            sex_text = ""
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        sex_text = ""
+    # Return.
+    return sex_text
+
+
+def determine_biological_sex_variables(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Interpret diagnosis type of bipolar disorder.
+    table["sex_y"] = table.apply(
+        lambda row:
+            interpret_biological_genetic_sex_y(
+                value_source=row["sex_genetic_raw"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["sex_text"] = table.apply(
+        lambda row:
+            interpret_biological_sex_text(
+                sex_y=row["sex_y"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_biological_sex_variables()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_report_female = table.loc[
+            (
+                (table["sex_text"] == "female")
+            ), :
+        ]
+        table_report_male = table.loc[
+            (
+                (table["sex_text"] == "male")
+            ), :
+        ]
+        # Count.
+        count_female = table_report_female.shape[0]
+        count_male = table_report_male.shape[0]
+        utility.print_terminal_partition(level=5)
+        print("count female: " + str(count_female))
+        utility.print_terminal_partition(level=5)
+        print("count male: " + str(count_male))
+        pass
+    # Return information.
+    return table
+
+
+def interpret_bipolar_disorder_diagnosis_control_case(
+    value_source=None,
+    strings_case=None,
+    strings_control=None,
+):
+    """
+    Inteprets control or case of diagnosis of bipolar disorder.
+
+    arguments:
+        value_source (str): raw value as character string
+        strings_case (list<str>): character strings that indicate diagnosis of
+            Bipolar Disorder
+        strings_control (list<str>): character strings that indiciate control
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: true, 0: false, NAN: missing, null)
+
+    """
+
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) in strings_case):
+            # 1: "case"
+            value_product = 1
+        elif (str(value_source) in strings_control):
+            # 0: "control"
+            value_product = 0
+        else:
+            # Assume that any other records are controls.
+            value_product = 0
+    else:
+        # Some records for controls have empty strings.
+        value_product = 0
+    # Return.
+    return value_product
+
+
+def determine_logical_binary_indicator_variables_bipolar_disorder(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Interpret diagnosis type of bipolar disorder.
+    table["bipolar_disorder_control_case"] = table.apply(
+        lambda row:
+            interpret_bipolar_disorder_diagnosis_control_case(
+                value_source=row["scid_dx"],
+                strings_case=[
+                    "BIPOLAR_I", "BIPOLAR_II",
+                    "SCHIZOAFFECTIVE_BIPOLAR_TYPE", "OTHER",
+                ],
+                strings_control=["Not Eligible", "",],
+            ),
+        axis="columns", # apply function to each row
+    )
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_logical_binary_indicator_variables_bipolar_disorder()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_report_control = table.loc[
+            (
+                (table["bipolar_disorder_control_case"] == 0)
+            ), :
+        ]
+        table_report_case = table.loc[
+            (
+                (table["bipolar_disorder_control_case"] == 1)
+            ), :
+        ]
+        # Count.
+        count_control = table_report_control.shape[0]
+        count_case = table_report_case.shape[0]
+        utility.print_terminal_partition(level=5)
+        print("count of Bipolar Disorder controls: " + str(count_control))
+        utility.print_terminal_partition(level=5)
+        print("count of Bipolar Disorder cases: " + str(count_case))
+        pass
+    # Return information.
+    return table
+
+
 def interpret_bipolar_disorder_type_diagnosis(
     value_source=None,
     match_1=None,
@@ -260,153 +523,6 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         print("count of Bipolar Disorder Type 1: " + str(count_type_1))
         utility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder Type 2: " + str(count_type_2))
-        pass
-    # Return information.
-    return table
-
-# TODO: TCW; 14 June 2022
-# TODO: this function currently interprets the "gender" variable...
-def interpret_biological_sex_y(
-    value_source=None,
-):
-    """
-    Intepret representation of biological sex.
-
-    arguments:
-        value_source (str): raw value as character string
-
-    raises:
-
-    returns:
-        (float): interpretation value (1: male, 0: female, NAN: missing, null)
-
-    """
-
-    # Interpret field code.
-    if (
-        (not pandas.isna(value_source)) and
-        (len(str(value_source)) > 0)
-    ):
-        # The value is non-missing and hopefully interpretable.
-        # Determine whether the value matches any strings.
-        if (str(value_source) == "1"):
-            # 1: "male"
-            value_product = 1
-        elif (str(value_source) == "2"):
-            # 2: "female"
-            value_product = 0
-        else:
-            # Ambiguous, uninterpretable, or missing information.
-            value_product = float("nan")
-    else:
-        # Ambiguous, uninterpretable, or missing information.
-        value_product = float("nan")
-    # Return.
-    return value_product
-
-
-def interpret_biological_sex_text(
-    sex_y=None,
-):
-    """
-    Intepret textual representation of biological sex from logical binary
-    representation of presence of Y chromosome.
-
-    arguments:
-        sex_y (float): logical binary representation of presence of Y chromosome
-
-    raises:
-
-    returns:
-        (str): textual representation of biological sex
-
-    """
-
-    # Interpret field code.
-    if (
-        (not pandas.isna(sex_y)) and
-        ((sex_y == 0) or (sex_y == 1))
-    ):
-        # The value is non-missing and hopefully interpretable.
-        if (sex_y == 0):
-            # sex_y: 0, "female"
-            sex_text = "female"
-        elif (sex_y == 1):
-            # sex_y: 1, "male"
-            sex_text = "male"
-        else:
-            # Ambiguous, uninterpretable, or missing information.
-            sex_text = ""
-    else:
-        # Ambiguous, uninterpretable, or missing information.
-        sex_text = ""
-    # Return.
-    return sex_text
-
-
-def determine_biological_sex_variables(
-    table=None,
-    report=None,
-):
-    """
-    Organizes table of information about phenotypes.
-
-    arguments:
-        table (object): Pandas data frame of information about phenotypes
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information about phenotypes
-
-    """
-
-    # Copy information in table.
-    table = table.copy(deep=True)
-    # Interpret diagnosis type of bipolar disorder.
-    table["sex_y"] = table.apply(
-        lambda row:
-            interpret_biological_sex_y(
-                value_source=row["gender"],
-            ),
-        axis="columns", # apply function to each row
-    )
-    table["sex_text"] = table.apply(
-        lambda row:
-            interpret_biological_sex_text(
-                sex_y=row["sex_y"],
-            ),
-        axis="columns", # apply function to each row
-    )
-
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("report: ")
-        name_function = (
-            "determine_biological_sex_variables()"
-        )
-        print(name_function)
-        utility.print_terminal_partition(level=3)
-        # Stratify tables.
-        table_report_female = table.loc[
-            (
-                (table["sex_text"] == "female")
-            ), :
-        ]
-        table_report_male = table.loc[
-            (
-                (table["sex_text"] == "male")
-            ), :
-        ]
-        # Count.
-        count_female = table_report_female.shape[0]
-        count_male = table_report_male.shape[0]
-        utility.print_terminal_partition(level=5)
-        print("count female: " + str(count_female))
-        utility.print_terminal_partition(level=5)
-        print("count male: " + str(count_male))
         pass
     # Return information.
     return table
@@ -614,6 +730,8 @@ def write_product(
 # Procedure
 
 # TODO: TCW; 14 June 2022
+# TODO: interpret genetic sex and compare to gender
+# TODO: interpret controls with neither Bipolar Disorder Type 1 nor 2
 # TODO: 4. organize chronotype variables?
 
 
@@ -651,15 +769,20 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
-
-    # Determine logical binary indicator variables for type of Bipolar Disorder
-    # diagnosis.
-    table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
+    # Determine variables for biological sex.
+    table = determine_biological_sex_variables(
         table=source["table_phenotypes"],
         report=True,
     )
-    # Determine variables for biological sex.
-    table = determine_biological_sex_variables(
+    # Determine logical binary indicator variables for Bipolar Disorder
+    # diagnosis controls and cases.
+    table = determine_logical_binary_indicator_variables_bipolar_disorder(
+        table=table,
+        report=True,
+    )
+    # Determine logical binary indicator variables for type of Bipolar Disorder
+    # diagnosis.
+    table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
         table=table,
         report=True,
     )
@@ -675,6 +798,51 @@ def execute_procedure(
         report=True,
     )
 
+    # Organize phenotype variables.
+
+    # "bib_id": phenotype identifier
+    # "gender": gender
+    # "pt_age": age
+    # "BMI": body mass index
+    # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
+    # "scid_dx": Bipolar Disorder type I or II
+    # "database": name of source database for phenotype (clinical) records
+    # "SITE": assessment center?
+
+    # Organize table.
+    # Select relevant columns from table.
+    columns_selection = [
+        #"bib_id",
+        "identifier_genotype",
+        "gender",
+        "sex_genetic_raw",
+        "sex_y",
+        "sex_text",
+        "pt_age",
+        "BMI",
+        "control_case_raw",
+        "scid_dx",
+        "bipolar_disorder_control_case",
+        "bipolar_disorder_type_1_2",
+        "bipolar_disorder_type_2_1",
+        "rc",
+        "rapid_cycling",
+        "database",
+        "steroid_globulin_female",
+        "steroid_globulin_male",
+        "testosterone_female",
+        "testosterone_male",
+    ]
+    table = table.loc[
+        :, table.columns.isin(columns_selection)
+    ]
+    table = table[[*columns_selection]]
+    utility.print_terminal_partition(level=2)
+    print("table after selection of columns")
+    print(table)
+    print("columns")
+    print(table.columns.to_list())
+
     # Collect information.
     pail_write = dict()
     pail_write["bipolar_organization"] = dict()
@@ -684,52 +852,6 @@ def execute_procedure(
         pail_write=pail_write,
         paths=paths,
     )
-
-
-    if False:
-
-        # Organize phenotype variables.
-
-        # "bib_id": phenotype identifier
-        # "gender": gender
-        # "pt_age": age
-        # "BMI": body mass index
-        # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
-        # "scid_dx": Bipolar Disorder type I or II
-        # "database": name of source database for phenotype (clinical) records
-        # "SITE": assessment center?
-
-        # Organize table.
-        # Select relevant columns from table.
-        columns_selection = [
-            #"bib_id",
-            #"identifier_genotype",
-            #"gender",
-            #"sex_y",
-            "sex_text",
-            #"pt_age",
-            #"BMI",
-            "rc",
-            #"scid_dx",
-            #"bipolar_disorder_type_1_2",
-            #"bipolar_disorder_type_2_1",
-            #"database",
-            #"steroid_globulin_female",
-            #"steroid_globulin_male",
-            #"testosterone_female",
-            #"testosterone_male",
-        ]
-        table = table.loc[
-            :, table.columns.isin(columns_selection)
-        ]
-        utility.print_terminal_partition(level=2)
-        print("table after selection of columns")
-        print(table)
-        print("columns")
-        print(table.columns.to_list())
-
-
-        table = table[[*columns_selection]]
 
     pass
 
