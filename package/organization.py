@@ -491,25 +491,25 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
         # Stratify tables.
         table_type_1_rapid_1 = table.loc[
             (
-                (table["bipolar_disorder_type_1_2"] == 1) and
+                (table["bipolar_disorder_type_1_2"] == 1) &
                 (table["rapid_cycling"] == 1)
             ), :
         ]
         table_type_1_rapid_0 = table.loc[
             (
-                (table["bipolar_disorder_type_1_2"] == 1) and
+                (table["bipolar_disorder_type_1_2"] == 1) &
                 (table["rapid_cycling"] == 0)
             ), :
         ]
         table_type_2_rapid_1 = table.loc[
             (
-                (table["bipolar_disorder_type_2_1"] == 1) and
+                (table["bipolar_disorder_type_2_1"] == 1) &
                 (table["rapid_cycling"] == 1)
             ), :
         ]
         table_type_2_rapid_0 = table.loc[
             (
-                (table["bipolar_disorder_type_2_1"] == 1) and
+                (table["bipolar_disorder_type_2_1"] == 1) &
                 (table["rapid_cycling"] == 0)
             ), :
         ]
