@@ -267,7 +267,7 @@ def organize_table_polygenic_score_ldpred2(
 
     """
 
-    # Copy information.
+    # Copy information in table.
     table = table.copy(deep=True)
     # Convert all identifiers to type string.
     table["IID"] = table["IID"].astype("string")
@@ -478,7 +478,7 @@ def organize_table_phenotype_genotype_identifiers(
 
     """
 
-    # Copy information.
+    # Copy information in table.
     table = table.copy(deep=True)
     # Convert all identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
@@ -537,7 +537,7 @@ def organize_table_phenotypes(
 
     """
 
-    # Copy information.
+    # Copy information in table.
     table = table.copy(deep=True)
     # Convert all identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
@@ -591,7 +591,7 @@ def merge_polygenic_scores_to_phenotypes(
 
     # 1. Introduce identifiers of genotype records to table of phenotype
     # records.
-    # Copy information.
+    # Copy information in table.
     table_identifiers = table_identifiers.copy(deep=True)
     table_phenotypes = table_phenotypes.copy(deep=True)
     # Organize tables' indices.

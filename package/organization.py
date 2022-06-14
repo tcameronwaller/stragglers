@@ -211,21 +211,27 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
 
     """
 
-    # Copy information.
+    # Copy information in table.
     table = table.copy(deep=True)
-
     # Interpret diagnosis type of bipolar disorder.
-    table["bipolar_disorder_type_1"] = table.apply(
+    table["bipolar_disorder_type_1_2"] = table.apply(
         lambda row:
             determine_female_oral_contraception(
                 value_source=row["scid_dx"],
-                match_1=row["age"],
-                match_0=row["2784-0.0"],
+                match_1="BIPOLAR_I",
+                match_0="BIPOLAR_II",
             ),
         axis="columns", # apply function to each row
     )
-
-
+    table["bipolar_disorder_type_2_1"] = table.apply(
+        lambda row:
+            determine_female_oral_contraception(
+                value_source=row["scid_dx"],
+                match_1="BIPOLAR_II",
+                match_0="BIPOLAR_I",
+            ),
+        axis="columns", # apply function to each row
+    )
 
     # Report.
     if report:
@@ -236,9 +242,24 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
         )
         print(name_function)
         utility.print_terminal_partition(level=3)
-
-        # TODO: stratify diagnosis types of Bipolar Disorder
-
+        # Stratify tables.
+        table_report_type_1 = table.loc[
+            (
+                (table["bipolar_disorder_type_1_2"] == 1)
+            ), :
+        ]
+        table_report_type_2 = table.loc[
+            (
+                (table["bipolar_disorder_type_2_1"] == 1)
+            ), :
+        ]
+        # Count.
+        count_type_1 = table_report_type_1.shape[0]
+        count_type_2 = table_report_type_2.shape[0]
+        utility.print_terminal_partition(level=5)
+        print("count of Bipolar Disorder Type 1: " + str(count_type_1))
+        utility.print_terminal_partition(level=5)
+        print("count of Bipolar Disorder Type 2: " + str(count_type_2))
         pass
     # Return information.
     return table
@@ -359,8 +380,12 @@ def execute_procedure(
         report=True,
     )
 
-    table = source["table_phenotypes"]
-
+    # Define logical binary indicator variables for type of Bipolar Disorder
+    # diagnosis.
+    table = define_logical_binary_indicator_variables_bipolar_disorder_type(
+        table=source["table_phenotypes"],
+        report=True,
+    )
 
     # Organize table.
     # Select relevant columns from table.
@@ -377,6 +402,8 @@ def execute_procedure(
         "steroid_globulin_male",
         "testosterone_female",
         "testosterone_male",
+        "bipolar_disorder_type_1_2",
+        "bipolar_disorder_type_2_1",
     ]
     table = table.loc[
         :, table.columns.isin(columns_selection)
@@ -389,13 +416,6 @@ def execute_procedure(
 
 
     if False:
-
-        # Define logical binary indicator variables for type of Bipolar Disorder
-        # diagnosis.
-        table = define_logical_binary_indicator_variables_bipolar_disorder_type(
-            table=source["table_phenotypes"],
-            report=True,
-        )
 
         # Organize phenotype variables.
 
