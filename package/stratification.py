@@ -99,6 +99,28 @@ def stratify_phenotype_cohorts(
     ]
     records.append(record)
 
+    # Sex and Bipolar Disorder.
+
+    record = dict()
+    record["name"] = "female_bipolar_disorder"
+    record["table"] = table.loc[
+        (
+            (table["sex_text"] == "female") &
+            (table["bipolar_disorder_control_case"] == 1)
+        ), :
+    ]
+    records.append(record)
+
+    record = dict()
+    record["name"] = "male_bipolar_disorder"
+    record["table"] = table.loc[
+        (
+            (table["sex_text"] == "male") &
+            (table["bipolar_disorder_control_case"] == 1)
+        ), :
+    ]
+    records.append(record)
+
     # Sex and type of Bipolar Disorder.
 
     record = dict()

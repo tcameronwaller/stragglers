@@ -410,7 +410,7 @@ def execute_procedure(
         pail_logistic_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_bipolar_disorder_switch_sex"]
+                source_reference["table_bipolar_disorder"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
@@ -422,7 +422,7 @@ def execute_procedure(
         pail_linear_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_bipolar_disorder_switch_sex"]
+                source_reference["table_bipolar_disorder"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
