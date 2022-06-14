@@ -46,6 +46,7 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
+import bipolar_biobank.stratification as bpd_strat
 import promiscuity.utility as utility
 #import promiscuity.plot as plot
 
@@ -540,69 +541,6 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
     return table
 
 
-
-
-##########
-# Stratification of cohorts
-
-
-def stratify_phenotype_cohorts(
-    table=None,
-    report=None,
-):
-    """
-    Organizes information and plots for sex hormones.
-
-    arguments:
-        table (object): Pandas data frame of phenotype variables across UK
-            Biobank cohort
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (list<dict>): records with information about cohorts
-
-    """
-
-    # Copy information in table.
-    table = table.copy(deep=True)
-    # Collect records of information about each cohort and model.
-    records = list()
-
-    # Sex.
-
-    record = dict()
-    record["name"] = "female"
-    record["table"] = table.loc[
-        (
-            (table["sex_text"] == "female")
-        ), :
-    ]
-    records.append(record)
-
-    record = dict()
-    record["name"] = "male"
-    record["table"] = table.loc[
-        (table["sex_text"] == "male"), :
-    ]
-    records.append(record)
-
-    # Report.
-    if report:
-        utility.print_terminal_partition(level=2)
-        print("report: ")
-        name_function = (
-            "stratify_phenotype_cohorts()"
-        )
-        print(name_function)
-        utility.print_terminal_partition(level=3)
-        pass
-    # Return information
-    return records
-
-
-
 ##########
 # Write
 
@@ -733,44 +671,11 @@ def execute_procedure(
         report=True,
     )
 
-
-
-
     # Stratify phenotype records in cohorts.
-    stratify_phenotype_cohorts(
+    bpd_strat.stratify_phenotype_cohorts(
         table=table,
         report=True,
     )
-
-    # Organize table.
-    # Select relevant columns from table.
-    columns_selection = [
-        #"bib_id",
-        #"identifier_genotype",
-        #"gender",
-        #"sex_y",
-        "sex_text",
-        #"pt_age",
-        #"BMI",
-        "rc",
-        #"scid_dx",
-        #"bipolar_disorder_type_1_2",
-        #"bipolar_disorder_type_2_1",
-        #"database",
-        #"steroid_globulin_female",
-        #"steroid_globulin_male",
-        #"testosterone_female",
-        #"testosterone_male",
-    ]
-    table = table.loc[
-        :, table.columns.isin(columns_selection)
-    ]
-    utility.print_terminal_partition(level=2)
-    print("table after selection of columns")
-    print(table)
-    print("columns")
-    print(table.columns.to_list())
-
 
     if False:
 
@@ -784,6 +689,36 @@ def execute_procedure(
         # "scid_dx": Bipolar Disorder type I or II
         # "database": name of source database for phenotype (clinical) records
         # "SITE": assessment center?
+
+        # Organize table.
+        # Select relevant columns from table.
+        columns_selection = [
+            #"bib_id",
+            #"identifier_genotype",
+            #"gender",
+            #"sex_y",
+            "sex_text",
+            #"pt_age",
+            #"BMI",
+            "rc",
+            #"scid_dx",
+            #"bipolar_disorder_type_1_2",
+            #"bipolar_disorder_type_2_1",
+            #"database",
+            #"steroid_globulin_female",
+            #"steroid_globulin_male",
+            #"testosterone_female",
+            #"testosterone_male",
+        ]
+        table = table.loc[
+            :, table.columns.isin(columns_selection)
+        ]
+        utility.print_terminal_partition(level=2)
+        print("table after selection of columns")
+        print(table)
+        print("columns")
+        print(table.columns.to_list())
+
 
         table = table[[*columns_selection]]
 
