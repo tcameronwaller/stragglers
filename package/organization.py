@@ -191,7 +191,7 @@ def interpret_bipolar_disorder_type_diagnosis(
     return value_product
 
 
-def define_logical_binary_indicator_variables_bipolar_disorder_type(
+def determine_logical_binary_indicator_variables_bipolar_disorder_type(
     table=None,
     report=None,
 ):
@@ -236,7 +236,8 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
         utility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
-            "define_logical_binary_indicator_variables_bipolar_disorder_type()"
+            "determine_logical_binary_indicator_variables_bipolar_disorder_" +
+            "type()"
         )
         print(name_function)
         utility.print_terminal_partition(level=3)
@@ -261,6 +262,156 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
         pass
     # Return information.
     return table
+
+# TODO: TCW; 14 June 2022
+# TODO: this function currently interprets the "gender" variable...
+def interpret_biological_sex_y(
+    value_source=None,
+):
+    """
+    Intepret representation of biological sex.
+
+    arguments:
+        value_source (str): raw value as character string
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: male, 0: female, NAN: missing, null)
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == "1"):
+            # 1: "male"
+            value_product = 1
+        elif (str(value_source) == "2"):
+            # 2: "female"
+            value_product = 0
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value_product = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
+
+
+def interpret_biological_sex_text(
+    sex_y=None,
+):
+    """
+    Intepret textual representation of biological sex from logical binary
+    representation of presence of Y chromosome.
+
+    arguments:
+        sex_y (float): logical binary representation of presence of Y chromosome
+
+    raises:
+
+    returns:
+        (str): textual representation of biological sex
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(sex_y)) and
+        ((sex_y == 0) or (sex_y == 1))
+    ):
+        # The value is non-missing and hopefully interpretable.
+        if (sex_y == 0):
+            # sex_y: 0, "female"
+            sex_text = "female"
+        elif (sex_y == 1):
+            # sex_y: 1, "male"
+            sex_text = "male"
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            sex_text = ""
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        sex_text = ""
+    # Return.
+    return sex_text
+
+
+
+def determine_biological_sex_variables(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Interpret diagnosis type of bipolar disorder.
+    table["sex_y"] = table.apply(
+        lambda row:
+            interpret_biological_sex_y(
+                value_source=row["gender"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["sex_text"] = table.apply(
+        lambda row:
+            interpret_biological_sex_text(
+                sex_y=row["sex_y"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_biological_sex_variables()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_report_female = table.loc[
+            (
+                (table["sex_text"] == "female")
+            ), :
+        ]
+        table_report_male = table.loc[
+            (
+                (table["sex_text"] == "male")
+            ), :
+        ]
+        # Count.
+        count_female = table_report_female.shape[0]
+        count_male = table_report_male.shape[0]
+        utility.print_terminal_partition(level=5)
+        print("count female: " + str(count_female))
+        utility.print_terminal_partition(level=5)
+        print("count male: " + str(count_male))
+        pass
+    # Return information.
+    return table
+
+
 
 
 ##########
@@ -457,10 +608,17 @@ def execute_procedure(
 
     # Define logical binary indicator variables for type of Bipolar Disorder
     # diagnosis.
-    table = define_logical_binary_indicator_variables_bipolar_disorder_type(
+    table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
         table=source["table_phenotypes"],
         report=True,
     )
+
+    # Define sex variables.
+    table = determine_biological_sex_variables(
+        table=table,
+        report=True,
+    )
+
 
     # Stratify phenotype records in cohorts.
     stratify_phenotype_cohorts(
