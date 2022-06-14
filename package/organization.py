@@ -149,6 +149,103 @@ def read_source(
 #    )
 
 
+def interpret_bipolar_disorder_type_diagnosis(
+    value_source=None,
+    match_1=None,
+    match_0=None,
+):
+    """
+    Inteprets whether the diagnosis type of bipolar disorder.
+
+    arguments:
+        value_source (str): raw value as character string
+        match_1 (str): character string match for logical binary value one
+        match_0 (str): character string match for logical binary value zero
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: true, 0: false, NAN: missing, null)
+
+    """
+
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == str(match_1)):
+            # 1: "True"
+            value_product = 1
+        elif (str(value_source) == str(match_0)):
+            # 0: "No"
+            value_product = 0
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
+
+
+
+
+def define_logical_binary_indicator_variables_bipolar_disorder_type(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information.
+    table = table.copy(deep=True)
+
+    # Interpret diagnosis type of bipolar disorder.
+    table["bipolar_disorder_type_1"] = table.apply(
+        lambda row:
+            determine_female_oral_contraception(
+                value_source=row["scid_dx"],
+                match_1=row["age"],
+                match_0=row["2784-0.0"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "define_logical_binary_indicator_variables_bipolar_disorder_type()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+
+        # TODO: stratify diagnosis types of Bipolar Disorder
+
+        pass
+    # Return information.
+    return table
+
+
+
+
 ##########
 # Write
 
@@ -262,17 +359,8 @@ def execute_procedure(
         report=True,
     )
 
+    table = source["table_phenotypes"]
 
-    # Organize phenotype variables.
-
-    # "bib_id": phenotype identifier
-    # "gender": gender
-    # "pt_age": age
-    # "BMI": body mass index
-    # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
-    # "scid_dx": Bipolar Disorder type I or II
-    # "database": name of source database for phenotype (clinical) records
-    # "SITE": assessment center?
 
     # Organize table.
     # Select relevant columns from table.
@@ -299,27 +387,38 @@ def execute_procedure(
     print("columns")
     print(table.columns.to_list())
 
-    table = table[[*columns_selection]]
-    # Define logical binary indicator variables for type of Bipolar Disorder
-    # diagnosis.
-    table = define_logical_binary_indicator_variables_bipolar_disorder_type(
-        table=table,
-        report=True,
-    )
 
+    if False:
 
+        # Define logical binary indicator variables for type of Bipolar Disorder
+        # diagnosis.
+        table = define_logical_binary_indicator_variables_bipolar_disorder_type(
+            table=source["table_phenotypes"],
+            report=True,
+        )
 
+        # Organize phenotype variables.
 
+        # "bib_id": phenotype identifier
+        # "gender": gender
+        # "pt_age": age
+        # "BMI": body mass index
+        # "rc" rapid cycling encoded as a binary variable (derived from multiple categories)
+        # "scid_dx": Bipolar Disorder type I or II
+        # "database": name of source database for phenotype (clinical) records
+        # "SITE": assessment center?
 
-    # Collect information.
-    pail_write = dict()
-    pail_write["bipolar_organization"] = dict()
-    pail_write["bipolar_organization"]["table_phenotypes"] = table
-    # Write product information to file.
-    write_product(
-        pail_write=pail_write,
-        paths=paths,
-    )
+        table = table[[*columns_selection]]
+
+        # Collect information.
+        pail_write = dict()
+        pail_write["bipolar_organization"] = dict()
+        pail_write["bipolar_organization"]["table_phenotypes"] = table
+        # Write product information to file.
+        write_product(
+            pail_write=pail_write,
+            paths=paths,
+        )
 
     pass
 
