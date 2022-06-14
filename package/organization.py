@@ -343,7 +343,6 @@ def interpret_biological_sex_text(
     return sex_text
 
 
-
 def determine_biological_sex_variables(
     table=None,
     report=None,
@@ -407,6 +406,135 @@ def determine_biological_sex_variables(
         print("count female: " + str(count_female))
         utility.print_terminal_partition(level=5)
         print("count male: " + str(count_male))
+        pass
+    # Return information.
+    return table
+
+
+def interpret_bipolar_disorder_rapid_cycling(
+    value_source=None,
+):
+    """
+    Intepret representation of rapid cycling as a phenotype of Bipolar Disorder.
+
+    arguments:
+        value_source (str): raw value as character string
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: True, 0: False, NAN: missing, null)
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == "1"):
+            # 1: True
+            value_product = 1
+        elif (str(value_source) == "0"):
+            # 0: "False"
+            value_product = 0
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value_product = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
+
+
+def determine_logical_binary_indicator_variables_rapid_cycling(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Interpret diagnosis type of bipolar disorder.
+    table["rapid_cycling"] = table.apply(
+        lambda row:
+            interpret_bipolar_disorder_rapid_cycling(
+                value_source=row["rc"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_logical_binary_indicator_variables_rapid_cycling()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_type_1_rapid_1 = table.loc[
+            (
+                (table["bipolar_disorder_type_1_2"] == 1) and
+                (table["rapid_cycling"] == 1)
+            ), :
+        ]
+        table_type_1_rapid_0 = table.loc[
+            (
+                (table["bipolar_disorder_type_1_2"] == 1) and
+                (table["rapid_cycling"] == 0)
+            ), :
+        ]
+        table_type_2_rapid_1 = table.loc[
+            (
+                (table["bipolar_disorder_type_2_1"] == 1) and
+                (table["rapid_cycling"] == 1)
+            ), :
+        ]
+        table_type_2_rapid_0 = table.loc[
+            (
+                (table["bipolar_disorder_type_2_1"] == 1) and
+                (table["rapid_cycling"] == 0)
+            ), :
+        ]
+        # Count.
+        count_type_1_rapid_1 = table_type_1_rapid_1.shape[0]
+        count_type_1_rapid_0 = table_type_1_rapid_0.shape[0]
+        count_type_2_rapid_1 = table_type_2_rapid_1.shape[0]
+        count_type_2_rapid_0 = table_type_2_rapid_0.shape[0]
+        print(
+            "count of Bipolar Disorder Type 1, Rapid Cycling True: " +
+            str(count_type_1_rapid_1)
+        )
+        print(
+            "count of Bipolar Disorder Type 1, Rapid Cycling False: " +
+            str(count_type_1_rapid_0)
+        )
+        utility.print_terminal_partition(level=5)
+        print(
+            "count of Bipolar Disorder Type 2, Rapid Cycling True: " +
+            str(count_type_2_rapid_1)
+        )
+        print(
+            "count of Bipolar Disorder Type 2, Rapid Cycling False: " +
+            str(count_type_2_rapid_0)
+        )
         pass
     # Return information.
     return table
@@ -588,18 +716,24 @@ def execute_procedure(
         report=True,
     )
 
-    # Define logical binary indicator variables for type of Bipolar Disorder
+    # Determine logical binary indicator variables for type of Bipolar Disorder
     # diagnosis.
     table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
         table=source["table_phenotypes"],
         report=True,
     )
-
-    # Define sex variables.
+    # Determine variables for biological sex.
     table = determine_biological_sex_variables(
         table=table,
         report=True,
     )
+    # Determine variables for rapid cycling as a phenotype of Bipolar Disorder.
+    table = determine_logical_binary_indicator_variables_rapid_cycling(
+        table=table,
+        report=True,
+    )
+
+
 
 
     # Stratify phenotype records in cohorts.
