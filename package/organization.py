@@ -448,7 +448,7 @@ def stratify_phenotype_cohorts(
     record["name"] = "female"
     record["table"] = table.loc[
         (
-            (table["gender"] == 2)
+            (table["sex_text"] == "female")
         ), :
     ]
     records.append(record)
@@ -456,7 +456,7 @@ def stratify_phenotype_cohorts(
     record = dict()
     record["name"] = "male"
     record["table"] = table.loc[
-        (table["gender"] == 1), :
+        (table["sex_text"] == "male"), :
     ]
     records.append(record)
 
@@ -469,24 +469,6 @@ def stratify_phenotype_cohorts(
         )
         print(name_function)
         utility.print_terminal_partition(level=3)
-        # Stratify tables.
-        table_report_female = table.loc[
-            (
-                (table["gender"] == 2)
-            ), :
-        ]
-        table_report_male = table.loc[
-            (
-                (table["gender"] == 1)
-            ), :
-        ]
-        # Count.
-        count_female = table_report_female.shape[0]
-        count_male = table_report_male.shape[0]
-        utility.print_terminal_partition(level=5)
-        print("count female: " + str(count_female))
-        utility.print_terminal_partition(level=5)
-        print("count male: " + str(count_male))
         pass
     # Return information
     return records
@@ -629,20 +611,22 @@ def execute_procedure(
     # Organize table.
     # Select relevant columns from table.
     columns_selection = [
-        "bib_id",
-        "identifier_genotype",
-        "gender",
-        "pt_age",
-        "BMI",
+        #"bib_id",
+        #"identifier_genotype",
+        #"gender",
+        #"sex_y",
+        "sex_text",
+        #"pt_age",
+        #"BMI",
         "rc",
-        "scid_dx",
-        "database",
-        "steroid_globulin_female",
-        "steroid_globulin_male",
-        "testosterone_female",
-        "testosterone_male",
-        "bipolar_disorder_type_1_2",
-        "bipolar_disorder_type_2_1",
+        #"scid_dx",
+        #"bipolar_disorder_type_1_2",
+        #"bipolar_disorder_type_2_1",
+        #"database",
+        #"steroid_globulin_female",
+        #"steroid_globulin_male",
+        #"testosterone_female",
+        #"testosterone_male",
     ]
     table = table.loc[
         :, table.columns.isin(columns_selection)
