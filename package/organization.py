@@ -216,7 +216,7 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
     # Interpret diagnosis type of bipolar disorder.
     table["bipolar_disorder_type_1_2"] = table.apply(
         lambda row:
-            determine_female_oral_contraception(
+            interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
                 match_1="BIPOLAR_I",
                 match_0="BIPOLAR_II",
@@ -225,7 +225,7 @@ def define_logical_binary_indicator_variables_bipolar_disorder_type(
     )
     table["bipolar_disorder_type_2_1"] = table.apply(
         lambda row:
-            determine_female_oral_contraception(
+            interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
                 match_1="BIPOLAR_II",
                 match_0="BIPOLAR_I",
