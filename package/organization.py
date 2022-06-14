@@ -183,7 +183,7 @@ def interpret_bipolar_disorder_type_diagnosis(
             value_product = 0
         else:
             # Ambiguous, uninterpretable, or missing information.
-            value = float("nan")
+            value_product = float("nan")
     else:
         # Ambiguous, uninterpretable, or missing information.
         value_product = float("nan")
