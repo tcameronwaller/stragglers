@@ -163,7 +163,10 @@ def read_source(
         path_table_genetic_sex,
         sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=None,
-        names=["FID", "IID", "father", "mother", "sex", "control_case"],
+        names=[
+            "FID", "IID", "father", "mother",
+            "sex_genetic_raw", "control_case_raw"
+        ],
         dtype={
             "FID": "string",
             "IID": "string", # identifier of individual's genotype
