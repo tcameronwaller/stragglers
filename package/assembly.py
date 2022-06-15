@@ -140,7 +140,7 @@ def read_source(
         path_table_identifiers,
         sep=",",
         header=0,
-        dtype="string",
+        #dtype="string",
         dtype={
             "bib_id": "string",
             "gwas1_sampleid": "string", # identifier of individual's genotype
