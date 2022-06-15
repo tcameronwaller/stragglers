@@ -170,7 +170,7 @@ def read_source(
         header=None,
         names=[
             "FID", "IID", "father", "mother",
-            "sex_genetic_raw", "control_case_raw"
+            "sex_genotype_raw", "control_case_raw"
         ],
         dtype={
             "FID": "string",
