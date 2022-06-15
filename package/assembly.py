@@ -177,7 +177,7 @@ def read_source(
             "IID": "string", # identifier of individual's genotype
             "father": "string",
             "mother": "string",
-            "sex_genetic_raw": "string", # 1: male; 2: female; 0: unknown
+            "sex_genotype_raw": "string", # 1: male; 2: female; 0: unknown
             "control_case_raw": "string", # 1: control; 2: case; 0: unknown
         },
     )
@@ -652,11 +652,15 @@ def merge_polygenic_scores_to_phenotypes(
     """
     Merge information from multiple source tables.
 
-    Sample identifiers from genotype files ("IID") are the most inclusive
-    identifiers.
-    Most controls do not have phenotype records and do not have a "bib_id".
+    Most controls that accompany the Bipolar Biobank do not have phenotype
+    records and do not have a "bib_id".
     Only a few controls from the Mexico and Chile cohorts do have "bib_id" and
     phenotype records.
+
+    Many cases in the Bipolar Biobank do not have genotypes.
+
+    Sample identifiers from genotype files ("IID") are the most inclusive
+    identifiers when analyses prioritize genotypes.
 
     arguments:
         table_identifiers (object): Pandas data frame of identifiers for
@@ -897,7 +901,7 @@ def write_product_bipolar_assembly(
         path_or_buf=path_table_phenotypes_text,
         sep="\t",
         header=True,
-        index=True,
+        index=False, # include index in table
     )
     pass
 
