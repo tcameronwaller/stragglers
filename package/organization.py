@@ -150,7 +150,7 @@ def read_source(
 #    )
 
 
-def interpret_biological_genetic_sex_y(
+def interpret_genotype_biological_sex_y(
     value_source=None,
 ):
     """
@@ -198,6 +198,44 @@ def interpret_biological_genetic_sex_y(
     return value_product
 
 
+def interpret_phenotype_biological_sex_y(
+    value_source=None,
+):
+    """
+    Intepret representation of biological sex.
+
+    arguments:
+        value_source (str): raw value as character string
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: male, 0: female, NAN: missing, null)
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == "1"):
+            # 1: "male"
+            value_product = 1
+        elif (str(value_source) == "2"):
+            # 2: "female"
+            value_product = 0
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value_product = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
+
 
 def determine_consensus_biological_sex_y(
     sex_genotype_raw=None,
@@ -206,23 +244,18 @@ def determine_consensus_biological_sex_y(
     """
     Determine consensus biological sex (not social gender).
 
-    Prioritize interpretation of the genetic sex variable, and use self report
-    to fill in any missing values. Exclude records for persons whose genotypes
-    suggested aneuploidy in the sex chromosomes.
+    Prioritize interpretation of the genotype sex variable, and use phenotype
+    sex variable to fill in any missing values.
 
     Use a logical binary encoding for presence of Y chromosome.
     0 : female (false, XX)
     1 : male (true, XY)
 
-    Code is same as UK Biobank for data-fields "31" and "22001".
-    0: "Female"
-    1: "Male"
-
     arguments:
-        field_31 (float): UK Biobank data-field 31, person's self-reported sex
-        field_22001 (float): UK Biobank data-field 22001, genetic sex
-        field_22019 (float): UK Biobank data-field 22019, sex-chromosome
-            aneuploidy
+        sex_genotype_raw (str): textual representation of sex from genotype
+            record
+        sex_phenotype_raw (str): textual representation of sex from phenotype
+            record
 
     raises:
 
@@ -240,32 +273,21 @@ def determine_consensus_biological_sex_y(
         value_source=sex_phenotype_raw,
     )
     # Comparison.
-    # Determine whether there was aneuploidy in the sex chromosomes.
-    if (
-        (not pandas.isna(aneuploidy_sex)) and
-        (aneuploidy_sex == 0)
-    ):
-        # Prioritize genetic sex.
-        if (not pandas.isna(sex_genetic)):
-            # Genetic sex variable has a valid value.
-            # Prioritize this variable.
-            value = sex_genetic
-        elif (not pandas.isna(sex_self_report)):
-            # Person has missing value for genetic sex.
-            # Self-report sex variable has a valid value.
-            # Resort to self-report sex in absence of genetic sex.
-            value = sex_self_report
-        else:
-            # Missing information.
-            value = float("nan")
+    # Prioritize genetic sex.
+    if (not pandas.isna(sex_y_genotype)):
+        # Genotype sex variable has a valid value.
+        # Prioritize this variable.
+        value = sex_y_genotype
+    elif (not pandas.isna(sex_y_phenotype)):
+        # Person has missing value for genetic sex.
+        # Self-report sex variable has a valid value.
+        # Resort to self-report sex in absence of genetic sex.
+        value = sex_y_phenotype
     else:
-        # Aneuploidy in the sex chromosomes complicates definition of biological
-        # sex.
+        # Missing information.
         value = float("nan")
     # Return information.
     return value
-
-
 
 
 def interpret_biological_sex_text(
@@ -376,11 +398,55 @@ def determine_biological_sex_variables(
     return table
 
 
+def interpret_genotype_bipolar_disorder_control_case(
+    value_source=None,
+):
+    """
+    Intepret representation of bipolar disorder control or case.
+
+    The indication of control or case comes from a file in PLINK2 ".fam" format.
+    https://www.cog-genomics.org/plink/2.0/formats#fam
+    1: "control"
+    2: "case"
+    0: "unknown or missing"
+
+    arguments:
+        value_source (str): raw value as character string
+
+    raises:
+
+    returns:
+        (float): interpretation value (1: case, 0: control, NAN: missing, null)
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(value_source)) and
+        (len(str(value_source)) > 0)
+    ):
+        # The value is non-missing and hopefully interpretable.
+        # Determine whether the value matches any strings.
+        if (str(value_source) == "1"):
+            # 1: "control"
+            value_product = 0
+        elif (str(value_source) == "2"):
+            # 2: "case"
+            value_product = 1
+        elif (str(value_source) == "0"):
+            # 0: "unknown" or "missing"
+            value_product = float("nan")
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            value_product = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value_product = float("nan")
+    # Return.
+    return value_product
 
 
-
-
-def interpret_bipolar_disorder_diagnosis_control_case(
+def interpret_phenotype_bipolar_disorder_control_case(
     value_source=None,
     strings_case=None,
     strings_control=None,
@@ -423,6 +489,46 @@ def interpret_bipolar_disorder_diagnosis_control_case(
     return value_product
 
 
+def determine_consensus_bipolar_disorder_control_case(
+    case_genotype=None,
+    case_phenotype=None,
+):
+    """
+    Determine consensus bipolar disorder control and case.
+
+    Prioritize interpretation of the genotype control-case variable, and use
+    phenotype control-case variable to fill in any missing values.
+
+    arguments:
+        case_genotype (float): control or case representation from genotype
+            record
+        sex_phenotype_raw (str): control or case representation from phenotype
+
+    raises:
+
+    returns:
+        (float): interpretation value
+
+    """
+
+    # Comparison.
+    # Prioritize genetic sex.
+    if (not pandas.isna(case_genotype)):
+        # Genotype sex variable has a valid value.
+        # Prioritize this variable.
+        value = case_genotype
+    elif (not pandas.isna(case_phenotype)):
+        # Person has missing value for genetic sex.
+        # Self-report sex variable has a valid value.
+        # Resort to self-report sex in absence of genetic sex.
+        value = case_phenotype
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        value = float("nan")
+    # Return information.
+    return value
+
+
 def determine_logical_binary_indicator_variables_bipolar_disorder(
     table=None,
     report=None,
@@ -444,15 +550,31 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
     # Copy information in table.
     table = table.copy(deep=True)
     # Interpret diagnosis type of bipolar disorder.
-    table["bipolar_disorder_control_case"] = table.apply(
+    table["bipolar_disorder_genotype"] = table.apply(
         lambda row:
-            interpret_bipolar_disorder_diagnosis_control_case(
+            interpret_genotype_bipolar_disorder_control_case(
+                value_source=row["bipolar_disorder_genotype_raw"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["bipolar_disorder_phenotype"] = table.apply(
+        lambda row:
+            interpret_phenotype_bipolar_disorder_control_case(
                 value_source=row["scid_dx"],
                 strings_case=[
                     "BIPOLAR_I", "BIPOLAR_II",
                     "SCHIZOAFFECTIVE_BIPOLAR_TYPE", "OTHER",
                 ],
                 strings_control=["Not Eligible", "",],
+            ),
+        axis="columns", # apply function to each row
+    )
+    # Consensus.
+    table["bipolar_disorder_control_case"] = table.apply(
+        lambda row:
+            determine_consensus_bipolar_disorder_control_case(
+                case_genotype=row["bipolar_disorder_genotype"],
+                case_phenotype=row["bipolar_disorder_phenotype"],
             ),
         axis="columns", # apply function to each row
     )
@@ -900,7 +1022,9 @@ def execute_procedure(
         "sex_genetic_raw",
         "sex_y",
         "sex_text",
-        "control_case_raw",
+        "bipolar_disorder_genotype_raw",
+        "bipolar_disorder_genotype",
+        "bipolar_disorder_phenotype",
         "bipolar_disorder_control_case",
         "pt_age",
         "BMI",

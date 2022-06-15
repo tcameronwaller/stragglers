@@ -170,7 +170,7 @@ def read_source(
         header=None,
         names=[
             "FID", "IID", "father", "mother",
-            "sex_genotype_raw", "control_case_raw"
+            "sex_genotype_raw", "bipolar_disorder_genotype_raw"
         ],
         dtype={
             "FID": "string",
@@ -178,7 +178,7 @@ def read_source(
             "father": "string",
             "mother": "string",
             "sex_genotype_raw": "string", # 1: male; 2: female; 0: unknown
-            "control_case_raw": "string", # 1: control; 2: case; 0: unknown
+            "bipolar_disorder_genotype_raw": "string", # 1: control; 2: case;
         },
     )
     table_genetic_sex_case.reset_index(
