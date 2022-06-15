@@ -335,10 +335,9 @@ def organize_table_polygenic_score_ldpred2(
         errors="coerce", # force any invalid values to missing or null
         downcast="float",
     )
-    # Remove the column for the genotype family identifier ("FID").
-    # This identifier is redundant and unnecessary.
+    # Remove columns.
     table.drop(
-        labels=["FID"],
+        labels=["FID", "IID"],
         axis="columns",
         inplace=True
     )
@@ -579,6 +578,12 @@ def organize_table_phenotypes(
     # Convert identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
     table["identifier_phenotype"] = table["bib_id"].astype("string")
+    # Remove columns.
+    table.drop(
+        labels=["bib_id"],
+        axis="columns",
+        inplace=True
+    )
     # Return information.
     return table
 
@@ -625,7 +630,7 @@ def organize_table_genetic_sex_case(
     # Remove the columns for identifiers of parents.
     # These identifiers are redundant and unnecessary.
     table.drop(
-        labels=["FID", "father", "mother"],
+        labels=["FID", "IID", "father", "mother"],
         axis="columns",
         inplace=True
     )
