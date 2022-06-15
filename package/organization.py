@@ -814,6 +814,7 @@ def execute_procedure(
     columns_selection = [
         #"bib_id",
         "identifier_genotype",
+        "identifier_phenotype",
         "gender",
         "sex_genetic_raw",
         "sex_y",

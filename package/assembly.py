@@ -127,7 +127,7 @@ def read_source(
         path_dock, "access", "mayo_bipolar_phenotypes",
         "220513_BP_phenotypes.csv"
     )
-    path_table_genetic_sex = os.path.join(
+    path_table_genetic_sex_case = os.path.join(
         path_dock, "access", "mayo_bipolar_phenotypes",
         "MERGED.maf0.01.dosR20.8.noDups.fam"
     )
@@ -141,6 +141,11 @@ def read_source(
         sep=",",
         header=0,
         dtype="string",
+        dtype={
+            "bib_id": "string",
+            "gwas1_sampleid": "string", # identifier of individual's genotype
+            "gwas2_sampleid": "string", # identifier of individual's genotype
+        },
     )
     table_identifiers.reset_index(
         level=None,
@@ -159,8 +164,8 @@ def read_source(
         drop=True, # remove index; do not move to regular columns
     )
     # https://www.cog-genomics.org/plink/2.0/formats#fam
-    table_genetic_sex = pandas.read_csv(
-        path_table_genetic_sex,
+    table_genetic_sex_case = pandas.read_csv(
+        path_table_genetic_sex_case,
         sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=None,
         names=[
@@ -176,7 +181,7 @@ def read_source(
             "control_case_raw": "string", # 1: control; 2: case; 0: unknown
         },
     )
-    table_genetic_sex.reset_index(
+    table_genetic_sex_case.reset_index(
         level=None,
         inplace=True,
         drop=True, # remove index; do not move to regular columns
@@ -204,7 +209,7 @@ def read_source(
     return {
         "table_identifiers": table_identifiers,
         "table_phenotypes": table_phenotypes,
-        "table_genetic_sex": table_genetic_sex,
+        "table_genetic_sex_case": table_genetic_sex_case,
         "table_scores_parameters": table_scores_parameters,
     }
 
@@ -314,6 +319,7 @@ def organize_table_polygenic_score_ldpred2(
     )
     # Convert identifiers to type string.
     table["IID"] = table["IID"].astype("string")
+    table["identifier_genotype"] = table["IID"].astype("string")
     # Translate names of columns.
     #table = table.add_prefix("import_")
     translations = dict()
@@ -427,16 +433,13 @@ def drive_read_organize_tables_polygenic_scores(
 
 
 def prioritize_genotype_identifiers(
-    phenotype_identifier=None,
     genotype_identifier_priority=None,
     genotype_identifier_spare=None,
 ):
     """
-    Determines the identifier for a priority genotype record that matches the
-    identifier for a phenotype record.
+    Determines the identifier for a priority genotype record.
 
     arguments:
-        phenotype_identifer (str): identifier for a phenotype record
         genotype_identifier_priority (str): identifier for a priority genotype
         genotype_identifier_spare (str): identifier for a spare genotype
 
@@ -447,40 +450,31 @@ def prioritize_genotype_identifiers(
 
     """
 
-    # Determine the priority genotype record that matches the phenotype record.
+    # Determine identifier of priority genotype.
     if (
-        (not pandas.isna(phenotype_identifier)) and
-        (len(str(phenotype_identifier)) > 0)
+        (not pandas.isna(genotype_identifier_priority)) and
+        (len(str(genotype_identifier_priority)) > 0)
     ):
-        # Identifier for phenotype record is not missing.
-        if (
-            (not pandas.isna(genotype_identifier_priority)) and
-            (len(str(genotype_identifier_priority)) > 0)
-        ):
-            # Identifier for priority genotype record is not missing.
-            # Priority genotype record comes from a primary, priority set or
-            # batch of genotypes.
-            genotype_priority = str(
-                copy.deepcopy(genotype_identifier_priority)
-            )
-        elif (
-            (not pandas.isna(genotype_identifier_spare)) and
-            (len(str(genotype_identifier_spare)) > 0)
-        ):
-            # Identifier for spare genotype record is not missing.
-            # Spare genotype record comes from a secondary, not priority set or
-            # batch of genotypes.
-            genotype_priority = str(
-                copy.deepcopy(genotype_identifier_spare)
-            )
-            pass
-        else:
-            # There is not a genotype record available to match the phenotype
-            # record.
-            genotype_priority = ""
+        # Identifier for priority genotype record is not missing.
+        # Priority genotype record comes from a primary, priority set or
+        # batch of genotypes.
+        genotype_priority = str(
+            copy.deepcopy(genotype_identifier_priority)
+        )
+    elif (
+        (not pandas.isna(genotype_identifier_spare)) and
+        (len(str(genotype_identifier_spare)) > 0)
+    ):
+        # Identifier for spare genotype record is not missing.
+        # Spare genotype record comes from a secondary, not priority set or
+        # batch of genotypes.
+        genotype_priority = str(
+            copy.deepcopy(genotype_identifier_spare)
+        )
         pass
     else:
-        # The is not a phenotype record available.
+        # There is not a genotype record available to match the phenotype
+        # record.
         genotype_priority = ""
     # Return information.
     return genotype_priority
@@ -516,7 +510,6 @@ def organize_table_phenotype_genotype_identifiers(
     table["identifier_genotype"] = table.apply(
         lambda row:
             prioritize_genotype_identifiers(
-                phenotype_identifier=row["bib_id"],
                 genotype_identifier_priority=row["gwas1_sampleid"],
                 genotype_identifier_spare=row["gwas2_sampleid"],
             ),
@@ -536,12 +529,13 @@ def organize_table_phenotype_genotype_identifiers(
     # Remove any records with missing identifiers.
     table.dropna(
         axis="index", # drop rows with missing values in columns
-        how="any",
+        how="all",
         subset=["bib_id", "identifier_genotype"],
         inplace=True,
     )
     # Convert identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
+    table["identifier_phenotype"] = table["bib_id"].astype("string")
     table["identifier_genotype"] = table["identifier_genotype"].astype("string")
     # Return information.
     return table
@@ -584,12 +578,12 @@ def organize_table_phenotypes(
     )
     # Convert identifiers to type string.
     table["bib_id"] = table["bib_id"].astype("string")
+    table["identifier_phenotype"] = table["bib_id"].astype("string")
     # Return information.
     return table
 
 
-
-def organize_table_genetic_sex(
+def organize_table_genetic_sex_case(
     table=None,
     report=None,
 ):
@@ -626,6 +620,7 @@ def organize_table_genetic_sex(
     )
     # Convert identifiers to type string.
     table["IID"] = table["IID"].astype("string")
+    table["identifier_genotype"] = table["IID"].astype("string")
     # Remove the column for the genotype family identifier ("FID").
     # Remove the columns for identifiers of parents.
     # These identifiers are redundant and unnecessary.
@@ -645,19 +640,25 @@ def organize_table_genetic_sex(
 def merge_polygenic_scores_to_phenotypes(
     table_identifiers=None,
     table_phenotypes=None,
-    table_genetic_sex=None,
+    table_genetic_sex_case=None,
     tables_scores=None,
     report=None,
 ):
     """
-    Removes irrelevant columns and rows from data.
+    Merge information from multiple source tables.
+
+    Sample identifiers from genotype files ("IID") are the most inclusive
+    identifiers.
+    Most controls do not have phenotype records and do not have a "bib_id".
+    Only a few controls from the Mexico and Chile cohorts do have "bib_id" and
+    phenotype records.
 
     arguments:
         table_identifiers (object): Pandas data frame of identifiers for
             matching phenotype and genotype records
         table_phenotypes (object): Pandas data frame of information about
             phenotype variables
-        table_genetic_sex (object): Pandas data frame of information about
+        table_genetic_sex_case (object): Pandas data frame of information about
             genetic sex and case-control status from file in PLINK2 ".fam"
             format
         tables_scores (list<object>): collection of Pandas data frames of
@@ -671,21 +672,73 @@ def merge_polygenic_scores_to_phenotypes(
 
     """
 
-    # 1. Introduce identifiers of genotype records to table of phenotype
-    # records.
+    # 1. Introduce phenotype records for Bipolar Disorder cases (mostly) to the
+    # table of genetic sex and case status.
+    # The table of genetic sex and case status is the most inclusive of cases
+    # and controls with genotypes.
+
+    # 1.1. Introduce identifiers for phenotype records ("bib_id") to the table
+    # of genetic sex and case status.
     # Copy information in table.
+    table_genetic_sex_case = table_genetic_sex_case.copy(deep=True)
     table_identifiers = table_identifiers.copy(deep=True)
-    table_phenotypes = table_phenotypes.copy(deep=True)
-    table_genetic_sex = table_genetic_sex.copy(deep=True)
     # Organize tables' indices.
+    table_genetic_sex_case.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
+    table_genetic_sex_case["identifier_genotype"] = (
+        table_genetic_sex_case["identifier_genotype"].astype("string")
+    )
+    table_genetic_sex_case.set_index(
+        "identifier_genotype",
+        append=False,
+        drop=True, # move regular column to index; remove original column
+        inplace=True
+    )
     table_identifiers.reset_index(
         level=None,
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
-    table_identifiers["bib_id"] = table_identifiers["bib_id"].astype("string")
+    table_identifiers["identifier_genotype"] = (
+        table_identifiers["identifier_genotype"].astype("string")
+    )
     table_identifiers.set_index(
-        "bib_id",
+        "identifier_genotype",
+        append=False,
+        drop=True, # move regular column to index; remove original column
+        inplace=True
+    )
+    # Merge data tables using database-style join.
+    # Alternative is to use DataFrame.join().
+    table = pandas.merge(
+        table_genetic_sex_case, # left table
+        table_identifiers, # right table
+        left_on=None, # "identifier_genotype",
+        right_on=None, # "identifier_genotype",
+        left_index=True,
+        right_index=True,
+        how="outer", # keep union of keys from both tables
+        #suffixes=("_main", "_identifiers"), # deprecated?
+    )
+
+    # 1.2. Introduce phenotype records for Bipolar Disorder cases (mostly) to
+    # the main table of genetic sex and case status.
+    # Copy information in table.
+    table_phenotypes = table_phenotypes.copy(deep=True)
+    # Organize tables' indices.
+    table.reset_index(
+        level=None,
+        inplace=True,
+        drop=False, # remove index; do not move to regular columns
+    )
+    table["identifier_phenotype"] = (
+        table["identifier_phenotype"].astype("string")
+    )
+    table.set_index(
+        "identifier_phenotype",
         append=False,
         drop=True, # move regular column to index; remove original column
         inplace=True
@@ -695,50 +748,11 @@ def merge_polygenic_scores_to_phenotypes(
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
-    table_phenotypes["bib_id"] = table_phenotypes["bib_id"].astype("string")
+    table_phenotypes["identifier_phenotype"] = (
+        table_phenotypes["identifier_phenotype"].astype("string")
+    )
     table_phenotypes.set_index(
-        "bib_id",
-        append=False,
-        drop=True, # move regular column to index; remove original column
-        inplace=True
-    )
-    # Merge data tables using database-style join.
-    # Alternative is to use DataFrame.join().
-    table = pandas.merge(
-        table_phenotypes, # left table
-        table_identifiers, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
-        left_index=True,
-        right_index=True,
-        how="left", # keep only keys from left table
-        #suffixes=("_main", "_identifiers"), # deprecated?
-    )
-
-    # 2. Introduce genetic sex and case-control.
-    # Organize tables' indices.
-    table.reset_index(
-        level=None,
-        inplace=True,
-        drop=False, # remove index; do not move to regular columns
-    )
-    table["identifier_genotype"] = (
-        table["identifier_genotype"].astype("string")
-    )
-    table.set_index(
-        "identifier_genotype",
-        append=False,
-        drop=False, # move regular column to index; remove original column
-        inplace=True
-    )
-    table_genetic_sex.reset_index(
-        level=None,
-        inplace=True,
-        drop=True, # remove index; do not move to regular columns
-    )
-    table_genetic_sex["IID"] = table_genetic_sex["IID"].astype("string")
-    table_genetic_sex.set_index(
-        "IID",
+        "identifier_phenotype",
         append=False,
         drop=True, # move regular column to index; remove original column
         inplace=True
@@ -747,12 +761,12 @@ def merge_polygenic_scores_to_phenotypes(
     # Alternative is to use DataFrame.join().
     table = pandas.merge(
         table, # left table
-        table_genetic_sex, # right table
-        left_on=None, # "bib_id",
-        right_on=None, # "IID",
+        table_phenotypes, # right table
+        left_on=None, # "identifier_phenotype",
+        right_on=None, # "identifier_phenotype",
         left_index=True,
         right_index=True,
-        how="left", # keep only keys from left table
+        how="outer", # keep union of keys from both tables
         #suffixes=("_main", "_identifiers"), # deprecated?
     )
 
@@ -769,7 +783,7 @@ def merge_polygenic_scores_to_phenotypes(
     table.set_index(
         "identifier_genotype",
         append=False,
-        drop=False, # move regular column to index; remove original column
+        drop=True, # move regular column to index; remove original column
         inplace=True
     )
     # Iterate on tables for polygenic scores.
@@ -780,9 +794,11 @@ def merge_polygenic_scores_to_phenotypes(
             inplace=True,
             drop=True, # remove index; do not move to regular columns
         )
-        table_score["IID"] = table_score["IID"].astype("string")
+        table_score["identifier_genotype"] = (
+            table_score["identifier_genotype"].astype("string")
+        )
         table_score.set_index(
-            "IID",
+            "identifier_genotype",
             append=False,
             drop=True, # move regular column to index; remove original column
             inplace=True
@@ -792,12 +808,12 @@ def merge_polygenic_scores_to_phenotypes(
         table = pandas.merge(
             table, # left table
             table_score, # right table
-            left_on=None, # "bib_id",
-            right_on=None, # "IID",
+            left_on=None, # "identifier_genotype",
+            right_on=None, # "identifier_genotype",
             left_index=True,
             right_index=True,
-            how="left", # keep only keys from left table
-            #suffixes=("_main", "_score"), # deprecated?
+            how="outer", # keep union of keys from both tables
+            #suffixes=("_main", "_identifiers"), # deprecated?
         )
         pass
     # Organize table's index.
@@ -807,7 +823,7 @@ def merge_polygenic_scores_to_phenotypes(
         drop=False, # remove index; do not move to regular columns
     )
     table.set_index(
-        "bib_id",
+        "identifier_genotype",
         append=False,
         drop=True, # move regular column to index; remove original column
         inplace=True
@@ -913,7 +929,7 @@ def write_product(
 # Procedure
 
 # TODO: TCW; 13 June 2022
-# TODO: 1. I need to read in the genetic sex and ancestry and or ethnicity ("European" or "Hispanic")
+# TODO: 1. I need to read in the ancestry and/or ethnicity ("European" or "Hispanic")
 
 
 def execute_procedure(
@@ -969,15 +985,15 @@ def execute_procedure(
     )
     # Organize table of genetic sex (from PLINK2 file in ".fam" format).
     # https://www.cog-genomics.org/plink/2.0/formats#fam
-    table_genetic_sex = organize_table_genetic_sex(
-        table=source["table_genetic_sex"],
+    table_genetic_sex_case = organize_table_genetic_sex_case(
+        table=source["table_genetic_sex_case"],
         report=True,
     )
     # Mege polygenic scores with information on phenotypes.
     table = merge_polygenic_scores_to_phenotypes(
         table_identifiers=table_identifiers,
         table_phenotypes=table_phenotypes,
-        table_genetic_sex=table_genetic_sex,
+        table_genetic_sex_case=table_genetic_sex_case,
         tables_scores=tables_polygenic_scores,
         report=True,
     )

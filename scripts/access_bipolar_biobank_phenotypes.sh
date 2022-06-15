@@ -32,6 +32,9 @@ echo "----------------------------------------------------------------------"
 # TODO: 1. path to Mayo Bipolar Phenotype source directory
 # TODO: 2. path to target directory
 
+# "220513_BP_phenotypes.csv" # from the directory (from Richard) for Bipolar Biobank phenotypes
+# "210421_id_matching_gwas.csv" # from the same directory as the Bipolar Biobank phenotypes
+# "MERGED.maf0.01.dosR20.8.noDups.fam" from the same directory as the Bipolar Biobank genotypes ("GWAS_MERGED")
 
 ###########################################################################
 # Organize arguments.
