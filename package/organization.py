@@ -1019,7 +1019,7 @@ def execute_procedure(
         "identifier_phenotype",
         "bib_id",
         "gender",
-        "sex_genetic_raw",
+        "sex_genotype_raw",
         "sex_y",
         "sex_text",
         "bipolar_disorder_genotype_raw",
