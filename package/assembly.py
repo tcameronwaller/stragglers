@@ -827,12 +827,12 @@ def merge_polygenic_scores_to_phenotypes(
         inplace=True,
         drop=False, # remove index; do not move to regular columns
     )
-    table.set_index(
-        "identifier_genotype",
-        append=False,
-        drop=True, # move regular column to index; remove original column
-        inplace=True
-    )
+    #table.set_index(
+    #    "identifier_genotype",
+    #    append=False,
+    #    drop=True, # move regular column to index; remove original column
+    #    inplace=True
+    #)
     # Report.
     if report:
         utility.print_terminal_partition(level=2)
