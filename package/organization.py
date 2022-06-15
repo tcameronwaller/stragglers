@@ -200,9 +200,8 @@ def interpret_biological_genetic_sex_y(
 
 
 def determine_consensus_biological_sex_y(
-    field_31=None,
-    field_22001=None,
-    field_22019=None,
+    sex_genotype_raw=None,
+    sex_phenotype_raw=None,
 ):
     """
     Determine consensus biological sex (not social gender).
@@ -234,11 +233,11 @@ def determine_consensus_biological_sex_y(
 
     # Interpret biological sex from genotype record.
     sex_y_genotype = interpret_genotype_biological_sex_y(
-        value_source=sex_genetic_raw,
+        value_source=sex_genotype_raw,
     )
     # Interpret biological sex from phenotype record.
     sex_y_phenotype = interpret_phenotype_biological_sex_y(
-        value_source=,
+        value_source=sex_phenotype_raw,
     )
     # Comparison.
     # Determine whether there was aneuploidy in the sex chromosomes.
@@ -331,8 +330,9 @@ def determine_biological_sex_variables(
     # Interpret diagnosis type of bipolar disorder.
     table["sex_y"] = table.apply(
         lambda row:
-            interpret_biological_genetic_sex_y(
-                sex_genetic_raw=row["sex_genetic_raw"],
+            determine_consensus_biological_sex_y(
+                sex_genotype_raw=row["sex_genotype_raw"],
+                sex_phenotype_raw=row["gender"],
             ),
         axis="columns", # apply function to each row
     )
