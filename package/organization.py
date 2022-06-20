@@ -755,29 +755,35 @@ def interpret_bipolar_disorder_type_control_case(
 
     # Interpretation.
     if (
-        (not pandas.isna(main_control_case)) and
-        (not pandas.isna(type_variable))
-    ):
-        if (
-            (main_control_case == 1) and
+        (
+            (not pandas.isna(main_control_case)) and
+            (main_control_case == 1)
+        ) and
+        (
+            (not pandas.isna(type_variable)) and
             (type_variable == 1)
-        ):
-            # Case of relevant type.
-            interpretation = 1
-        elif (
-            (main_control_case == 1) and
+        )
+    ):
+        # Case of relevant type.
+        interpretation = 1
+    elif (
+        (
+            (not pandas.isna(main_control_case)) and
+            (main_control_case == 1)
+        ) and
+        (
+            (not pandas.isna(type_variable)) and
             (type_variable == 0)
-        ):
-            # Case, but not of relevant type.
-            interpretation = float("nan")
-        elif (
-            (main_control_case == 0)
-        ):
-            # Control.
-            interpretation = 0
-        else:
-            # Ambiguous, uninterpretable, or missing information.
-            interpretation = float("nan")
+        )
+    ):
+        # Case, but not of relevant type.
+        interpretation = float("nan")
+    elif (
+        (not pandas.isna(main_control_case)) and
+        (main_control_case == 0)
+    ):
+        # Control.
+        interpretation = 0
     else:
         # Ambiguous, uninterpretable, or missing information.
         interpretation = float("nan")
