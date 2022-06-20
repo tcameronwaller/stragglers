@@ -1062,18 +1062,8 @@ def write_product(
 # Procedure
 
 # TODO: TCW; 14 June 2022
-# TODO: interpret genetic sex and compare to gender
-# TODO: interpret controls with neither Bipolar Disorder Type 1 nor 2
 # TODO: 4. organize chronotype variables?
 
-
-# TODO: use consensus of genetic sex and "gender" (prioritize genetic sex where available) for "sex_y"
-# TODO: determine Bipolar Disorder controls and cases from genetic table
-
-
-# TODO: TCW; 20 June 2022
-# bipolar_type_1_control_case
-# bipolar_type_2_control_case
 
 def execute_procedure(
     path_dock=None,
