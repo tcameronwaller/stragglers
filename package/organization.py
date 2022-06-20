@@ -507,20 +507,19 @@ def determine_consensus_bipolar_disorder_control_case(
     raises:
 
     returns:
-        (float): interpretation value
+        (float): interpretation value (1: case, 0: control, NAN: missing, null)
 
     """
 
     # Comparison.
     # Prioritize genetic sex.
     if (not pandas.isna(case_genotype)):
-        # Genotype sex variable has a valid value.
+        # Genotype control-case variable has a valid value.
         # Prioritize this variable.
         value = case_genotype
     elif (not pandas.isna(case_phenotype)):
-        # Person has missing value for genetic sex.
-        # Self-report sex variable has a valid value.
-        # Resort to self-report sex in absence of genetic sex.
+        # Person has missing value for genetotype control-case variable.
+        # Phenotype control-case variable has a valid value.
         value = case_phenotype
     else:
         # Ambiguous, uninterpretable, or missing information.
@@ -720,6 +719,142 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         print("count of Bipolar Disorder Type 1: " + str(count_type_1))
         utility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder Type 2: " + str(count_type_2))
+        pass
+    # Return information.
+    return table
+
+
+# TODO: TCW; 20 June 2022
+# TODO: I need some sort of interpretation function
+# TODO: I need to feed the Bipolar Disorder control-case variable
+# TODO: I also need to feed in the Bipolar Disorder type variable...
+# TODO: then use AND logic
+# TODO: controls are controls
+
+
+def interpret_bipolar_disorder_type_control_case(
+    type_variable=None,
+    type_value=None,
+    main_control_case=None,
+):
+    """
+    Determine status as a control or a case of a specific type of the disorder.
+
+    arguments:
+        type_variable (float): type indicator variable
+        type_value (int): relevant value of type indicator variable
+        main_control_case (float): logical binary representation of main status
+            as control or case (1: case, 0: control, NAN: missing, null)
+
+    raises:
+
+    returns:
+        (float): interpretation value
+
+    """
+
+    # Interpretation.
+    if (
+        (not pandas.isna(main_control_case)) and
+        (not pandas.isna(type_variable))
+    ):
+        if (
+            (main_control_case == 1) and
+            (type_variable == 1)
+        ):
+            # Case of relevant type.
+            interpretation = 1
+        elif (
+            (main_control_case == 1) and
+            (type_variable == 0)
+        ):
+            # Case, but not of relevant type.
+            interpretation = float("nan")
+        elif (
+            (main_control_case == 0)
+        ):
+            # Control.
+            interpretation = 0
+        else:
+            # Ambiguous, uninterpretable, or missing information.
+            interpretation = float("nan")
+    else:
+        # Ambiguous, uninterpretable, or missing information.
+        interpretation = float("nan")
+    # Return information.
+    return interpretation
+
+
+def determine_bipolar_disorder_type_control_case(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Interpret diagnosis type of bipolar disorder.
+    table["bipolar_type_1_control_case"] = table.apply(
+        lambda row:
+            interpret_bipolar_disorder_type_control_case(
+                type_variable=row["bipolar_disorder_type_1_2"],
+                type_value=1,
+                main_control_case=row["bipolar_disorder_control_case"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["bipolar_type_2_control_case"] = table.apply(
+        lambda row:
+            interpret_bipolar_disorder_type_control_case(
+                type_variable=row["bipolar_disorder_type_2_1"],
+                type_value=1,
+                main_control_case=row["bipolar_disorder_control_case"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_bipolar_disorder_type_control_case()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        # Stratify tables.
+        table_type_1_case = table.loc[
+            (
+                (table["bipolar_type_1_control_case"] == 1)
+            ), :
+        ]
+        table_type_2_case = table.loc[
+            (
+                (table["bipolar_type_2_control_case"] == 1)
+            ), :
+        ]
+        # Count.
+        count_type_1_case = table_type_1_case.shape[0]
+        count_type_2_case = table_type_2_case.shape[0]
+        utility.print_terminal_partition(level=5)
+        print(
+            "count of Bipolar Disorder Type 1 cases: " + str(count_type_1_case)
+        )
+        utility.print_terminal_partition(level=5)
+        print(
+            "count of Bipolar Disorder Type 2 cases: " + str(count_type_2_case)
+        )
         pass
     # Return information.
     return table
@@ -936,6 +1071,10 @@ def write_product(
 # TODO: determine Bipolar Disorder controls and cases from genetic table
 
 
+# TODO: TCW; 20 June 2022
+# bipolar_type_1_control_case
+# bipolar_type_2_control_case
+
 def execute_procedure(
     path_dock=None,
 ):
@@ -984,6 +1123,12 @@ def execute_procedure(
     # Determine logical binary indicator variables for type of Bipolar Disorder
     # diagnosis.
     table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
+        table=table,
+        report=True,
+    )
+    # Determine logical binary indicator variables for Bipolar Disorder
+    # diagnosis type controls and cases.
+    table = determine_bipolar_disorder_type_control_case(
         table=table,
         report=True,
     )
