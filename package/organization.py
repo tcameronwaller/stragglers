@@ -1166,6 +1166,8 @@ def execute_procedure(
         "scid_dx",
         "bipolar_disorder_type_1_2",
         "bipolar_disorder_type_2_1",
+        "bipolar_type_1_control_case",
+        "bipolar_type_2_control_case",
         "rc",
         "rapid_cycling",
         "database",
