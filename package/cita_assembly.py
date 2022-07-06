@@ -155,6 +155,74 @@ def read_source(
 #    )
 
 
+
+# Main driver
+
+
+def drive_estimate_bioavailable_free_estradiol_testosterone(
+    table=None,
+    report=None,
+):
+    """
+    Drives the estimation of bioavailable and free estradiol and testosterone.
+
+    arguments:
+        table (object): Pandas data frame table of phenotype variables
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data-frame table of phenotype variables
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+
+    ##########
+    # Organize raw hormone variables.
+
+    # Convert variable types to float.
+    columns_float = list()
+    columns_float.append("e1_")
+    columns_float.append("e2_")
+    columns_float.append("testost")
+    columns_float.append("shbg_")
+    columns_float.append("albumin_")
+    table = utility.convert_table_columns_variables_types_float(
+        columns=columns_float,
+        table=table,
+    )
+    # Convert concentrations to units of moles per liter (mol/L) with adjustment
+    # by specific factors for appropriate scale in analyses (and floats).
+    factors_concentration = dict()
+    factors_concentration["oestradiol"] = 1E12 # 1 pmol / L
+    factors_concentration["oestradiol_free"] = 1E12 # 1 pmol / L
+    factors_concentration["oestradiol_bioavailable"] = 1E12 # 1 pmol / L
+    factors_concentration["testosterone"] = 1E12 # 1 pmol / L
+    factors_concentration["testosterone_free"] = 1E12 # 1 pmol / L
+    factors_concentration["testosterone_bioavailable"] = 1E12 # 1 pmol / L
+    factors_concentration["steroid_globulin"] = 1E9 # 1 nmol / L
+    factors_concentration["albumin"] = 1E6 # 1 umol / L
+    table = convert_hormone_concentration_units_moles_per_liter(
+        table=table,
+        factors_concentration=factors_concentration,
+    )
+
+    ##########
+    # Calculate estimates of bioavailable and free hormones.
+    table = organize_calculation_estimate_bioavailable_free_hormones(
+        factors_concentration=factors_concentration,
+        table=table,
+        report=report,
+    )
+
+
+    # Return information.
+    return table
+
+
 ##########
 # Write
 
@@ -268,6 +336,13 @@ def execute_procedure(
     )
 
     print(source["table_phenotypes"])
+
+    # Calculate estimates of bioavailable and free estradiol and testosterone.
+    table = drive_estimate_bioavailable_free_estradiol_testosterone(
+        table=source["table_phenotypes"],
+        report=True,
+    )
+
 
 
     pass
