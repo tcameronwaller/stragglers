@@ -414,9 +414,9 @@ def report_hormone_by_female_male(
     """
 
     # Report.
-    utility.print_terminal_partition(level=2)
+    utility.print_terminal_partition(level=4)
     print("variable: " + str(variable))
-    utility.print_terminal_partition(level=2)
+    utility.print_terminal_partition(level=4)
 
     # Copy information in table.
     table = table.copy(deep=True)
@@ -452,7 +452,7 @@ def report_hormone_by_female_male(
         minimum = numpy.nanmin(array)
         maximum = numpy.nanmax(array)
         # Report.
-        utility.print_terminal_partition(level=4)
+        utility.print_terminal_partition(level=5)
         print("mean: " + str(round(mean, 3)))
         print("standard error: " + str(round(standard_error, 3)))
         print(
