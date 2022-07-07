@@ -392,6 +392,81 @@ def drive_estimate_bioavailable_free_estradiol_testosterone(
     return table
 
 
+# review: TCW on 20 January January 2022
+def report_hormone_deficiency_by_sex_menopause_age(
+    variable=None,
+    table=None,
+):
+    """
+    Reports counts and percentages of persons who were deficient in a hormone
+    with stratification by sex, female menopause status, and age.
+
+    arguments:
+        column_hormone (str): name of column for hormone measurement
+        threshold_deficiency (float): low threshold, concentrations below which
+            qualify as deficiency
+        table (object): Pandas data frame of phenotype variables across UK
+            Biobank cohort
+
+    raises:
+
+    returns:
+
+    """
+
+    # Report.
+    utility.print_terminal_partition(level=2)
+    print("variable: " + str(variable))
+    utility.print_terminal_partition(level=2)
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+
+    # Females.
+    table_female = table.loc[
+        (
+            (table["gender"] == "Female")
+        ), :
+    ]
+    table_male = table.loc[
+        (
+            (table["gender"] == "Male")
+        ), :
+    ]
+
+
+    # Counts.
+    count_female = int(table_female.shape[0])
+    count_male = int(table_male.shape[0])
+    # Quantitation.
+    array_female = copy.deepcopy(table_female[variable].dropna().to_numpy())
+    array_male = copy.deepcopy(table_male[variable].dropna().to_numpy())
+    arrays = [array_female, array_male]
+    for array in arrays:
+        mean = numpy.nanmean(array)
+        standard_error = scipy.stats.sem(array)
+        interval_95 = (1.96 * standard_error)
+        confidence_95_low = (mean - interval_95)
+        confidence_95_high = (mean + interval_95)
+        median = numpy.nanmedian(array)
+        standard_deviation = numpy.nanstd(array)
+        minimum = numpy.nanmin(array)
+        maximum = numpy.nanmax(array)
+        # Report.
+        utility.print_terminal_partition(level=4)
+        print("mean: " + str(round(mean, 3)))
+        print("standard error: " + str(round(standard_error, 3)))
+        print(
+            "95% CI: " + str(
+                str(round(confidence_95_low, 3)) + " ... " +
+                str(round(confidence_95_high, 3))
+            )
+        )
+    pass
+
+
+
+
 ##########
 # Write
 
@@ -512,8 +587,19 @@ def execute_procedure(
         report=True,
     )
 
-
-
+    hormones = [
+        "estradiol_pmol_l",
+        "estradiol_bioavailable_pmol_l",
+        "estradiol_free_pmol_l",
+        "testosterone_pmol_l",
+        "testosterone_bioavailable_pmol_l",
+        "testosterone_free_pmol_l",
+    ]
+    for hormone in hormones:
+        report_hormone_by_female_male(
+            variable=hormone,
+            table=table,
+        )
     pass
 
 
