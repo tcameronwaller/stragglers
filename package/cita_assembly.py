@@ -46,6 +46,7 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
+import uk_biobank.organization as ukb_org
 import promiscuity.utility as utility
 #import promiscuity.plot as plot
 
@@ -159,6 +160,175 @@ def read_source(
 # Main driver
 
 
+def convert_biochemical_concentration_units_moles_per_liter(
+    table=None,
+    factors_concentration=None,
+):
+    """
+    Converts biochemical concentrations to units of moles per liter (mol/L).
+
+    Molar Mass, Molecular Weight
+    Species     ...     Molar Mass     ...     Reference
+    estradiol           272.4 g/mol            PubChem
+    testosterone        288.4 g/mol            PubChem
+    SHBG
+    albumin             69,367 g/mol           UniProt
+    albumin             66,500 g/mol           Drug Bank
+    - use 66.5 kDa molar mass for albumin (anticipate post-translational
+    - - cleavage)
+
+    Metric Prefixes
+    (https://www.nist.gov/pml/weights-and-measures/metric-si-prefixes)
+    Prefix     ...     Abbreviation     ...     Factor
+    deci               d                        1E-1
+    centi              c                        1E-2
+    milli              m                        1E-3
+    micro              u                        1E-6
+    nano               n                        1E-9
+    pico               p                        1E-12
+
+    arguments:
+        table (object): Pandas data frame table of phenotype variables
+        factors_concentration (dict<float>): factors by which to multiply
+            concentrations for convenience of storage and analysis
+
+    raises:
+
+    returns:
+        (object): Pandas data frame table of phenotype variables
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Convert concentrations to units of moles per liter (mol/L).
+    # Estradiol
+    # original unit: pg / mL
+    # final unit: pmol / L
+    table["estradiol_pmol_l"] = table.apply(
+        lambda row: float(
+            (row["e2_"]) * (1E-12) * (1 / 272.4) * (1 / 1E-3)
+            * factors_concentration["oestradiol"]
+        ),
+        axis="columns", # apply function to each row
+    )
+    # Testosterone
+    # original unit: ng / dL
+    # final unit: pmol / L
+    table["testosterone_pmol_l"] = table.apply(
+        lambda row: float(
+            (row["testost"]) * (1E-9) * (1 / 288.4) * (1 / 1E-1)
+            * factors_concentration["testosterone"]
+        ),
+        axis="columns", # apply function to each row
+    )
+    # Sex-Steroid Hormone Binding Globulin (SHBG)
+    # original unit: nmol / L
+    # final unit: nmol / L
+    table["shbg_nmol_l"] = table.apply(
+        lambda row: float(
+            (row["shbg_"]) * (1E-9)
+            * factors_concentration["steroid_globulin"]
+        ),
+        axis="columns", # apply function to each row
+    )
+    # Albumin
+    # original unit: g / dL
+    # final unit: umol / L
+    table["albumin_umol_l"] = table.apply(
+        lambda row: float(
+            (row["albumin_"]) * (1 / 66500.0) * (1 / 1E-1)
+            * factors_concentration["albumin"]
+        ),
+        axis="columns", # apply function to each row
+    )
+    # Return information.
+    return table
+
+
+def drive_calculation_estimate_bioavailable_free_hormones(
+    factors_concentration=None,
+    table=None,
+    report=None,
+):
+    """
+    Organizes calculation estimates of bioavailable and free concentrations
+    of testosterone and oestradiol.
+
+    arguments:
+        factors_concentration (dict<float>): factors by which to multiply
+            concentrations for the sake of float storage and analysis
+        table (object): Pandas data frame table of phenotype variables
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame table of phenotype variables
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Define association constants for calculation of free hormones.
+    # units: L/mol
+    associations = dict()
+    associations["shbg_test"] = 5.97E8 #
+    associations["shbg_oest"] = 3.14E8 #
+    associations["albumin_test"] = 4.06E4 #
+    associations["albumin_oest"] = 4.21E4 #
+    # Measurements.
+    # Calculate estimation of free and bioavailable testosterone.
+    table["testosterone_free_pmol_l"] = table.apply(
+        lambda row:
+            ukb_org.calculate_estimation_free_testosterone(
+                testosterone=row["testosterone_pmol_l"],
+                albumin=row["albumin_umol_l"],
+                steroid_globulin=row["shbg_nmol_l"],
+                factors_concentration=factors_concentration,
+                associations=associations,
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["testosterone_bioavailable_pmol_l"] = table.apply(
+        lambda row:
+            ukb_org.calculate_estimation_bioavailable_testosterone(
+                testosterone_free=row["testosterone_free_pmol_l"],
+                albumin=row["albumin_umol_l"],
+                factors_concentration=factors_concentration,
+                associations=associations,
+            ),
+        axis="columns", # apply function to each row
+    )
+    # Calculate estimation of free, bioavailable oestradiol.
+    table["estradiol_free_pmol_l"] = table.apply(
+        lambda row:
+            ukb_org.calculate_estimation_free_oestradiol(
+                oestradiol=row["estradiol_pmol_l"],
+                testosterone_free=row["testosterone_free_pmol_l"],
+                albumin=row["albumin_umol_l"],
+                steroid_globulin=row["shbg_nmol_l"],
+                factors_concentration=factors_concentration,
+                associations=associations,
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["estradiol_bioavailable_pmol_l"] = table.apply(
+        lambda row:
+            ukb_org.calculate_estimation_bioavailable_oestradiol(
+                oestradiol=row["estradiol_pmol_l"],
+                oestradiol_free=row["estradiol_free_pmol_l"],
+                testosterone_free=row["testosterone_free_pmol_l"],
+                steroid_globulin=row["shbg_nmol_l"],
+                factors_concentration=factors_concentration,
+                associations=associations,
+            ),
+        axis="columns", # apply function to each row
+    )
+    # Return information.
+    return table
+
+
 def drive_estimate_bioavailable_free_estradiol_testosterone(
     table=None,
     report=None,
@@ -205,19 +375,18 @@ def drive_estimate_bioavailable_free_estradiol_testosterone(
     factors_concentration["testosterone_bioavailable"] = 1E12 # 1 pmol / L
     factors_concentration["steroid_globulin"] = 1E9 # 1 nmol / L
     factors_concentration["albumin"] = 1E6 # 1 umol / L
-    table = convert_hormone_concentration_units_moles_per_liter(
+    table = convert_biochemical_concentration_units_moles_per_liter(
         table=table,
         factors_concentration=factors_concentration,
     )
 
     ##########
     # Calculate estimates of bioavailable and free hormones.
-    table = organize_calculation_estimate_bioavailable_free_hormones(
+    table = drive_calculation_estimate_bioavailable_free_hormones(
         factors_concentration=factors_concentration,
         table=table,
         report=report,
     )
-
 
     # Return information.
     return table
