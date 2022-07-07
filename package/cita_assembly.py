@@ -392,8 +392,7 @@ def drive_estimate_bioavailable_free_estradiol_testosterone(
     return table
 
 
-# review: TCW on 20 January January 2022
-def report_hormone_deficiency_by_sex_menopause_age(
+def report_hormone_by_female_male(
     variable=None,
     table=None,
 ):
