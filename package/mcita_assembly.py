@@ -142,7 +142,7 @@ def read_source(
         "AUDhormone_analysis.csv"
     )
     path_table_parameter_scores = os.path.join(
-        path_dock, "parameters", "bipolar_biobank",
+        path_dock, "parameters", "stragglers",
         "polygenic_scores", "table_cita_biobank.tsv"
     )
     # Read information from file.
