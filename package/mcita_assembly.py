@@ -672,7 +672,7 @@ def execute_procedure(
     # Organize table of phenotypes.
     # "plasma_sampleid", "External_Participant_Id"
     table_phenotypes = organize_table_column_identifier(
-        column_source="plasma_sampleid",
+        column_source="External_Participant_Id",
         column_target="identifier_genotype",
         table=source["table_phenotypes"],
         report=True,
