@@ -64,7 +64,7 @@ import networkx
 import promiscuity.utility as utility
 import promiscuity.regression as pro_reg
 import promiscuity.decomposition as decomp
-import bipolar_biobank.stratification as bpd_strat # problem when executing uk_biobank not as sub-directory...
+import stragglers.mbpdb_stratification as bpd_strat # problem when executing uk_biobank not as sub-directory...
 
 ###############################################################################
 # Functionality

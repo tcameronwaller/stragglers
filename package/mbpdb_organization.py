@@ -46,7 +46,7 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
-import bipolar_biobank.stratification as bpd_strat
+import stragglers.mbpdb_stratification as bpd_strat
 import promiscuity.utility as utility
 #import promiscuity.plot as plot
 
