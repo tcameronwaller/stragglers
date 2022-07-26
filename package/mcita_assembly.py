@@ -169,6 +169,64 @@ def read_source(
 
 
 ##########
+# Organize separate tables before merge
+
+
+def organize_table_column_identifier(
+    column_source=None,
+    column_target=None,
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        column_source (str): name of original column for identifier
+        column_target (str): name of novel column to which to copy identifier
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Convert all identifiers to type string.
+    table[column_source] = table[column_source].astype("string")
+    # Replace any empty identifier strings with missing values.
+    table[column_source].replace(
+        "",
+        numpy.nan,
+        inplace=True,
+    )
+    # Remove any records with missing identifiers.
+    table.dropna(
+        axis="index", # drop rows with missing values in columns
+        how="any",
+        subset=[column_source,],
+        inplace=True,
+    )
+    # Convert identifiers to type string.
+    table[column_source] = table[column_source].astype("string")
+    table[column_target] = table[column_source].astype("string").copy(deep=True)
+    # Remove columns.
+    #table.drop(
+    #    labels=["bib_id"],
+    #    axis="columns",
+    #    inplace=True
+    #)
+    # Return information.
+    return table
+
+
+
+
+##########
 # Organize phenotype variables
 
 #    # Convert column types to float.
@@ -180,6 +238,9 @@ def read_source(
 #        columns=columns_type,
 #        table=table,
 #    )
+
+
+
 
 
 
@@ -608,6 +669,23 @@ def execute_procedure(
         filter_inclusion=True,
         report=True,
     )
+    # Organize table of phenotypes.
+    # "plasma_sampleid", "External_Participant_Id"
+    table_phenotypes = organize_table_column_identifier(
+        column_source="plasma_sampleid",
+        column_target="identifier_genotype",
+        table=source["table_phenotypes"],
+        report=True,
+    )
+    # Merge polygenic scores with information on phenotypes.
+    table = utility.merge_tables_supplements_to_main(
+        identifier_main="identifier_genotype",
+        identifier_supplement="identifier_genotype",
+        table_main=table_phenotypes,
+        tables_supplements=tables_polygenic_scores,
+        report=True,
+    )
+    # TODO: drop redundant columns
 
 
 

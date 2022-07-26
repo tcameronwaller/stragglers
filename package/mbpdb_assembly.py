@@ -48,7 +48,7 @@ import statsmodels.multivariate.pca
 # Custom
 import promiscuity.utility as utility
 import promiscuity.polygenic_score as pgs
-#import promiscuity.plot as plot
+import stragglers.mcita_assembly
 
 ###############################################################################
 # Functionality
@@ -200,9 +200,6 @@ def read_source(
     }
 
 
-
-
-
 ##########
 # Organize separate tables before merge
 
@@ -316,54 +313,6 @@ def organize_table_phenotype_genotype_identifiers(
     return table
 
 
-def organize_table_phenotypes(
-    table=None,
-    report=None,
-):
-    """
-    Organizes table of information about phenotypes.
-
-    arguments:
-        table (object): Pandas data frame of information about phenotypes
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information about phenotypes
-
-    """
-
-    # Copy information in table.
-    table = table.copy(deep=True)
-    # Convert all identifiers to type string.
-    table["bib_id"] = table["bib_id"].astype("string")
-    # Replace any empty identifier strings with missing values.
-    table["bib_id"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    # Remove any records with missing identifiers.
-    table.dropna(
-        axis="index", # drop rows with missing values in columns
-        how="any",
-        subset=["bib_id",],
-        inplace=True,
-    )
-    # Convert identifiers to type string.
-    table["bib_id"] = table["bib_id"].astype("string")
-    table["identifier_phenotype"] = table["bib_id"].astype("string")
-    # Remove columns.
-    table.drop(
-        labels=["bib_id"],
-        axis="columns",
-        inplace=True
-    )
-    # Return information.
-    return table
-
-
 def organize_table_genetic_sex_case(
     table=None,
     report=None,
@@ -415,7 +364,10 @@ def organize_table_genetic_sex_case(
 
 
 ##########
-# Merge polygenic scores to phenotypes
+# Merge information on phenotypes
+
+
+# TODO: split up this function... some of this function is specific to the Bipolar Biobank... joining phenotypes, identifiers, etc...
 
 
 def merge_polygenic_scores_to_phenotypes(
@@ -708,8 +660,6 @@ def write_product(
     pass
 
 
-
-
 ###############################################################################
 # Procedure
 
@@ -763,24 +713,36 @@ def execute_procedure(
         report=True,
     )
     # Organize table of phenotypes.
-    table_phenotypes = organize_table_phenotypes(
-        table=source["table_phenotypes"],
-        report=True,
-    )
+    table_phenotypes = (
+        stragglers.mcita_assembly.organize_table_column_identifier(
+            column_source="bib_id",
+            column_target="identifier_phenotype",
+            table=source["table_phenotypes"],
+            report=True,
+    ))
     # Organize table of genetic sex (from PLINK2 file in ".fam" format).
     # https://www.cog-genomics.org/plink/2.0/formats#fam
     table_genetic_sex_case = organize_table_genetic_sex_case(
         table=source["table_genetic_sex_case"],
         report=True,
     )
-    # Mege polygenic scores with information on phenotypes.
-    table = merge_polygenic_scores_to_phenotypes(
+    # Merge together information about phenotypes.
+    table_phenotypes_merge = merge_phenotype_variables_identifiers(
         table_identifiers=table_identifiers,
         table_phenotypes=table_phenotypes,
         table_genetic_sex_case=table_genetic_sex_case,
-        tables_scores=tables_polygenic_scores,
         report=True,
     )
+
+    # Merge polygenic scores with information on phenotypes.
+    table = utility.merge_tables_supplements_to_main(
+        identifier_main="identifier_genotype",
+        identifier_supplement="identifier_genotype",
+        table_main=table_phenotypes_merge,
+        tables_supplements=tables_polygenic_scores,
+        report=True,
+    )
+    # TODO: drop redundant columns
 
     # Collect information.
     pail_write = dict()
