@@ -49,9 +49,26 @@ import statsmodels.multivariate.pca
 import uk_biobank.organization as ukb_org
 import promiscuity.utility as utility
 #import promiscuity.plot as plot
+import assembly
 
 ###############################################################################
 # Functionality
+
+# TODO: 1. I need an "access" script for the CITA data set components
+# TODO: 1.1. collect and organize paths to A. phenotypes B. polygenic scores
+
+
+
+# TODO: Read in the Polygenic Scores (PGS) like I did for the Bipolar Biobank.
+# TODO:
+#    # Read and organize tables of polygenic scores.
+#    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+#        table_scores_parameters=source["table_scores_parameters"],
+#        filter_inclusion=True,
+#        report=True,
+#    )
+
+
 
 
 ##########
@@ -124,7 +141,15 @@ def read_source(
         path_dock, "access", "mayo_cita_phenotypes",
         "AUDhormone_analysis.csv"
     )
+    path_table_parameter_scores = os.path.join(
+        path_dock, "parameters", "bipolar_biobank",
+        "polygenic_scores", "table_cita_biobank.tsv"
+    )
     # Read information from file.
+    table_parameter_scores = pgs.read_source_collection_polygenic_scores(
+        path_table=path_table_parameter_scores,
+        report=report,
+    )
     table_phenotypes = pandas.read_csv(
         path_table_phenotypes,
         sep=",",
@@ -136,9 +161,10 @@ def read_source(
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
-    # Return information.
+    # Collect and return information.
     return {
         "table_phenotypes": table_phenotypes,
+        "table_parameter_scores": table_parameter_scores,
     }
 
 
@@ -572,33 +598,43 @@ def execute_procedure(
         path_dock=path_dock,
     )
     # Read source information from file.
-    # Exclusion identifiers are "eid".
     source = read_source(
         path_dock=path_dock,
         report=True,
     )
-
-    print(source["table_phenotypes"])
-
-    # Calculate estimates of bioavailable and free estradiol and testosterone.
-    table = drive_estimate_bioavailable_free_estradiol_testosterone(
-        table=source["table_phenotypes"],
+    # Read and organize tables of polygenic scores.
+    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+        table_parameter_scores=source["table_parameter_scores"],
+        filter_inclusion=True,
         report=True,
     )
 
-    hormones = [
-        "estradiol_pmol_l",
-        "estradiol_bioavailable_pmol_l",
-        "estradiol_free_pmol_l",
-        "testosterone_pmol_l",
-        "testosterone_bioavailable_pmol_l",
-        "testosterone_free_pmol_l",
-    ]
-    for hormone in hormones:
-        report_hormone_by_female_male(
-            variable=hormone,
-            table=table,
+
+
+
+    if False:
+        # This material belongs in "cita_organization" procedure.
+        print(source["table_phenotypes"])
+
+        # Calculate estimates of bioavailable and free estradiol and testosterone.
+        table = drive_estimate_bioavailable_free_estradiol_testosterone(
+            table=source["table_phenotypes"],
+            report=True,
         )
+
+        hormones = [
+            "estradiol_pmol_l",
+            "estradiol_bioavailable_pmol_l",
+            "estradiol_free_pmol_l",
+            "testosterone_pmol_l",
+            "testosterone_bioavailable_pmol_l",
+            "testosterone_free_pmol_l",
+        ]
+        for hormone in hormones:
+            report_hormone_by_female_male(
+                variable=hormone,
+                table=table,
+            )
     pass
 
 
