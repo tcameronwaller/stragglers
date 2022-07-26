@@ -50,9 +50,9 @@ import textwrap
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
 import stragglers.mbpdb_regression
-import stragglers.cita_assembly
-#import stragglers.cita_organization
-#import stragglers.cita_regression
+import stragglers.mcita_assembly
+#import stragglers.mcita_organization
+#import stragglers.mcita_regression
 
 #dir()
 #importlib.reload()
@@ -139,7 +139,7 @@ def define_subparser_main(subparsers=None):
         )
     )
     parser.add_argument(
-        "-cita_assembly", "--cita_assembly", dest="cita_assembly",
+        "-mcita_assembly", "--mcita_assembly", dest="mcita_assembly",
         action="store_true",
         help=(
             "Assemble information."
