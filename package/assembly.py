@@ -47,7 +47,7 @@ import statsmodels.multivariate.pca
 
 # Custom
 import promiscuity.utility as utility
-import promiscuity.polygenic_scores as pgs
+import promiscuity.polygenic_score as pgs
 #import promiscuity.plot as plot
 
 ###############################################################################
