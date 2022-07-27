@@ -44,7 +44,7 @@ mkdir -p $path_directory_access
 ################################################################################
 # Copy files to persistence directory.
 
-if true; then
+if false; then
   cp $path_file_identifier_control_source $path_file_identifier_control_persistence
   cp $path_file_identifier_case_source $path_file_identifier_case_persistence
 fi
