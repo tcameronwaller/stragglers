@@ -261,7 +261,7 @@ def organize_table_column_identifier(
     return table
 
 
-def simplify_table_columns(
+def reduce_table_columns(
     columns_keep=None,
     table=None,
     report=None,
@@ -317,7 +317,7 @@ def simplify_translate_table_columns_organize_identifier(
 
     """
 
-    table = simplify_table_columns(
+    table = reduce_table_columns(
         columns_keep=columns_keep,
         table=table,
         report=report,
@@ -808,12 +808,12 @@ def execute_procedure(
     ))
 
     print("identifiers for cases...")
-    print(source["table_identifiers_case"])
+    print(table_identifiers_case)
     print("...")
     print("...")
     print("...")
     print("identifiers for controls...")
-    print(source["table_identifiers_control"])
+    print(table_identifiers_control)
 
 
     # Merge with phenotype variables the genotype identifiers for cases.
