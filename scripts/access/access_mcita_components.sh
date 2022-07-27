@@ -30,7 +30,7 @@ path_file_identifier_control_persistence="${path_directory_persistence}/Clin_gen
 path_file_identifier_case_persistence="${path_directory_persistence}/CITAcaseIID_to_SubjIden.txt"
 path_file_phenotype_product="${path_directory_access}/table_phenotype.csv"
 path_file_identifier_control_product="${path_directory_access}/table_identifier_control.csv"
-path_file_identifier_case_product="${path_directory_access}/table_identifier_case.tsv"
+path_file_identifier_case_product="${path_directory_access}/table_identifier_case.txt"
 
 # Echo each command to console.
 set -x

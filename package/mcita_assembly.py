@@ -147,7 +147,7 @@ def read_source(
     )
     path_table_identifiers_case = os.path.join(
         path_dock, "access", "mayo_cita",
-        "table_identifier_case.tsv"
+        "table_identifier_case.txt"
     )
     path_table_identifiers_control = os.path.join(
         path_dock, "access", "mayo_cita",
@@ -174,7 +174,7 @@ def read_source(
 
     table_identifiers_case = pandas.read_csv(
         path_table_identifiers_case,
-        sep="\t", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        sep="\s+", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype="string",
     )
