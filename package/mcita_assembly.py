@@ -137,22 +137,32 @@ def read_source(
     """
 
     # Specify directories and files.
-    path_table_phenotypes = os.path.join(
-        path_dock, "access", "mayo_cita_phenotypes",
-        "AUDhormone_analysis.csv"
-    )
     path_table_parameter_scores = os.path.join(
         path_dock, "parameters", "stragglers",
         "polygenic_scores", "table_cita_biobank.tsv"
     )
+    path_table_phenotypes = os.path.join(
+        path_dock, "access", "mayo_cita",
+        "table_phenotype.csv"
+    )
+    path_table_identifiers_case = os.path.join(
+        path_dock, "access", "mayo_cita",
+        "table_identifier_case.tsv"
+    )
+    path_table_identifiers_control = os.path.join(
+        path_dock, "access", "mayo_cita",
+        "table_identifier_control.csv"
+    )
+
     # Read information from file.
     table_parameter_scores = pgs.read_source_collection_polygenic_scores(
         path_table=path_table_parameter_scores,
         report=report,
     )
+
     table_phenotypes = pandas.read_csv(
         path_table_phenotypes,
-        sep=",",
+        sep=",", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype="string",
     )
@@ -161,10 +171,37 @@ def read_source(
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
+
+    table_identifiers_case = pandas.read_csv(
+        path_table_identifiers_case,
+        sep="\t", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        header=0,
+        dtype="string",
+    )
+    table_identifiers_case.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
+
+    table_identifiers_control = pandas.read_csv(
+        path_table_identifiers_control,
+        sep=",", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
+        header=0,
+        dtype="string",
+    )
+    table_identifiers_control.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
+
     # Collect and return information.
     return {
-        "table_phenotypes": table_phenotypes,
         "table_parameter_scores": table_parameter_scores,
+        "table_phenotypes": table_phenotypes,
+        "table_identifiers_case": table_identifiers_case,
+        "table_identifiers_control": table_identifiers_control,
     }
 
 
@@ -663,29 +700,34 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
-    # Read and organize tables of polygenic scores.
-    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
-        table_parameter_scores=source["table_parameter_scores"],
-        filter_inclusion=True,
-        report=True,
-    )
-    # Organize table of phenotypes.
-    # "clinic_or_btogid" (1525 rows), "plasma_sampleid" (1528 rows), "External_Participant_Id" (1528 rows)
-    table_phenotypes = organize_table_column_identifier(
-        column_source="plasma_sampleid",
-        column_target="identifier_genotype",
-        table=source["table_phenotypes"],
-        report=True,
-    )
-    # Merge polygenic scores with information on phenotypes.
-    table = utility.merge_tables_supplements_to_main(
-        identifier_main="identifier_genotype",
-        identifier_supplement="identifier_genotype",
-        table_main=table_phenotypes,
-        tables_supplements=tables_polygenic_scores,
-        report=True,
-    )
-    # TODO: drop redundant columns
+
+    print(source["table_identifiers_case"])
+
+    if False:
+
+        # Read and organize tables of polygenic scores.
+        tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+            table_parameter_scores=source["table_parameter_scores"],
+            filter_inclusion=True,
+            report=True,
+        )
+        # Organize table of phenotypes.
+        # "clinic_or_btogid" (1525 rows), "plasma_sampleid" (1528 rows), "External_Participant_Id" (1528 rows)
+        table_phenotypes = organize_table_column_identifier(
+            column_source="plasma_sampleid",
+            column_target="identifier_genotype",
+            table=source["table_phenotypes"],
+            report=True,
+        )
+        # Merge polygenic scores with information on phenotypes.
+        table = utility.merge_tables_supplements_to_main(
+            identifier_main="identifier_genotype",
+            identifier_supplement="identifier_genotype",
+            table_main=table_phenotypes,
+            tables_supplements=tables_polygenic_scores,
+            report=True,
+        )
+        # TODO: drop redundant columns
 
 
 
