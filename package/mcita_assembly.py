@@ -211,7 +211,7 @@ def read_source(
 
 def organize_table_column_identifier(
     column_source=None,
-    column_target=None,
+    column_product=None,
     table=None,
     report=None,
 ):
@@ -220,7 +220,7 @@ def organize_table_column_identifier(
 
     arguments:
         column_source (str): name of original column for identifier
-        column_target (str): name of novel column to which to copy identifier
+        column_product (str): name of novel column to which to copy identifier
         table (object): Pandas data frame of information about phenotypes
         report (bool): whether to print reports
 
@@ -250,7 +250,7 @@ def organize_table_column_identifier(
     )
     # Convert identifiers to type string.
     table[column_source] = table[column_source].astype("string")
-    table[column_target] = table[column_source].astype("string").copy(deep=True)
+    table[column_product] = table[column_source].astype("string").copy(deep=True)
     # Remove columns.
     #table.drop(
     #    labels=["bib_id"],
@@ -259,6 +259,82 @@ def organize_table_column_identifier(
     #)
     # Return information.
     return table
+
+
+def simplify_table_columns(
+    columns_keep=None,
+    table=None,
+    report=None,
+):
+    """
+    Simplifies or filters the columns in a table.
+
+    arguments:
+        columns_keep (list<str>): names of columns to keep in table
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Filter columns in table.
+    table = table.loc[
+        :, table.columns.isin(columns_keep)
+    ]
+    # Return information.
+    return table
+
+
+def simplify_translate_table_columns_organize_identifier(
+    columns_keep=None,
+    columns_translations=None,
+    identifier_source=None,
+    identifier_product=None,
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        columns_keep (list<str>): names of columns to keep in table
+        columns_translations (dict<str>): translation names for columns
+        identifier_source (str): name of original column for identifier
+        identifier_product (str): name of novel column to which to copy identifier
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    table = simplify_table_columns(
+        columns_keep=columns_keep,
+        table=table,
+        report=report,
+    )
+    table.rename(
+        columns=columns_translations,
+        inplace=True,
+    )
+    table = organize_table_column_identifier(
+        column_source=identifier_source,
+        column_product=identifier_product,
+        table=table,
+        report=report,
+    )
+    # Return information.
+    return table
+
 
 
 
@@ -701,6 +777,36 @@ def execute_procedure(
         report=True,
     )
 
+    # Organize identifiers in tables before merges.
+    table_phenotypes = organize_table_column_identifier(
+        column_source="clinic_or_btogid",
+        column_product="identifier_phenotype",
+        table=source["table_phenotypes"],
+        report=True,
+    )
+    table_identifiers_case = (
+        simplify_translate_table_columns_organize_identifier(
+            columns_keep=["Sample.ID", "ClinicNum",],
+            columns_translations={
+                "Sample.ID": "identifier_genotype_case",
+            },
+            identifier_source="ClinicNum",
+            identifier_product="identifier_phenotype",
+            table=source["table_identifiers_case"],
+            report=True,
+    ))
+    table_identifiers_control = (
+        simplify_translate_table_columns_organize_identifier(
+            columns_keep=["control_btogid", "DNA_sampleid",],
+            columns_translations={
+                "DNA_sampleid": "identifier_genotype_control",
+            },
+            identifier_source="control_btogid",
+            identifier_product="identifier_phenotype",
+            table=source["table_identifiers_control"],
+            report=True,
+    ))
+
     print("identifiers for cases...")
     print(source["table_identifiers_case"])
     print("...")
@@ -708,28 +814,6 @@ def execute_procedure(
     print("...")
     print("identifiers for controls...")
     print(source["table_identifiers_control"])
-
-    # Organize identifiers in tables before merges.
-    table_phenotypes = organize_table_column_identifier(
-        column_source="clinic_or_btogid",
-        column_target="identifier_phenotype",
-        table=source["table_phenotypes"],
-        report=True,
-    )
-    table_identifiers_case = organize_table_column_identifier(
-        column_source="ClinicNum",
-        column_target="identifier_phenotype",
-        table=source["table_identifiers_case"],
-        report=True,
-    )
-
-    if False:
-        table_identifiers_control = organize_table_column_identifier(
-            column_source="ClinicNum",
-            column_target="identifier_phenotype",
-            table=source["table_identifiers_case"],
-            report=True,
-        )
 
 
     # Merge with phenotype variables the genotype identifiers for cases.
