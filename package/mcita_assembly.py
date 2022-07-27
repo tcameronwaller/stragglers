@@ -701,24 +701,44 @@ def execute_procedure(
         report=True,
     )
 
+    print("identifiers for cases...")
     print(source["table_identifiers_case"])
+    print("...")
+    print("...")
+    print("...")
+    print("identifiers for controls...")
+    print(source["table_identifiers_control"])
+
+    # Organize identifiers in tables before merges.
+    table_phenotypes = organize_table_column_identifier(
+        column_source="clinic_or_btogid",
+        column_target="identifier_phenotype",
+        table=source["table_phenotypes"],
+        report=True,
+    )
+    table_identifiers_case = organize_table_column_identifier(
+        column_source="ClinicNum",
+        column_target="identifier_phenotype",
+        table=source["table_identifiers_case"],
+        report=True,
+    )
+
+    if False:
+        table_identifiers_control = organize_table_column_identifier(
+            column_source="ClinicNum",
+            column_target="identifier_phenotype",
+            table=source["table_identifiers_case"],
+            report=True,
+        )
+
+
+    # Merge with phenotype variables the genotype identifiers for cases.
+
+
+    # Merge with phenotype variables the genotype identifiers for controls.
 
     if False:
 
-        # Read and organize tables of polygenic scores.
-        tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
-            table_parameter_scores=source["table_parameter_scores"],
-            filter_inclusion=True,
-            report=True,
-        )
-        # Organize table of phenotypes.
-        # "clinic_or_btogid" (1525 rows), "plasma_sampleid" (1528 rows), "External_Participant_Id" (1528 rows)
-        table_phenotypes = organize_table_column_identifier(
-            column_source="plasma_sampleid",
-            column_target="identifier_genotype",
-            table=source["table_phenotypes"],
-            report=True,
-        )
         # Merge polygenic scores with information on phenotypes.
         table = utility.merge_tables_supplements_to_main(
             identifier_main="identifier_genotype",
@@ -733,6 +753,14 @@ def execute_procedure(
 
 
     if False:
+
+        # Read and organize tables of polygenic scores.
+        tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+            table_parameter_scores=source["table_parameter_scores"],
+            filter_inclusion=True,
+            report=True,
+        )
+
         # This material belongs in "cita_organization" procedure.
         print(source["table_phenotypes"])
 
