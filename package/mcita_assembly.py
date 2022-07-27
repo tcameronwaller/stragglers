@@ -670,7 +670,7 @@ def execute_procedure(
         report=True,
     )
     # Organize table of phenotypes.
-    # "clinic_or_btogid" (1525 rows), "plasma_sampleid", "External_Participant_Id" (1528 rows)
+    # "clinic_or_btogid" (1525 rows), "plasma_sampleid" (1528 rows), "External_Participant_Id" (1528 rows)
     table_phenotypes = organize_table_column_identifier(
         column_source="plasma_sampleid",
         column_target="identifier_genotype",
