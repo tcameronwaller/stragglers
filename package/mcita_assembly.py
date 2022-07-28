@@ -709,12 +709,11 @@ def report_hormone_by_female_male(
 
 
 
-
 ##########
 # Write
 
 
-def write_product_bipolar_assembly(
+def write_product_assembly(
     pail_write=None,
     path_directory=None,
 ):
@@ -770,9 +769,9 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_bipolar_assembly(
-        pail_write=pail_write["bipolar_assembly"],
-        path_directory=paths["bipolar_assembly"],
+    write_product_assembly(
+        pail_write=pail_write["mcita_assembly"],
+        path_directory=paths["mcita_assembly"],
     )
     pass
 
@@ -781,6 +780,10 @@ def write_product(
 
 ###############################################################################
 # Procedure
+
+# TODO: TCW; 28 July 2022
+# TODO: organize some of the behavior within nice functions.
+
 
 # TODO: TCW; 06 July 2022
 # TODO: 1. convert measurement variables to float32
@@ -982,7 +985,15 @@ def execute_procedure(
     print(table.columns.to_list())
 
 
-    # paths["mcita_assembly"]
+    # Collect information.
+    pail_write = dict()
+    pail_write["mcita_assembly"] = dict()
+    pail_write["mcita_assembly"]["table_phenotypes"] = table
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
 
 
 
