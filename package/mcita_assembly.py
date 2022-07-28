@@ -831,6 +831,12 @@ def execute_procedure(
         table_second=table_identifiers_control,
         report=True,
     )
+    # Remove unnecessary columns from transformations on tables.
+    table.drop(
+        labels=["index_x", "index_y",],
+        axis="columns",
+        inplace=True
+    )
 
     print("...")
     print("...")
