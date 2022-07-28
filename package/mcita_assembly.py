@@ -807,6 +807,8 @@ def execute_procedure(
             report=True,
     ))
 
+    print("phenotype table before merges...")
+    print(table_phenotypes)
     print("identifiers for cases...")
     print(table_identifiers_case)
     print("...")
@@ -838,6 +840,13 @@ def execute_procedure(
         inplace=True
     )
 
+    # Temporary...
+    table = reduce_table_columns(
+        columns_keep=["identifier_phenotype", "identifier_genotype_case", "identifier_genotype_control",],
+        table=table,
+        report=True,
+    )
+
     # Combine and organize genotype identifiers for cases and controls.
     table["identifier_genotype_case"] = (
         table["identifier_genotype_case"].astype("string")
@@ -846,23 +855,15 @@ def execute_procedure(
         table["identifier_genotype_control"].astype("string")
     )
     table["identifier_genotype_case"].replace(
-        "<NA>",
+        numpy.nan,
         "",
         inplace=True,
     )
     table["identifier_genotype_control"].replace(
-        "<NA>",
+        numpy.nan,
         "",
         inplace=True,
     )
-
-    # Temporary...
-    table = reduce_table_columns(
-        columns_keep=["identifier_phenotype", "identifier_genotype_case", "identifier_genotype_control",],
-        table=table,
-        report=True,
-    )
-
 
 
     print("...")
