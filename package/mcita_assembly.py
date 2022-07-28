@@ -884,10 +884,18 @@ def execute_procedure(
         axis="columns",
         inplace=True
     )
-
-    # Temporary...
+    # Select relevant columns for phenotype variables.
     table = reduce_table_columns(
-        columns_keep=["identifier_phenotype", "identifier_genotype_case", "identifier_genotype_control",],
+        columns_keep=[
+            "clinic_or_btogid",
+            "identifier_phenotype",
+            "identifier_genotype_case", "identifier_genotype_control",
+            "gender", "male", "age", "bmi", "race", "menopause", "bc", "case",
+            "Albumin", "e1", "e2", "fsh", "lh", "Progesterone", "shbg",
+            "Testosterone", "e2_", "e1_", "shbg_", "fsh_", "progest", "testost",
+            "luteinizing", "albumin_",
+            "log_e1", "log_e2", "log_fsh",
+        ],
         table=table,
         report=True,
     )
@@ -917,6 +925,12 @@ def execute_procedure(
                 value_spare=row["identifier_genotype_case"],
             ),
         axis="columns", # apply function to each row
+    )
+    # Remove unnecessary columns from transformations on tables.
+    table.drop(
+        labels=["identifier_genotype_case", "identifier_genotype_control",],
+        axis="columns",
+        inplace=True
     )
 
     table = organize_table_column_identifier(
@@ -950,7 +964,7 @@ def execute_procedure(
     )
     # Remove unnecessary columns from transformations on tables.
     table.drop(
-        labels=["index_x", "index_y",],
+        labels=["index_x", "index_y", "index",],
         axis="columns",
         inplace=True
     )
