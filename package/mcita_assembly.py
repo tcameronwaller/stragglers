@@ -98,13 +98,13 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["cita_assembly"] = os.path.join(path_dock, "cita_assembly")
+    paths["mcita_assembly"] = os.path.join(path_dock, "mcita_assembly")
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["cita_assembly"])
+        utility.remove_directory(path=paths["mcita_assembly"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["cita_assembly"]
+        path=paths["mcita_assembly"]
     )
     # Return information.
     return paths
@@ -948,12 +948,21 @@ def execute_procedure(
         tables_supplements=tables_polygenic_scores,
         report=True,
     )
+    # Remove unnecessary columns from transformations on tables.
+    #table.drop(
+    #    labels=["index_x", "index_y",],
+    #    axis="columns",
+    #    inplace=True
+    #)
 
     print("...")
     print("...")
     print("...")
     print("table after merges with PGS...")
     print(table)
+
+
+    # paths["mcita_assembly"]
 
 
 
