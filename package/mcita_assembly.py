@@ -839,11 +839,12 @@ def execute_procedure(
             table=source["table_identifiers_case"],
             report=True,
     ))
+    # "RLIMS_Id", "External_Participant_Id", "genotype_dna_sampleid", "DNA_sampleid", "plasma_sampleid", "Sample_ID", "SubjectIden"
     table_identifiers_control = (
         simplify_translate_table_columns_organize_identifier(
-            columns_keep=["control_btogid", "DNA_sampleid",],
+            columns_keep=["control_btogid", "genotype_dna_sampleid",],
             columns_translations={
-                "DNA_sampleid": "identifier_genotype_control",
+                "genotype_dna_sampleid": "identifier_genotype_control",
             },
             identifier_source="control_btogid",
             identifier_product="identifier_phenotype",
