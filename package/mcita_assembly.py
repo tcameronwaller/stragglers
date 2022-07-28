@@ -838,11 +838,30 @@ def execute_procedure(
         inplace=True
     )
 
+    # Combine and organize genotype identifiers for cases and controls.
+    table["identifier_genotype_case"] = (
+        table["identifier_genotype_case"].astype("string")
+    )
+    table["identifier_genotype_control"] = (
+        table["identifier_genotype_control"].astype("string")
+    )
+    table["identifier_genotype_case"].replace(
+        "<NA>",
+        "",
+        inplace=True,
+    )
+    table["identifier_genotype_control"].replace(
+        "<NA>",
+        "",
+        inplace=True,
+    )
+
     print("...")
     print("...")
     print("...")
     print("table after merge...")
     print(table)
+
 
 
     if False:
