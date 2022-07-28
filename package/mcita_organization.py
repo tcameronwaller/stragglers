@@ -592,13 +592,38 @@ def execute_procedure(
 
     print(source["table_phenotypes"])
 
-    records_stratification = mcita_stratification.stratify_phenotype_cohorts(
+    # Convert values within relevant columns to type float.
+    table = utility.convert_table_columns_variables_types_float(
+        columns=["testost", "shbg_",],
         table=source["table_phenotypes"],
+    )
+    # Stratify cohorts.
+    records_stratification = mcita_stratification.stratify_phenotype_cohorts(
+        table=table,
         report=True,
     )
     utility.report_stratification_cohort_record_table_sizes(
         records=records_stratification,
     )
+    entries_stratification = (
+        utility.organize_dictionary_entries_stratification_cohorts(
+            records=records_stratification,
+    ))
+    # Calculate and report correlations between variables within cohorts.
+    utility.calculate_table_column_pair_correlations(
+        column_one="testost",
+        column_two="pgs_testosterone_female",
+        table=entries_stratification["female"]["table"],
+        report=True,
+    )
+    utility.calculate_table_column_pair_correlations(
+        column_one="testost",
+        column_two="pgs_testosterone_male",
+        table=entries_stratification["male"]["table"],
+        report=True,
+    )
+
+
 
     if False:
 
