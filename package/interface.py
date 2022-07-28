@@ -51,7 +51,7 @@ import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
 import stragglers.mbpdb_regression
 import stragglers.mcita_assembly
-#import stragglers.mcita_organization
+import stragglers.mcita_organization
 #import stragglers.mcita_regression
 
 #dir()
@@ -99,6 +99,20 @@ def define_subparser_main(subparsers=None):
         )
     )
     parser.add_argument(
+        "-mcita_assembly", "--mcita_assembly", dest="mcita_assembly",
+        action="store_true",
+        help=(
+            "Assemble information."
+        )
+    )
+    parser.add_argument(
+        "-mcita_organization", "--mcita_organization",
+        dest="mcita_organization", action="store_true",
+        help=(
+            "Organize information."
+        )
+    )
+    parser.add_argument(
         "-mbpdb_assembly", "--mbpdb_assembly", dest="mbpdb_assembly",
         action="store_true",
         help=(
@@ -136,13 +150,6 @@ def define_subparser_main(subparsers=None):
         action="store_true",
         help=(
             "Regress phenotypes within cohorts."
-        )
-    )
-    parser.add_argument(
-        "-mcita_assembly", "--mcita_assembly", dest="mcita_assembly",
-        action="store_true",
-        help=(
-            "Assemble information."
         )
     )
     # Define behavior.
@@ -223,6 +230,20 @@ def evaluate_parameters_main(arguments):
     print("--------------------------------------------------")
     print("... call to main routine ...")
     # Execute procedure.
+    if arguments.mcita_assembly:
+        # Report status.
+        print("... executing 'mcita_assembly' procedure ...")
+        # Execute procedure.
+        stragglers.mcita_assembly.execute_procedure(
+            path_dock=arguments.path_dock
+        )
+    if arguments.mcita_organization:
+        # Report status.
+        print("... executing 'mcita_organization' procedure ...")
+        # Execute procedure.
+        stragglers.mcita_organization.execute_procedure(
+            path_dock=arguments.path_dock
+        )
     if arguments.mbpdb_assembly:
         # Report status.
         print("... executing 'mbpdb_assembly' procedure ...")
@@ -256,13 +277,6 @@ def evaluate_parameters_main(arguments):
         print("... executing 'mbpdb_regression' procedure ...")
         # Execute procedure.
         stragglers.mbpdb_regression.execute_procedure(
-            path_dock=arguments.path_dock
-        )
-    if arguments.mcita_assembly:
-        # Report status.
-        print("... executing 'mcita_assembly' procedure ...")
-        # Execute procedure.
-        stragglers.mcita_assembly.execute_procedure(
             path_dock=arguments.path_dock
         )
     pass
