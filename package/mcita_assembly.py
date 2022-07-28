@@ -139,7 +139,7 @@ def read_source(
     # Specify directories and files.
     path_table_parameter_scores = os.path.join(
         path_dock, "parameters", "stragglers",
-        "polygenic_scores", "table_cita_biobank.tsv"
+        "polygenic_scores", "table_mayo_cita.tsv"
     )
     path_table_phenotypes = os.path.join(
         path_dock, "access", "mayo_cita",
