@@ -815,16 +815,34 @@ def execute_procedure(
     print("identifiers for controls...")
     print(table_identifiers_control)
 
-
     # Merge with phenotype variables the genotype identifiers for cases.
-
-
+    table = utility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table_phenotypes,
+        table_second=table_identifiers_case,
+        report=True,
+    )
     # Merge with phenotype variables the genotype identifiers for controls.
+    table = utility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table,
+        table_second=table_identifiers_control,
+        report=True,
+    )
+
+    print("...")
+    print("...")
+    print("...")
+    print("table after merge...")
+    print(table)
+
 
     if False:
 
         # Merge polygenic scores with information on phenotypes.
-        table = utility.merge_tables_supplements_to_main(
+        table = utility.merge_columns_tables_supplements_to_main(
             identifier_main="identifier_genotype",
             identifier_supplement="identifier_genotype",
             table_main=table_phenotypes,
