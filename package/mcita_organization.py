@@ -590,6 +590,14 @@ def execute_procedure(
 
     print(source["table_phenotypes"])
 
+    records_stratification = mcita_stratification.stratify_phenotype_cohorts(
+        table=source["table_phenotypes"],
+        report=True,
+    )
+    utility.report_stratification_cohort_record_table_sizes(
+        records=records_stratification,
+    )
+
     if False:
 
         # Collect information.
