@@ -949,17 +949,23 @@ def execute_procedure(
         report=True,
     )
     # Remove unnecessary columns from transformations on tables.
-    #table.drop(
-    #    labels=["index_x", "index_y",],
-    #    axis="columns",
-    #    inplace=True
-    #)
+    table.drop(
+        labels=["index_x", "index_y",],
+        axis="columns",
+        inplace=True
+    )
 
     print("...")
     print("...")
     print("...")
     print("table after merges with PGS...")
     print(table)
+
+    utility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table.shape[1])))
+    print("table rows: " + str(int(table.shape[0])))
+    print("columns")
+    print(table.columns.to_list())
 
 
     # paths["mcita_assembly"]
