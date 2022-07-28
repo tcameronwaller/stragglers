@@ -49,7 +49,9 @@ import statsmodels.multivariate.pca
 import promiscuity.utility as utility
 import promiscuity.polygenic_score as pgs
 import uk_biobank.organization as ukb_org
-import stragglers.mcita_stratification
+import stragglers.mcita_stratification as mcita_stratification
+
+
 
 ###############################################################################
 # Functionality
