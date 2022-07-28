@@ -856,6 +856,15 @@ def execute_procedure(
         inplace=True,
     )
 
+    # Temporary...
+    table = reduce_table_columns(
+        columns_keep=["identifier_phenotype", "identifier_genotype_case", "identifier_genotype_control",],
+        table=table,
+        report=True,
+    )
+
+
+
     print("...")
     print("...")
     print("...")
