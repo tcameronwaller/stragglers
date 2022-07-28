@@ -918,6 +918,14 @@ def execute_procedure(
         axis="columns", # apply function to each row
     )
 
+    table = organize_table_column_identifier(
+        column_source="identifier_genotype",
+        column_product="identifier_genotype",
+        table=table,
+        report=True,
+    )
+
+
     print("...")
     print("...")
     print("...")
