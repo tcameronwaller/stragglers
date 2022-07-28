@@ -932,6 +932,13 @@ def execute_procedure(
     print("table after merge...")
     print(table)
 
+    # Read and organize tables of polygenic scores.
+    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+        table_parameter_scores=source["table_parameter_scores"],
+        filter_inclusion=True,
+        report=True,
+    )
+
     # Merge polygenic scores with information on phenotypes.
     table = utility.merge_columns_tables_supplements_to_main(
         identifier_main="identifier_genotype",
@@ -950,13 +957,6 @@ def execute_procedure(
 
 
     if False:
-
-        # Read and organize tables of polygenic scores.
-        tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
-            table_parameter_scores=source["table_parameter_scores"],
-            filter_inclusion=True,
-            report=True,
-        )
 
         # This material belongs in "cita_organization" procedure.
         print(source["table_phenotypes"])
