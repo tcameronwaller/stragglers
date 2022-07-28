@@ -46,10 +46,10 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
-import uk_biobank.organization as ukb_org
 import promiscuity.utility as utility
 import promiscuity.polygenic_score as pgs
-#import promiscuity.plot as plot
+import uk_biobank.organization as ukb_org
+import stragglers.mcita_stratification
 
 ###############################################################################
 # Functionality
