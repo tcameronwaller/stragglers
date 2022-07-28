@@ -932,20 +932,20 @@ def execute_procedure(
     print("table after merge...")
     print(table)
 
+    # Merge polygenic scores with information on phenotypes.
+    table = utility.merge_columns_tables_supplements_to_main(
+        identifier_main="identifier_genotype",
+        identifier_supplement="identifier_genotype",
+        table_main=table,
+        tables_supplements=tables_polygenic_scores,
+        report=True,
+    )
 
-
-    if False:
-
-        # Merge polygenic scores with information on phenotypes.
-        table = utility.merge_columns_tables_supplements_to_main(
-            identifier_main="identifier_genotype",
-            identifier_supplement="identifier_genotype",
-            table_main=table_phenotypes,
-            tables_supplements=tables_polygenic_scores,
-            report=True,
-        )
-        # TODO: drop redundant columns
-
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges with PGS...")
+    print(table)
 
 
 
