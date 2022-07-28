@@ -622,6 +622,18 @@ def execute_procedure(
         table=entries_stratification["male"]["table"],
         report=True,
     )
+    utility.calculate_table_column_pair_correlations(
+        column_one="shbg_",
+        column_two="pgs_steroid_globulin_female",
+        table=entries_stratification["female"]["table"],
+        report=True,
+    )
+    utility.calculate_table_column_pair_correlations(
+        column_one="shbg_",
+        column_two="pgs_steroid_globulin_male",
+        table=entries_stratification["male"]["table"],
+        report=True,
+    )
 
 
 
