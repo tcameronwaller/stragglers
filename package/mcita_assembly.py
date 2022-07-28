@@ -337,6 +337,50 @@ def simplify_translate_table_columns_organize_identifier(
 
 
 
+##########
+# Genotype identifiers
+
+
+def prioritize_combination_values(
+    value_priority=None,
+    value_spare=None,
+):
+    """
+    Determines the combination or consensus value between a clear priority and
+    spare.
+
+    arguments:
+        value_priority (str): priority value
+        value_spare (str): spare value that is only relevant if the priority
+            value is missing
+
+    raises:
+
+    returns:
+        (str): choice value
+
+    """
+
+    # Determine identifier of priority genotype.
+    if (
+        (not pandas.isna(value_priority)) and
+        (len(str(value_priority)) > 0)
+    ):
+        # Priority value is not missing.
+        choice = str(copy.deepcopy(value_priority))
+    elif (
+        (not pandas.isna(value_spare)) and
+        (len(str(value_spare)) > 0)
+    ):
+        # Priority value is missing.
+        # Spare value is not missing.
+        choice = str(copy.deepcopy(value_spare))
+        pass
+    else:
+        # There is not a value available.
+        choice = ""
+    # Return information.
+    return choice
 
 
 ##########
@@ -864,7 +908,15 @@ def execute_procedure(
         "",
         inplace=True,
     )
-
+    # Determine consensus combination of identifiers for genotypes.
+    table["identifier_genotype"] = table.apply(
+        lambda row:
+            prioritize_combination_values(
+                value_priority=row["identifier_genotype_control"],
+                value_spare=row["identifier_genotype_case"],
+            ),
+        axis="columns", # apply function to each row
+    )
 
     print("...")
     print("...")

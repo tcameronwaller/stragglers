@@ -204,54 +204,6 @@ def read_source(
 # Organize separate tables before merge
 
 
-def prioritize_genotype_identifiers(
-    genotype_identifier_priority=None,
-    genotype_identifier_spare=None,
-):
-    """
-    Determines the identifier for a priority genotype record.
-
-    arguments:
-        genotype_identifier_priority (str): identifier for a priority genotype
-        genotype_identifier_spare (str): identifier for a spare genotype
-
-    raises:
-
-    returns:
-        (str): identifier for priority genotype
-
-    """
-
-    # Determine identifier of priority genotype.
-    if (
-        (not pandas.isna(genotype_identifier_priority)) and
-        (len(str(genotype_identifier_priority)) > 0)
-    ):
-        # Identifier for priority genotype record is not missing.
-        # Priority genotype record comes from a primary, priority set or
-        # batch of genotypes.
-        genotype_priority = str(
-            copy.deepcopy(genotype_identifier_priority)
-        )
-    elif (
-        (not pandas.isna(genotype_identifier_spare)) and
-        (len(str(genotype_identifier_spare)) > 0)
-    ):
-        # Identifier for spare genotype record is not missing.
-        # Spare genotype record comes from a secondary, not priority set or
-        # batch of genotypes.
-        genotype_priority = str(
-            copy.deepcopy(genotype_identifier_spare)
-        )
-        pass
-    else:
-        # There is not a genotype record available to match the phenotype
-        # record.
-        genotype_priority = ""
-    # Return information.
-    return genotype_priority
-
-
 def organize_table_phenotype_genotype_identifiers(
     table=None,
     report=None,
