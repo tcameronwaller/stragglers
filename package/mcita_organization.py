@@ -291,275 +291,6 @@ def organize_table_measurement_score_correlations(
     return table
 
 
-
-
-
-def back_up_organize_table_measurement_score_correlations(
-    table=None,
-    report=None,
-):
-    """
-    Organizes table of correlations between variables within stratification
-    cohorts.
-
-    It would be practical to derive from this function a new function of more
-    general utility.
-    Pass a parameter that is a list of dictionaries (records) with details for
-    each desired correlation comparison.
-
-    arguments:
-        table (object): Pandas data frame of information about phenotypes
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information about correlations
-
-    """
-
-    # Stratify cohorts and organize records and entries.
-    records_cohorts = mcita_stratification.stratify_phenotype_cohorts(
-        table=table,
-        report=report,
-    )
-    entries_cohorts = (
-        utility.organize_dictionary_entries_stratification_cohorts(
-            records=records_cohorts,
-    ))
-    # Report.
-    if report:
-        utility.report_stratification_cohort_record_table_sizes(
-            records=records_cohorts,
-        )
-
-    # Collect records of information about correlations between variables within
-    # cohorts.
-    records = list()
-
-    # Calculate and report correlations between variables within cohorts.
-
-    # cohort: CITA Females.
-
-    record = dict()
-    record["cohort"] = "female"
-    record["measurement"] = "Testosterone"
-    record["polygenic_score"] = "pgs_testosterone_female"
-    pail = utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    record.update(pail)
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female"
-    record["measurement"] = "testost"
-    record["polygenic_score"] = "pgs_testosterone_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female"
-    record["measurement"] = "shbg"
-    record["polygenic_score"] = "pgs_steroid_globulin_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female"
-    record["measurement"] = "shbg_"
-    record["polygenic_score"] = "pgs_steroid_globulin_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    # cohort: CITA Males.
-
-    record = dict()
-    record["cohort"] = "male"
-    record["measurement"] = "Testosterone"
-    record["polygenic_score"] = "pgs_testosterone_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male"
-    record["measurement"] = "testost"
-    record["polygenic_score"] = "pgs_testosterone_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male"
-    record["measurement"] = "shbg"
-    record["polygenic_score"] = "pgs_steroid_globulin_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male"
-    record["measurement"] = "shbg_"
-    record["polygenic_score"] = "pgs_steroid_globulin_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    # cohort: CITA Females Controls.
-
-    record = dict()
-    record["cohort"] = "female_alcoholism_control"
-    record["measurement"] = "Testosterone"
-    record["polygenic_score"] = "pgs_testosterone_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female_alcoholism_control"
-    record["measurement"] = "testost"
-    record["polygenic_score"] = "pgs_testosterone_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female_alcoholism_control"
-    record["measurement"] = "shbg"
-    record["polygenic_score"] = "pgs_steroid_globulin_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "female_alcoholism_control"
-    record["measurement"] = "shbg_"
-    record["polygenic_score"] = "pgs_steroid_globulin_female"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    # cohort: CITA Males Controls.
-
-    record = dict()
-    record["cohort"] = "male_alcoholism_control"
-    record["measurement"] = "Testosterone"
-    record["polygenic_score"] = "pgs_testosterone_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male_alcoholism_control"
-    record["measurement"] = "testost"
-    record["polygenic_score"] = "pgs_testosterone_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male_alcoholism_control"
-    record["measurement"] = "shbg"
-    record["polygenic_score"] = "pgs_steroid_globulin_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    record = dict()
-    record["cohort"] = "male_alcoholism_control"
-    record["measurement"] = "shbg_"
-    record["polygenic_score"] = "pgs_steroid_globulin_male"
-    utility.calculate_table_column_pair_correlations(
-        column_one=record["measurement"],
-        column_two=record["polygenic_score"],
-        table=entries_cohorts[record["cohort"]]["table"],
-        report=True,
-    )
-    records.append(record)
-
-    # Organize table.
-    table = pandas.DataFrame(data=records)
-    # Select columns.
-    # columns.insert(0, dependence)
-    columns = [
-        "cohort",
-        "measurement", "polygenic_score",
-        "pairs",
-        "correlation_pearson", "probability_pearson",
-        "correlation_spearman", "probability_spearman",
-        "correlation_kendall", "probability_kendall",
-    ]
-    table = table.loc[:, table.columns.isin(columns)]
-    # Sort columns.
-    table = table[[*columns]]
-    # Return information.
-    return table
-
-
-
 ##########
 # Organize phenotype variables
 
@@ -572,9 +303,6 @@ def back_up_organize_table_measurement_score_correlations(
 #        columns=columns_type,
 #        table=table,
 #    )
-
-
-
 
 
 
@@ -890,7 +618,7 @@ def report_hormone_by_female_male(
 # Write
 
 
-def write_product_assembly(
+def write_product_organization(
     pail_write=None,
     path_directory=None,
 ):
@@ -914,12 +642,21 @@ def write_product_assembly(
     path_table_phenotypes_text = os.path.join(
         path_directory, "table_phenotypes.tsv"
     )
+    path_table_correlations_text = os.path.join(
+        path_directory, "table_correlations_measurement_score.tsv"
+    )
     # Write information to file.
     pail_write["table_phenotypes"].to_pickle(
         path_table_phenotypes
     )
     pail_write["table_phenotypes"].to_csv(
         path_or_buf=path_table_phenotypes_text,
+        sep="\t",
+        header=True,
+        index=False, # include index in table
+    )
+    pail_write["table_correlations"].to_csv(
+        path_or_buf=path_table_correlations_text,
         sep="\t",
         header=True,
         index=False, # include index in table
@@ -946,9 +683,9 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_assembly(
-        pail_write=pail_write["mcita_assembly"],
-        path_directory=paths["mcita_assembly"],
+    write_product_organization(
+        pail_write=pail_write["mcita_organization"],
+        path_directory=paths["mcita_organization"],
     )
     pass
 
@@ -997,8 +734,6 @@ def execute_procedure(
         report=True,
     )
 
-    print(source["table_phenotypes"])
-
     # Convert values within relevant columns to type float.
     table = utility.convert_table_columns_variables_types_float(
         columns=["Testosterone", "testost", "shbg", "shbg_",],
@@ -1011,23 +746,17 @@ def execute_procedure(
         table=table,
         report=True,
     )
-    print(table_correlations)
-
-
-
-
-    if False:
-
-        # Collect information.
-        pail_write = dict()
-        pail_write["mcita_assembly"] = dict()
-        pail_write["mcita_assembly"]["table_phenotypes"] = table
-        # Write product information to file.
-        write_product(
-            pail_write=pail_write,
-            paths=paths,
-        )
-        pass
+    # Collect information.
+    pail_write = dict()
+    pail_write["mcita_organization"] = dict()
+    pail_write["mcita_organization"]["table_phenotypes"] = table
+    pail_write["mcita_organization"]["table_correlations"] = table_correlations
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
+    pass
 
     if False:
 
