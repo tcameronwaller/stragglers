@@ -195,6 +195,143 @@ def organize_table_measurement_score_correlations(
         utility.report_stratification_cohort_record_table_sizes(
             records=records_cohorts,
         )
+    # Organize information for correlation comparisons.
+    records_comparisons = [
+        {
+            "cohort": "female",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female",
+            "one": "testost",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
+            "cohort": "female",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "testost",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
+            "cohort": "male",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male",
+            "one": "testost",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_male",
+        },
+        {
+            "cohort": "male",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_male",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "testost",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_male",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_male",
+        },
+    ]
+
+    # Calculate correlations.
+    table = utility.drive_calculate_table_column_pair_correlations(
+        entries_cohorts=entries_cohorts,
+        name_one="measurement",
+        name_two="polygenic_score",
+        records_comparisons=records_comparisons,
+        report=report,
+    )
+    # Return information.
+    return table
+
+
+
+
+
+def back_up_organize_table_measurement_score_correlations(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of correlations between variables within stratification
+    cohorts.
+
+    It would be practical to derive from this function a new function of more
+    general utility.
+    Pass a parameter that is a list of dictionaries (records) with details for
+    each desired correlation comparison.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about correlations
+
+    """
+
+    # Stratify cohorts and organize records and entries.
+    records_cohorts = mcita_stratification.stratify_phenotype_cohorts(
+        table=table,
+        report=report,
+    )
+    entries_cohorts = (
+        utility.organize_dictionary_entries_stratification_cohorts(
+            records=records_cohorts,
+    ))
+    # Report.
+    if report:
+        utility.report_stratification_cohort_record_table_sizes(
+            records=records_cohorts,
+        )
 
     # Collect records of information about correlations between variables within
     # cohorts.
@@ -208,12 +345,13 @@ def organize_table_measurement_score_correlations(
     record["cohort"] = "female"
     record["measurement"] = "Testosterone"
     record["polygenic_score"] = "pgs_testosterone_female"
-    utility.calculate_table_column_pair_correlations(
+    pail = utility.calculate_table_column_pair_correlations(
         column_one=record["measurement"],
         column_two=record["polygenic_score"],
         table=entries_cohorts[record["cohort"]]["table"],
         report=True,
     )
+    record.update(pail)
     records.append(record)
 
     record = dict()
