@@ -218,6 +218,26 @@ def organize_table_measurement_score_correlations(
             "two": "pgs_steroid_globulin_female",
         },
         {
+            "cohort": "female_alcoholism_case",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "testost",
+            "two": "pgs_testosterone_female",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_female",
+        },
+        {
             "cohort": "female_alcoholism_control",
             "one": "Testosterone",
             "two": "pgs_testosterone_female",
@@ -254,6 +274,26 @@ def organize_table_measurement_score_correlations(
         },
         {
             "cohort": "male",
+            "one": "shbg_",
+            "two": "pgs_steroid_globulin_male",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "Testosterone",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "testost",
+            "two": "pgs_testosterone_male",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "shbg",
+            "two": "pgs_steroid_globulin_male",
+        },
+        {
+            "cohort": "male_alcoholism_case",
             "one": "shbg_",
             "two": "pgs_steroid_globulin_male",
         },
