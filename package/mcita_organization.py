@@ -303,7 +303,7 @@ def drive_calculation_estimate_bioavailable_free_hormones(
     table["estradiol_free_pmol_l"] = table.apply(
         lambda row:
             ukb_org.calculate_estimation_free_oestradiol(
-                estradiol=row["estradiol_pmol_l"],
+                oestradiol=row["estradiol_pmol_l"],
                 testosterone_free=row["testosterone_free_pmol_l"],
                 albumin=row["albumin_umol_l"],
                 steroid_globulin=row["shbg_nmol_l"],
@@ -315,8 +315,8 @@ def drive_calculation_estimate_bioavailable_free_hormones(
     table["estradiol_bioavailable_pmol_l"] = table.apply(
         lambda row:
             ukb_org.calculate_estimation_bioavailable_oestradiol(
-                estradiol=row["estradiol_pmol_l"],
-                estradiol_free=row["estradiol_free_pmol_l"],
+                oestradiol=row["estradiol_pmol_l"],
+                oestradiol_free=row["estradiol_free_pmol_l"],
                 testosterone_free=row["testosterone_free_pmol_l"],
                 steroid_globulin=row["shbg_nmol_l"],
                 factors_concentration=factors_concentration,
