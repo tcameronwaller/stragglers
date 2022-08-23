@@ -730,17 +730,17 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "male",
             "one": "e2_",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_adjust",
         },
         {
             "cohort": "male",
@@ -791,17 +791,17 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "male_alcoholism_case",
             "one": "e2_",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male_alcoholism_case",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male_alcoholism_case",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_adjust",
         },
         {
             "cohort": "male_alcoholism_case",
@@ -852,17 +852,17 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "male_alcoholism_control",
             "one": "e2_",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male_alcoholism_control",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_unadjust",
         },
         {
             "cohort": "male_alcoholism_control",
             "one": "estradiol_pmol_l",
-            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+            "two": "tcw_ukb_estradiol_detection_male_age_low_adjust",
         },
         {
             "cohort": "male_alcoholism_control",
