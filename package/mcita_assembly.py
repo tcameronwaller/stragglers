@@ -469,14 +469,6 @@ def write_product(
 ###############################################################################
 # Procedure
 
-# TODO: TCW; 28 July 2022
-# TODO: organize some of the behavior within nice functions.
-
-
-# TODO: TCW; 06 July 2022
-# TODO: 1. convert measurement variables to float32
-# TODO: 2. convert measurement variables to units of molarity (moles / liter)
-# TODO: 3. call the functions from "uk_biobank.organization" to estimate bioavailable and free testosterone and estradiol
 
 def execute_procedure(
     path_dock=None,
