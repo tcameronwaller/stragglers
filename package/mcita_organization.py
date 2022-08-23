@@ -536,127 +536,50 @@ def organize_table_measurement_score_correlations(
             records=records_cohorts,
         )
     # Organize information for correlation comparisons.
+    # "female", "female_alcoholism_case", "female_alcoholism_control",
+    # "male", "male_alcoholism_case", "male_alcoholism_control",
     records_comparisons = [
         {
             "cohort": "female",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_female",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_adjust",
         },
         {
             "cohort": "female",
             "one": "testost",
-            "two": "pgs_testosterone_female",
+            "two": "tcw_ukb_testosterone_female_premenopause_adjust",
         },
         {
             "cohort": "female",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_female",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_adjust",
         },
         {
             "cohort": "female",
             "one": "shbg_",
-            "two": "pgs_steroid_globulin_female",
+            "two": "tcw_ukb_shbg_female_premenopause_adjust",
         },
         {
-            "cohort": "female_alcoholism_case",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_female",
+            "cohort": "female",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_adjust",
         },
         {
-            "cohort": "female_alcoholism_case",
-            "one": "testost",
-            "two": "pgs_testosterone_female",
+            "cohort": "female",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_female_premenopause_adjust",
         },
         {
-            "cohort": "female_alcoholism_case",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_female",
+            "cohort": "female",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_adjust",
         },
-        {
-            "cohort": "female_alcoholism_case",
-            "one": "shbg_",
-            "two": "pgs_steroid_globulin_female",
-        },
-        {
-            "cohort": "female_alcoholism_control",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_female",
-        },
-        {
-            "cohort": "female_alcoholism_control",
-            "one": "testost",
-            "two": "pgs_testosterone_female",
-        },
-        {
-            "cohort": "female_alcoholism_control",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_female",
-        },
-        {
-            "cohort": "female_alcoholism_control",
-            "one": "shbg_",
-            "two": "pgs_steroid_globulin_female",
-        },
-        {
-            "cohort": "male",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male",
-            "one": "testost",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_male",
-        },
-        {
-            "cohort": "male",
-            "one": "shbg_",
-            "two": "pgs_steroid_globulin_male",
-        },
-        {
-            "cohort": "male_alcoholism_case",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male_alcoholism_case",
-            "one": "testost",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male_alcoholism_case",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_male",
-        },
-        {
-            "cohort": "male_alcoholism_case",
-            "one": "shbg_",
-            "two": "pgs_steroid_globulin_male",
-        },
-        {
-            "cohort": "male_alcoholism_control",
-            "one": "Testosterone",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male_alcoholism_control",
-            "one": "testost",
-            "two": "pgs_testosterone_male",
-        },
-        {
-            "cohort": "male_alcoholism_control",
-            "one": "shbg",
-            "two": "pgs_steroid_globulin_male",
-        },
-        {
-            "cohort": "male_alcoholism_control",
-            "one": "shbg_",
-            "two": "pgs_steroid_globulin_male",
-        },
+
     ]
 
     # Calculate correlations.
