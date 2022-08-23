@@ -496,6 +496,10 @@ def drive_estimate_bioavailable_free_estradiol_testosterone(
 ##########
 # Correlations between measurements and polygenic scores
 
+# TODO: TCW; 23 August 2022
+# TODO: include correlations for alcoholism_case and alcoholism_control cohorts
+# TODO: also try PGS from "unadjust" GWAS models
+
 
 def organize_table_measurement_score_correlations(
     table=None,
@@ -539,10 +543,16 @@ def organize_table_measurement_score_correlations(
     # "female", "female_alcoholism_case", "female_alcoholism_control",
     # "male", "male_alcoholism_case", "male_alcoholism_control",
     records_comparisons = [
+        # cohort: female
         {
             "cohort": "female",
             "one": "e2_",
-            "two": "tcw_ukb_estradiol_female_premenopause_adjust",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
         },
         {
             "cohort": "female",
@@ -552,7 +562,12 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "female",
             "one": "testost",
-            "two": "tcw_ukb_testosterone_female_premenopause_adjust",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
         },
         {
             "cohort": "female",
@@ -562,7 +577,12 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "female",
             "one": "shbg_",
-            "two": "tcw_ukb_shbg_female_premenopause_adjust",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
         },
         {
             "cohort": "female",
@@ -572,14 +592,323 @@ def organize_table_measurement_score_correlations(
         {
             "cohort": "female",
             "one": "albumin_",
-            "two": "tcw_ukb_albumin_female_premenopause_adjust",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
         },
         {
             "cohort": "female",
             "one": "albumin_umol_l",
             "two": "tcw_ukb_albumin_female_premenopause_adjust",
         },
-
+        # cohort: female_alcoholism_case
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "testost",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "shbg_",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_case",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_adjust",
+        },
+        # cohort: female_alcoholism_control
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "testost",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "shbg_",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female_alcoholism_control",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_female_premenopause_adjust",
+        },
+        # cohort: male
+        {
+            "cohort": "male",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+        },
+        {
+            "cohort": "male",
+            "one": "testost",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_adjust",
+        },
+        {
+            "cohort": "male",
+            "one": "shbg_",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_adjust",
+        },
+        {
+            "cohort": "male",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_adjust",
+        },
+        # cohort: male_alcoholism_case
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "testost",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "shbg_",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_case",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_adjust",
+        },
+        # cohort: male_alcoholism_control
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "e2_",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "testost",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "testosterone_pmol_l",
+            "two": "tcw_ukb_testosterone_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "shbg_",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "shbg_nmol_l",
+            "two": "tcw_ukb_shbg_male_age_low_adjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "albumin_",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_unadjust",
+        },
+        {
+            "cohort": "male_alcoholism_control",
+            "one": "albumin_umol_l",
+            "two": "tcw_ukb_albumin_male_age_low_adjust",
+        },
     ]
 
     # Calculate correlations.
