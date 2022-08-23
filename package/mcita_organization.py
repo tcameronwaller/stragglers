@@ -561,6 +561,36 @@ def organize_table_measurement_score_correlations(
         },
         {
             "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_perimenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_female_perimenopause_adjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_detection_female_premenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_detection_female_premenopause_adjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_detection_female_perimenopause_unadjust",
+        },
+        {
+            "cohort": "female",
+            "one": "estradiol_pmol_l",
+            "two": "tcw_ukb_estradiol_detection_female_perimenopause_adjust",
+        },
+        {
+            "cohort": "female",
             "one": "testost",
             "two": "tcw_ukb_testosterone_female_premenopause_unadjust",
         },
