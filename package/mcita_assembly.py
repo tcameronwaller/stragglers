@@ -249,8 +249,11 @@ def organize_table_column_identifier(
         inplace=True,
     )
     # Convert identifiers to type string.
+    # Copy identifiers.
     table[column_source] = table[column_source].astype("string")
-    table[column_product] = table[column_source].astype("string").copy(deep=True)
+    table[column_product] = table[column_source].astype("string").copy(
+        deep=True,
+    )
     # Remove columns.
     #table.drop(
     #    labels=["bib_id"],
@@ -294,6 +297,7 @@ def reduce_table_columns(
 def simplify_translate_table_columns_organize_identifier(
     columns_keep=None,
     columns_translations=None,
+    columns_copy=None,
     identifier_source=None,
     identifier_product=None,
     table=None,
@@ -305,6 +309,7 @@ def simplify_translate_table_columns_organize_identifier(
     arguments:
         columns_keep (list<str>): names of columns to keep in table
         columns_translations (dict<str>): translation names for columns
+        columns_copy (dict<str>): names of columns to copy
         identifier_source (str): name of original column for identifier
         identifier_product (str): name of novel column to which to copy identifier
         table (object): Pandas data frame of information about phenotypes
@@ -326,6 +331,8 @@ def simplify_translate_table_columns_organize_identifier(
         columns=columns_translations,
         inplace=True,
     )
+    for column_new in columns_copy.keys():
+        table[column_new] = table[columns_copy[column_new]].copy(deep=True)
     table = organize_table_column_identifier(
         column_source=identifier_source,
         column_product=identifier_product,
@@ -511,11 +518,14 @@ def execute_procedure(
         table=source["table_phenotypes"],
         report=True,
     )
+    # Convert identifiers to type string.
+    # Copy identifiers.
     table_identifiers_case = (
         simplify_translate_table_columns_organize_identifier(
             columns_keep=["Sample.ID", "ClinicNum",],
-            columns_translations={
-                "Sample.ID": "identifier_genotype_case",
+            columns_translations={},
+            columns_copy={
+                "identifier_genotype_case": "Sample.ID"
             },
             identifier_source="ClinicNum",
             identifier_product="identifier_phenotype",
@@ -526,8 +536,9 @@ def execute_procedure(
     table_identifiers_control = (
         simplify_translate_table_columns_organize_identifier(
             columns_keep=["control_btogid", "genotype_dna_sampleid",],
-            columns_translations={
-                "genotype_dna_sampleid": "identifier_genotype_control",
+            columns_translations={},
+            columns_copy={
+                "identifier_genotype_control": "genotype_dna_sampleid",
             },
             identifier_source="control_btogid",
             identifier_product="identifier_phenotype",
@@ -570,7 +581,8 @@ def execute_procedure(
     # Select relevant columns for phenotype variables.
     table = reduce_table_columns(
         columns_keep=[
-            "clinic_or_btogid",
+            "clinic_or_btogid", "Sample.ID", "ClinicNum",
+            "control_btogid", "genotype_dna_sampleid",
             "identifier_phenotype",
             "identifier_genotype_case", "identifier_genotype_control",
             "gender", "male", "age", "bmi", "race", "menopause", "bc", "case",

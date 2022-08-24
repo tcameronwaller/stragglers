@@ -157,6 +157,7 @@ def read_source(
 # Estimate bioavailable and free concentrations of Estradiol and Testosterone
 # review: TCW; 22 August 2022
 
+
 def convert_biochemical_concentration_units_moles_per_liter(
     table=None,
     factors_concentration=None,
@@ -495,10 +496,6 @@ def drive_estimate_bioavailable_free_estradiol_testosterone(
 
 ##########
 # Correlations between measurements and polygenic scores
-
-# TODO: TCW; 23 August 2022
-# TODO: include correlations for alcoholism_case and alcoholism_control cohorts
-# TODO: also try PGS from "unadjust" GWAS models
 
 
 def organize_table_measurement_score_correlations(
@@ -942,7 +939,7 @@ def organize_table_measurement_score_correlations(
     ]
 
     # Calculate correlations.
-    table = utility.drive_calculate_table_column_pair_correlations(
+    table_correlations = utility.drive_calculate_table_column_pair_correlations(
         entries_cohorts=entries_cohorts,
         name_one="measurement",
         name_two="polygenic_score",
@@ -950,7 +947,7 @@ def organize_table_measurement_score_correlations(
         report=report,
     )
     # Return information.
-    return table
+    return table_correlations
 
 
 ##########
