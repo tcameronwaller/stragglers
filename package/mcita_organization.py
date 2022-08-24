@@ -1092,6 +1092,19 @@ def execute_procedure(
         table=table,
         report=True,
     )
+
+    print("...")
+    print("...")
+    print("...")
+    print("table after bioavailable and free estimates...")
+    print(table)
+
+    utility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table.shape[1])))
+    print("table rows: " + str(int(table.shape[0])))
+    print("columns")
+    print(table.columns.to_list())
+
     # Collect information.
     pail_write = dict()
     pail_write["mcita_organization"] = dict()
