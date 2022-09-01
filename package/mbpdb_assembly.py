@@ -554,7 +554,7 @@ def execute_procedure(
     table_phenotypes = (
         s_mcita_ass.organize_table_column_identifier(
             column_source="bib_id",
-            column_target="identifier_phenotype",
+            column_product="identifier_phenotype",
             table=source["table_phenotypes"],
             report=True,
     ))
@@ -582,7 +582,7 @@ def execute_procedure(
     )
     table_identifiers = s_mcita_ass.organize_table_column_identifier(
             column_source="gwas_sampleid_consensus",
-            column_target="identifier_genotype",
+            column_product="identifier_genotype",
             table=table_identifiers,
             report=True,
     )
@@ -615,7 +615,7 @@ def execute_procedure(
     # status.
     table = s_mcita_ass.organize_table_column_identifier(
             column_source="identifier_genotype",
-            column_target="identifier_genotype",
+            column_product="identifier_genotype",
             table=table,
             report=True,
     )
