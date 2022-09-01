@@ -48,7 +48,7 @@ import statsmodels.multivariate.pca
 # Custom
 import promiscuity.utility as utility
 import promiscuity.polygenic_score as pgs
-import stragglers.mcita_assembly
+import stragglers.mcita_assembly as s_mcita_ass
 
 ###############################################################################
 # Functionality
@@ -206,116 +206,6 @@ def read_source(
 # Organize separate tables before merge
 
 
-def organize_table_phenotype_genotype_identifiers(
-    table=None,
-    report=None,
-):
-    """
-    Organizes table of identifiers for phenotype and genotype records.
-
-    arguments:
-        table (object): Pandas data frame of identifiers for matching phenotype
-            and genotype records
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of identifiers for matching phenotype and
-            genotype records
-
-    """
-
-    # Copy information in table.
-    table = table.copy(deep=True)
-    # Convert all identifiers to type string.
-    table["bib_id"] = table["bib_id"].astype("string")
-    table["gwas1_sampleid"] = table["gwas1_sampleid"].astype("string")
-    table["gwas2_sampleid"] = table["gwas2_sampleid"].astype("string")
-    # Prioritize identifiers from "GWAS1" set of genotypes.
-    table["identifier_genotype"] = table.apply(
-        lambda row:
-            prioritize_genotype_identifiers(
-                genotype_identifier_priority=row["gwas1_sampleid"],
-                genotype_identifier_spare=row["gwas2_sampleid"],
-            ),
-        axis="columns", # apply function to each row
-    )
-    # Replace any empty identifier strings with missing values.
-    table["bib_id"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    table["identifier_genotype"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    # Remove any records with missing identifiers.
-    table.dropna(
-        axis="index", # drop rows with missing values in columns
-        how="all",
-        subset=["bib_id", "identifier_genotype"],
-        inplace=True,
-    )
-    # Convert identifiers to type string.
-    table["bib_id"] = table["bib_id"].astype("string")
-    table["identifier_phenotype"] = table["bib_id"].astype("string")
-    table["identifier_genotype"] = table["identifier_genotype"].astype("string")
-    # Return information.
-    return table
-
-
-def organize_table_genetic_sex_case(
-    table=None,
-    report=None,
-):
-    """
-    Organizes table of information about phenotypes.
-
-    arguments:
-        table (object): Pandas data frame of information about phenotypes
-        report (bool): whether to print reports
-
-    raises:
-
-    returns:
-        (object): Pandas data frame of information about phenotypes
-
-    """
-
-    # Copy information in table.
-    table = table.copy(deep=True)
-    # Convert all identifiers to type string.
-    table["IID"] = table["IID"].astype("string")
-    # Replace any empty identifier strings with missing values.
-    table["IID"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    # Remove any records with missing identifiers.
-    table.dropna(
-        axis="index", # drop rows with missing values in columns
-        how="any",
-        subset=["IID",],
-        inplace=True,
-    )
-    # Convert identifiers to type string.
-    table["IID"] = table["IID"].astype("string")
-    table["identifier_genotype"] = table["IID"].astype("string")
-    # Remove the column for the genotype family identifier ("FID").
-    # Remove the columns for identifiers of parents.
-    # These identifiers are redundant and unnecessary.
-    table.drop(
-        labels=["FID", "IID", "father", "mother"],
-        axis="columns",
-        inplace=True
-    )
-    # Return information.
-    return table
-
 
 ##########
 # Merge information on phenotypes
@@ -323,7 +213,8 @@ def organize_table_genetic_sex_case(
 
 # TODO: split up this function... some of this function is specific to the Bipolar Biobank... joining phenotypes, identifiers, etc...
 
-
+# TODO: TCW; 01 September 2022
+# TODO: obsolete
 def merge_polygenic_scores_to_phenotypes(
     table_identifiers=None,
     table_phenotypes=None,
@@ -617,9 +508,6 @@ def write_product(
 ###############################################################################
 # Procedure
 
-# TODO: TCW; 13 June 2022
-# TODO: 1. I need to read in the ancestry and/or ethnicity ("European" or "Hispanic")
-
 
 def execute_procedure(
     path_dock=None,
@@ -654,6 +542,7 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
+
     # Read and organize tables of polygenic scores.
     tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
         table_parameter_scores=source["table_parameter_scores"],
@@ -661,51 +550,90 @@ def execute_procedure(
         report=True,
     )
 
-
-
-    # Organize table of identifiers for phenotypes and genotypes.
-    table_identifiers = organize_table_phenotype_genotype_identifiers(
-        table=source["table_identifiers"],
-        report=True,
-    )
     # Organize table of phenotypes.
     table_phenotypes = (
-        stragglers.mcita_assembly.organize_table_column_identifier(
+        s_mcita_ass.organize_table_column_identifier(
             column_source="bib_id",
             column_target="identifier_phenotype",
             table=source["table_phenotypes"],
             report=True,
     ))
+
+    # Organize table of identifiers.
+    # Determine consensus combination of identifiers for genotypes.
+    # Prioritize identifiers from "GWAS1" set of genotypes.
+    table_identifiers = (
+        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+            columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
+            columns_translations={},
+            columns_copy={},
+            identifier_source="bib_id",
+            identifier_product="identifier_phenotype",
+            table=source["table_identifiers"],
+            report=True,
+    ))
+    table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
+        lambda row:
+            stragglers.mcita_assembly.prioritize_combination_values(
+                value_priority=row["gwas1_sampleid"],
+                value_spare=row["gwas2_sampleid"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table_identifiers = s_mcita_ass.organize_table_column_identifier(
+            column_source="gwas_sampleid_consensus",
+            column_target="identifier_genotype",
+            table=table_identifiers,
+            report=True,
+    )
+
     # Organize table of genetic sex (from PLINK2 file in ".fam" format).
     # https://www.cog-genomics.org/plink/2.0/formats#fam
-    table_genetic_sex_case = organize_table_genetic_sex_case(
-        table=source["table_genetic_sex_case"],
+    table_genetic_sex_case = (
+        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+            columns_keep=[
+                "IID", "sex_genotype_raw", "bipolar_disorder_genotype_raw"
+            ],
+            columns_translations={},
+            columns_copy={},
+            identifier_source="IID",
+            identifier_product="identifier_genotype",
+            table=source["table_genetic_sex_case"],
+            report=True,
+    ))
+
+    # Merge table of phenotype variables with table of phenotype and genotype
+    # identifiers.
+    table = utility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table_phenotypes,
+        table_second=table_identifiers,
         report=True,
     )
-    # Merge together information about phenotypes.
-    table_phenotypes_merge = merge_phenotype_variables_identifiers(
-        table_identifiers=table_identifiers,
-        table_phenotypes=table_phenotypes,
-        table_genetic_sex_case=table_genetic_sex_case,
+    # Merge table of phenotype variables with table of genetic sex and case
+    # status.
+    table = s_mcita_ass.organize_table_column_identifier(
+            column_source="identifier_genotype",
+            column_target="identifier_genotype",
+            table=table,
+            report=True,
+    )
+    table = utility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table,
+        table_second=table_genetic_sex_case,
         report=True,
     )
-
-
-    ################Divider##################
-
-    table = table_phenotypes_merge.copy(deep=True)
-    # Merge polygenic scores with information on phenotypes.
-    table = utility.merge_tables_supplements_to_main(
-        identifier_main="identifier_genotype",
-        identifier_supplement="identifier_genotype",
-        table_main=table,
-        tables_supplements=tables_polygenic_scores,
-        report=True,
+    # Remove unnecessary columns from transformations on tables.
+    table.drop(
+        labels=["index_x", "index_y",],
+        axis="columns",
+        inplace=True
     )
-    # TODO: drop redundant columns
 
-
-    # Merge polygenic scores with information on phenotypes.
+    # Merge table of phenotype variables with tables of polygenic scores.
     table = utility.merge_columns_tables_supplements_to_main(
         identifier_main="identifier_genotype",
         identifier_supplement="identifier_genotype",
@@ -719,6 +647,7 @@ def execute_procedure(
         axis="columns",
         inplace=True
     )
+
     # Report.
     print("...")
     print("...")

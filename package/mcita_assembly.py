@@ -471,8 +471,6 @@ def write_product(
     pass
 
 
-
-
 ###############################################################################
 # Procedure
 
@@ -516,7 +514,6 @@ def execute_procedure(
         filter_inclusion=True,
         report=True,
     )
-
     # Organize identifiers in tables before merges.
     table_phenotypes = organize_table_column_identifier(
         column_source="clinic_or_btogid",
@@ -524,6 +521,7 @@ def execute_procedure(
         table=source["table_phenotypes"],
         report=True,
     )
+
     # Convert identifiers to type string.
     # Copy identifiers.
     table_identifiers_case = (
