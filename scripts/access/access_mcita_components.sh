@@ -5,7 +5,7 @@
 ################################################################################
 # Notes:
 # first draft of script: TCW; 27 July 2022
-# last draft of script: TCW; 27 July 2022
+# last revision of script: TCW; 27 July 2022
 
 ################################################################################
 # Organize paths to files and directories.
