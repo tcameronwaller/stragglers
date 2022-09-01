@@ -510,6 +510,12 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
+    # Read and organize tables of polygenic scores.
+    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
+        table_parameter_scores=source["table_parameter_scores"],
+        filter_inclusion=True,
+        report=True,
+    )
 
     # Organize identifiers in tables before merges.
     table_phenotypes = organize_table_column_identifier(
@@ -642,13 +648,6 @@ def execute_procedure(
     print("table after merge...")
     print(table)
 
-    # Read and organize tables of polygenic scores.
-    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
-        table_parameter_scores=source["table_parameter_scores"],
-        filter_inclusion=True,
-        report=True,
-    )
-
     # Merge polygenic scores with information on phenotypes.
     table = utility.merge_columns_tables_supplements_to_main(
         identifier_main="identifier_genotype",
@@ -663,13 +662,12 @@ def execute_procedure(
         axis="columns",
         inplace=True
     )
-
+    # Report.
     print("...")
     print("...")
     print("...")
     print("table after merges with PGS...")
     print(table)
-
     utility.print_terminal_partition(level=3)
     print("table columns: " + str(int(table.shape[1])))
     print("table rows: " + str(int(table.shape[0])))

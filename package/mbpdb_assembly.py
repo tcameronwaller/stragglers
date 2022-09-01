@@ -81,13 +81,13 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["bipolar_assembly"] = os.path.join(path_dock, "bipolar_assembly")
+    paths["mbpdb_assembly"] = os.path.join(path_dock, "mbpdb_assembly")
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["bipolar_assembly"])
+        utility.remove_directory(path=paths["mbpdb_assembly"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["bipolar_assembly"]
+        path=paths["mbpdb_assembly"]
     )
     # Return information.
     return paths
@@ -120,22 +120,24 @@ def read_source(
     """
 
     # Specify directories and files.
+    path_table_parameter_scores = os.path.join(
+        path_dock, "parameters", "stragglers",
+        "polygenic_scores", "table_mayo_bpdb.tsv"
+    )
+
     path_table_identifiers = os.path.join(
-        path_dock, "access", "mayo_bipolar_phenotypes",
+        path_dock, "access", "mayo_bpdb",
         "210421_id_matching_gwas.csv"
     )
     path_table_phenotypes = os.path.join(
-        path_dock, "access", "mayo_bipolar_phenotypes",
+        path_dock, "access", "mayo_bpdb",
         "220513_BP_phenotypes.csv"
     )
     path_table_genetic_sex_case = os.path.join(
-        path_dock, "access", "mayo_bipolar_phenotypes",
+        path_dock, "access", "mayo_bpdb",
         "MERGED.maf0.01.dosR20.8.noDups.fam"
     )
-    path_table_parameter_scores = os.path.join(
-        path_dock, "parameters", "bipolar_biobank",
-        "polygenic_scores", "table_bipolar_biobank.tsv"
-    )
+
     # Read information from file.
     table_parameter_scores = pgs.read_source_collection_polygenic_scores(
         path_table=path_table_parameter_scores,
@@ -549,7 +551,7 @@ def merge_polygenic_scores_to_phenotypes(
 # Write
 
 
-def write_product_bipolar_assembly(
+def write_product_assembly(
     pail_write=None,
     path_directory=None,
 ):
@@ -605,9 +607,9 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_bipolar_assembly(
-        pail_write=pail_write["bipolar_assembly"],
-        path_directory=paths["bipolar_assembly"],
+    write_product_assembly(
+        pail_write=pail_write["mbpdb_assembly"],
+        path_directory=paths["mbpdb_assembly"],
     )
     pass
 
@@ -659,6 +661,8 @@ def execute_procedure(
         report=True,
     )
 
+
+
     # Organize table of identifiers for phenotypes and genotypes.
     table_identifiers = organize_table_phenotype_genotype_identifiers(
         table=source["table_identifiers"],
@@ -686,20 +690,52 @@ def execute_procedure(
         report=True,
     )
 
+
+    ################Divider##################
+
+    table = table_phenotypes_merge.copy(deep=True)
     # Merge polygenic scores with information on phenotypes.
     table = utility.merge_tables_supplements_to_main(
         identifier_main="identifier_genotype",
         identifier_supplement="identifier_genotype",
-        table_main=table_phenotypes_merge,
+        table_main=table,
         tables_supplements=tables_polygenic_scores,
         report=True,
     )
     # TODO: drop redundant columns
 
+
+    # Merge polygenic scores with information on phenotypes.
+    table = utility.merge_columns_tables_supplements_to_main(
+        identifier_main="identifier_genotype",
+        identifier_supplement="identifier_genotype",
+        table_main=table,
+        tables_supplements=tables_polygenic_scores,
+        report=True,
+    )
+    # Remove unnecessary columns from transformations on tables.
+    table.drop(
+        labels=["index_x", "index_y", "index",],
+        axis="columns",
+        inplace=True
+    )
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges with PGS...")
+    print(table)
+    utility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table.shape[1])))
+    print("table rows: " + str(int(table.shape[0])))
+    print("columns")
+    print(table.columns.to_list())
+
+
     # Collect information.
     pail_write = dict()
-    pail_write["bipolar_assembly"] = dict()
-    pail_write["bipolar_assembly"]["table_phenotypes"] = table
+    pail_write["mbpdb_assembly"] = dict()
+    pail_write["mbpdb_assembly"]["table_phenotypes"] = table
     # Write product information to file.
     write_product(
         pail_write=pail_write,
