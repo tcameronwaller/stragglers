@@ -574,7 +574,7 @@ def execute_procedure(
     ))
     table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
         lambda row:
-            stragglers.mcita_assembly.prioritize_combination_values(
+            s_mcita_ass.prioritize_combination_values(
                 value_priority=row["gwas1_sampleid"],
                 value_spare=row["gwas2_sampleid"],
             ),
