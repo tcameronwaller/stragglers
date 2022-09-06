@@ -81,15 +81,15 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["bipolar_organization"] = os.path.join(
-        path_dock, "bipolar_organization"
+    paths["mbpdb_organization"] = os.path.join(
+        path_dock, "mbpdb_organization"
     )
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["bipolar_organization"])
+        utility.remove_directory(path=paths["mbpdb_organization"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["bipolar_organization"]
+        path=paths["mbpdb_organization"]
     )
     # Return information.
     return paths
@@ -123,7 +123,7 @@ def read_source(
 
     # Specify directories and files.
     path_table_phenotypes = os.path.join(
-        path_dock, "bipolar_assembly",
+        path_dock, "mbpdb_assembly",
         "table_phenotypes.pickle"
     )
     # Read information from file.
@@ -999,7 +999,7 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 # Write
 
 
-def write_product_bipolar_organization(
+def write_product_organization(
     pail_write=None,
     path_directory=None,
 ):
@@ -1055,13 +1055,11 @@ def write_product(
     """
 
     # Organization procedure main information.
-    write_product_bipolar_organization(
-        pail_write=pail_write["bipolar_organization"],
-        path_directory=paths["bipolar_organization"],
+    write_product_organization(
+        pail_write=pail_write["mbpdb_organization"],
+        path_directory=paths["mbpdb_organization"],
     )
     pass
-
-
 
 
 ###############################################################################
@@ -1151,51 +1149,10 @@ def execute_procedure(
     # "database": name of source database for phenotype (clinical) records
     # "SITE": assessment center?
 
-    # Organize table.
-    # Select relevant columns from table.
-    columns_selection = [
-        "identifier_genotype",
-        "gwas1_sampleid",
-        "gwas2_sampleid",
-        "identifier_phenotype",
-        "bib_id",
-        "gender",
-        "sex_genotype_raw",
-        "sex_y",
-        "sex_text",
-        "bipolar_disorder_genotype_raw",
-        "bipolar_disorder_genotype",
-        "bipolar_disorder_phenotype",
-        "bipolar_disorder_control_case",
-        "pt_age",
-        "BMI",
-        "scid_dx",
-        "bipolar_disorder_type_1_2",
-        "bipolar_disorder_type_2_1",
-        "bipolar_type_1_control_case",
-        "bipolar_type_2_control_case",
-        "rc",
-        "rapid_cycling",
-        "database",
-        "steroid_globulin_female",
-        "steroid_globulin_male",
-        "testosterone_female",
-        "testosterone_male",
-    ]
-    table = table.loc[
-        :, table.columns.isin(columns_selection)
-    ]
-    table = table[[*columns_selection]]
-    utility.print_terminal_partition(level=2)
-    print("table after selection of columns")
-    print(table)
-    print("columns")
-    print(table.columns.to_list())
-
     # Collect information.
     pail_write = dict()
-    pail_write["bipolar_organization"] = dict()
-    pail_write["bipolar_organization"]["table_phenotypes"] = table
+    pail_write["mbpdb_organization"] = dict()
+    pail_write["mbpdb_organization"]["table_phenotypes"] = table
     # Write product information to file.
     write_product(
         pail_write=pail_write,
