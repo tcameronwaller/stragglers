@@ -1335,6 +1335,16 @@ def execute_procedure(
         report=True,
     )
 
+    # Organize age variable.
+    table["age"] = table["pt_age"].astype("string").copy(
+        deep=True,
+    )
+    table["age"].replace(
+        "",
+        numpy.nan,
+        inplace=True,
+    )
+    table["age"] = table["age"].astype("float")
     # Describe briefly the age of persons in different stratification cohorts.
     # Stratify phenotype records in cohorts.
     records_cohorts = bpd_strat.stratify_phenotype_cohorts(
