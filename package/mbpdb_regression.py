@@ -97,14 +97,14 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["bipolar_regression"] = os.path.join(path_dock, "bipolar_regression")
+    paths["mbpdb_regression"] = os.path.join(path_dock, "mbpdb_regression")
 
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["bipolar_regression"])
+        utility.remove_directory(path=paths["mbpdb_regression"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["bipolar_regression"]
+        path=paths["mbpdb_regression"]
     )
     # Return information.
     return paths
@@ -138,7 +138,7 @@ def read_source(
 
     # Specify directories and files.
     path_table_phenotypes = os.path.join(
-        path_dock, "bipolar_organization",
+        path_dock, "mbpdb_organization",
         "table_phenotypes.pickle",
     )
 
@@ -175,7 +175,7 @@ def read_source_cohort_model_reference(
 
     # Define path to parent directory.
     path_directory_parent = os.path.join(
-        path_dock, "parameters", "bipolar_biobank", "regression_cohorts_models",
+        path_dock, "parameters", "stragglers", "regression_cohorts_models",
     )
     # Read all files within parent directory and organize tables.
     pail = utility.read_all_pandas_tables_files_within_parent_directory(
@@ -406,11 +406,12 @@ def execute_procedure(
     )
 
     # Drive regressions.
+
     if True:
         pail_logistic_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_bipolar_disorder"]
+                source_reference["table_bipolar_disorder_control_case"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
@@ -434,7 +435,7 @@ def execute_procedure(
     pail_write = dict()
     pail_write["tables"] = dict()
 
-    pail_write["tables"]["table_bipolar_disorder_logistic"] = (
+    pail_write["tables"]["table_bipolar_disorder_control_case_logistic"] = (
         pail_logistic_1["table"]
     )
     #pail_write["tables"]["table_bipolar_disorder_linear"] = (
@@ -443,7 +444,7 @@ def execute_procedure(
     # Write product information to file.
     write_product(
         pail_write=pail_write,
-        path_directory=paths["bipolar_regression"],
+        path_directory=paths["mbpdb_regression"],
     )
     pass
 
