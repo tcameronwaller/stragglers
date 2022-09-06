@@ -411,7 +411,31 @@ def execute_procedure(
         pail_logistic_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_bipolar_disorder_control_case"]
+                source_reference["table_bipolar_disorder_any_control_case"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
+    if True:
+        pail_logistic_2 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_1_control_case"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
+    if True:
+        pail_logistic_3 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_2_control_case"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
@@ -435,9 +459,16 @@ def execute_procedure(
     pail_write = dict()
     pail_write["tables"] = dict()
 
-    pail_write["tables"]["table_bipolar_disorder_control_case_logistic"] = (
+    pail_write["tables"]["table_bipolar_disorder_any_control_case_logistic"] = (
         pail_logistic_1["table"]
     )
+    pail_write["tables"]["table_bipolar_disorder_1_control_case_logistic"] = (
+        pail_logistic_2["table"]
+    )
+    pail_write["tables"]["table_bipolar_disorder_2_control_case_logistic"] = (
+        pail_logistic_3["table"]
+    )
+
     #pail_write["tables"]["table_bipolar_disorder_linear"] = (
     #    pail_linear_1["table"]
     #)
