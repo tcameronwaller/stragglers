@@ -443,6 +443,42 @@ def execute_procedure(
             report=True,
         )
         pass
+    if True:
+        pail_logistic_4 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_any_rapid_cycle"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
+    if True:
+        pail_logistic_5 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_1_rapid_cycle"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
+    if True:
+        pail_logistic_6 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_2_rapid_cycle"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
     if False:
         pail_linear_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
@@ -467,6 +503,15 @@ def execute_procedure(
     )
     pail_write["tables"]["table_bipolar_disorder_2_control_case_logistic"] = (
         pail_logistic_3["table"]
+    )
+    pail_write["tables"]["table_bipolar_disorder_any_rapid_cycle_logistic"] = (
+        pail_logistic_4["table"]
+    )
+    pail_write["tables"]["table_bipolar_disorder_1_rapid_cycle_logistic"] = (
+        pail_logistic_5["table"]
+    )
+    pail_write["tables"]["table_bipolar_disorder_2_rapid_cycle_logistic"] = (
+        pail_logistic_6["table"]
     )
 
     #pail_write["tables"]["table_bipolar_disorder_linear"] = (
