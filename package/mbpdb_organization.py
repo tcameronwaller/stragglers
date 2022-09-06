@@ -1099,6 +1099,10 @@ def create_description_table_quantitation_record(
         utility.print_terminal_partition(level=5)
         print("cohort: " + str(record["cohort"]))
         print("variable: " + str(record["variable"]))
+        print(
+            "percentage non-missing: "
+            + str(record["percentage_variable_non_missing"])
+        )
         print("mean: " + str(record["mean"]))
         print("median: " + str(record["median"]))
         print("minimum: " + str(record["minimum"]))
