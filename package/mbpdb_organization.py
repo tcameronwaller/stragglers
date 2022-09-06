@@ -996,6 +996,195 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 
 
 ##########
+# Description
+
+# TODO: TCW; 6 September 2022
+# TODO: move these functions to the 'promiscuity.utility' module
+
+
+def create_description_table_quantitation_record(
+    name_cohort=None,
+    variable=None,
+    table=None,
+    report=None,
+):
+    """
+    Create a record (single row in table) to describe measures on a single
+    quantitative variable within a single stratification cohort.
+
+    Report percentages relative to the total count of records in the cohort.
+
+    arguments:
+        name_cohort (str): name of cohort
+        variable (str): name of table's column for variable
+        table (object): Pandas data frame of phenotype variables across UK
+            Biobank cohort
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (dict): information for summary table record on cohort
+
+    """
+
+    # Collect information for record.
+    record = dict()
+    record["cohort"] = str(name_cohort)
+    record["variable"] = str(variable)
+    # Copy information.
+    table = table.copy(deep=True)
+
+    # Count total records (regardless of missingness in the variable of
+    # interest).
+    count_total = int(table.shape[0])
+    # Initialize missing values.
+    count_variable = float("nan")
+    percentage_variable = float("nan")
+    mean = float("nan")
+    standard_error = float("nan")
+    interval_95 = float("nan")
+    confidence_95_low = float("nan")
+    confidence_95_high = float("nan")
+    median = float("nan")
+    standard_deviation = float("nan")
+    minimum = float("nan")
+    maximum = float("nan")
+    # Determine whether table has the column.
+    if (variable in table.columns.to_list()):
+        array = copy.deepcopy(table[variable].dropna().to_numpy()) # non-missing
+        # Determine count of valid values.
+        count_variable = int(array.size)
+        percentage_variable = round(
+            ((count_variable / count_total) * 100), 3
+        )
+        if (count_variable > 5):
+            # Determine mean, median, standard deviation, and standard error of
+            # values in array.
+            mean = numpy.nanmean(array)
+            standard_error = scipy.stats.sem(array)
+            interval_95 = (1.96 * standard_error)
+            confidence_95_low = (mean - interval_95)
+            confidence_95_high = (mean + interval_95)
+            median = numpy.nanmedian(array)
+            standard_deviation = numpy.nanstd(array)
+            minimum = numpy.nanmin(array)
+            maximum = numpy.nanmax(array)
+            pass
+        pass
+    # Collect information for record.
+    record["count_cohort_total_records"] = count_total
+    record["count_variable_non_missing"] = str(count_variable)
+    record["percentage_variable_non_missing"] = str(
+        str(count_variable) + " (" + str(percentage_variable) + "%)"
+    )
+    record["median"] = str(round(median, 7))
+    record["minimum"] = str(round(minimum, 7))
+    record["maximum"] = str(round(maximum, 7))
+    record["mean"] = str(round(mean, 7))
+    record["standard_error"] = str(round(standard_error, 7))
+    record["standard_deviation"] = str(round(standard_deviation, 7))
+    record["range_confidence_95"] = str(
+        str(round(confidence_95_low, 3)) + " ... " +
+        str(round(confidence_95_high, 3))
+    )
+    record["interval_95"] = str(round(interval_95, 7))
+    record["confidence_95_low"] = str(round(confidence_95_low, 7))
+    record["confidence_95_high"] = str(round(confidence_95_high, 7))
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=5)
+        print("report: ")
+        print("create_description_table_quantitation_record()")
+        utility.print_terminal_partition(level=5)
+        print("cohort: " + str(record["cohort"]))
+        print("variable: " + str(record["variable"]))
+        print("mean: " + str(record["mean"]))
+        print("median: " + str(record["median"]))
+        print("minimum: " + str(record["minimum"]))
+        print("maximum: " + str(record["maximum"]))
+        pass
+    # Return information.
+    return record
+
+
+def drive_collect_description_table_quantitation(
+    variables=None,
+    records_cohorts=None,
+    report=None,
+):
+    """
+    Drives the collection of a description table for measures on quantitative
+    variables. This description is most relevant for quantitative variables on a
+    Ratio scale, but it is also informative for variables on Interval and
+    Ordinal scales.
+
+    arguments:
+        variables (list<str>): name of table's columns for variables of interest
+        records_cohorts (list<dict>): records with information about cohorts
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of missingness of hormones in cohorts
+
+    """
+
+    # Collect summary records for rows within description table.
+    records_description = list()
+    # Iterate on cohorts.
+    for record_cohort in records_cohorts:
+        # Iterate on variables.
+        for variable in variables:
+            # Organize information for description record.
+            record_description = create_description_table_quantitation_record(
+                name_cohort=record_cohort["name"],
+                variable=variable,
+                table=record_cohort["table"],
+                report=report,
+            )
+            # Collect records.
+            records_description.append(record_description)
+            pass
+        pass
+    # Organize table.
+    table = pandas.DataFrame(data=records_description)
+    # Select and sort relevant columns from table.
+    columns = [
+        "cohort",
+        "variable",
+        "count_cohort_total_records",
+        "count_variable_non_missing",
+        "percentage_variable_non_missing",
+        "median",
+        "minimum",
+        "maximum",
+        "mean",
+        "standard_error",
+        "standard_deviation",
+        "range_confidence_95",
+        "interval_95",
+        "confidence_95_low",
+        "confidence_95_high",
+    ]
+    table = table.loc[
+        :, table.columns.isin(columns)
+    ]
+    table = table[[*columns]]
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        print("drive_collect_description_table_quantitation()")
+        utility.print_terminal_partition(level=3)
+        print(table)
+        pass
+    # Return information.
+    return table
+
+
+##########
 # Write
 
 
@@ -1023,6 +1212,9 @@ def write_product_organization(
     path_table_phenotypes_text = os.path.join(
         path_directory, "table_phenotypes.tsv"
     )
+    path_table_description_text = os.path.join(
+        path_directory, "table_description.tsv"
+    )
     # Write information to file.
     pail_write["table_phenotypes"].to_pickle(
         path_table_phenotypes
@@ -1032,6 +1224,12 @@ def write_product_organization(
         sep="\t",
         header=True,
         index=True,
+    )
+    pail_write["table_description"].to_csv(
+        path_or_buf=path_table_description_text,
+        sep="\t",
+        header=True,
+        index=False, # include index in table
     )
     pass
 
@@ -1067,6 +1265,9 @@ def write_product(
 
 # TODO: TCW; 14 June 2022
 # TODO: 4. organize chronotype variables?
+
+# TODO: TCW; 06 September 2022
+# TODO: 1. What are the mean, median, minimum, maximum age of persons with Bipolar Disorder?
 
 
 def execute_procedure(
@@ -1108,6 +1309,8 @@ def execute_procedure(
         table=source["table_phenotypes"],
         report=True,
     )
+
+
     # Determine logical binary indicator variables for Bipolar Disorder
     # diagnosis controls and cases.
     table = determine_logical_binary_indicator_variables_bipolar_disorder(
@@ -1132,11 +1335,18 @@ def execute_procedure(
         report=True,
     )
 
+    # Describe briefly the age of persons in different stratification cohorts.
     # Stratify phenotype records in cohorts.
-    bpd_strat.stratify_phenotype_cohorts(
+    records_cohorts = bpd_strat.stratify_phenotype_cohorts(
         table=table,
         report=True,
     )
+    table_description = drive_collect_description_table_quantitation(
+        variables=["age",],
+        records_cohorts=records_cohorts,
+        report=True,
+    )
+
 
     # Organize phenotype variables.
 
@@ -1153,6 +1363,7 @@ def execute_procedure(
     pail_write = dict()
     pail_write["mbpdb_organization"] = dict()
     pail_write["mbpdb_organization"]["table_phenotypes"] = table
+    pail_write["mbpdb_organization"]["table_description"] = table_description
     # Write product information to file.
     write_product(
         pail_write=pail_write,
