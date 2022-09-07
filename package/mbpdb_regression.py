@@ -479,6 +479,18 @@ def execute_procedure(
             report=True,
         )
         pass
+    if True:
+        pail_logistic_7 = stratify_cohorts_call_run_regressions(
+            table=source["table_phenotypes"],
+            table_cohorts_models=(
+                source_reference["table_bipolar_disorder_type_1_2"]
+            ),
+            independences_summary=None, # "None" or list of variables
+            filter_execution=True,
+            type="logistic",
+            report=True,
+        )
+        pass
     if False:
         pail_linear_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
@@ -512,6 +524,9 @@ def execute_procedure(
     )
     pail_write["tables"]["table_bipolar_disorder_2_rapid_cycle_logistic"] = (
         pail_logistic_6["table"]
+    )
+    pail_write["tables"]["table_bipolar_disorder_type_1_2_logistic"] = (
+        pail_logistic_7["table"]
     )
 
     #pail_write["tables"]["table_bipolar_disorder_linear"] = (
