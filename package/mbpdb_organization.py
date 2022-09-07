@@ -611,16 +611,16 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
 
 def interpret_bipolar_disorder_type_diagnosis(
     value_source=None,
-    match_1=None,
     match_0=None,
+    match_1=None,
 ):
     """
     Inteprets whether the diagnosis type of bipolar disorder.
 
     arguments:
         value_source (str): raw value as character string
-        match_1 (str): character string match for logical binary value one
         match_0 (str): character string match for logical binary value zero
+        match_1 (str): character string match for logical binary value one
 
     raises:
 
@@ -676,8 +676,8 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         lambda row:
             interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
-                match_1="BIPOLAR_I",
-                match_0="BIPOLAR_II",
+                match_0="BIPOLAR_I",
+                match_1="BIPOLAR_II",
             ),
         axis="columns", # apply function to each row
     )
@@ -685,8 +685,8 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         lambda row:
             interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
-                match_1="BIPOLAR_II",
-                match_0="BIPOLAR_I",
+                match_0="BIPOLAR_II",
+                match_1="BIPOLAR_I",
             ),
         axis="columns", # apply function to each row
     )
@@ -1270,8 +1270,12 @@ def write_product(
 # TODO: TCW; 14 June 2022
 # TODO: 4. organize chronotype variables?
 
-# TODO: TCW; 06 September 2022
-# TODO: 1. What are the mean, median, minimum, maximum age of persons with Bipolar Disorder?
+# TODO: TCW; 7 September 2022
+# TODO: 1. organize the BMI variable
+# TODO: 2. describe the BMI variable
+# TODO: 3. re-run the mbpdb_organization procedure
+# TODO: 4. set up and run new regressions with age, BMI covariates
+# TODO: 5. check the associations with new definition of "bipolar_disorder_type_1_2"
 
 
 def execute_procedure(
@@ -1314,7 +1318,6 @@ def execute_procedure(
         report=True,
     )
 
-
     # Determine logical binary indicator variables for Bipolar Disorder
     # diagnosis controls and cases.
     table = determine_logical_binary_indicator_variables_bipolar_disorder(
@@ -1349,6 +1352,18 @@ def execute_procedure(
         inplace=True,
     )
     table["age"] = table["age"].astype("float")
+
+    # Organize body mass index (BMI) variable.
+    table["body"] = table["BMI"].astype("string").copy(
+        deep=True,
+    )
+    table["body"].replace(
+        "",
+        numpy.nan,
+        inplace=True,
+    )
+    table["body"] = table["body"].astype("float")
+
     # Describe briefly the age of persons in different stratification cohorts.
     # Stratify phenotype records in cohorts.
     records_cohorts = bpd_strat.stratify_phenotype_cohorts(
@@ -1356,7 +1371,7 @@ def execute_procedure(
         report=True,
     )
     table_description = drive_collect_description_table_quantitation(
-        variables=["age",],
+        variables=["age", "body",],
         records_cohorts=records_cohorts,
         report=True,
     )

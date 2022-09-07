@@ -128,7 +128,7 @@ def stratify_phenotype_cohorts(
     record["table"] = table.loc[
         (
             (table["sex_text"] == "female") &
-            (table["bipolar_disorder_type_1_2"] == 1)
+            (table["bipolar_disorder_type_1_2"] == 0)
         ), :
     ]
     records.append(record)
@@ -138,7 +138,7 @@ def stratify_phenotype_cohorts(
     record["table"] = table.loc[
         (
             (table["sex_text"] == "male") &
-            (table["bipolar_disorder_type_1_2"] == 1)
+            (table["bipolar_disorder_type_1_2"] == 0)
         ), :
     ]
     records.append(record)
@@ -148,7 +148,7 @@ def stratify_phenotype_cohorts(
     record["table"] = table.loc[
         (
             (table["sex_text"] == "female") &
-            (table["bipolar_disorder_type_2_1"] == 1)
+            (table["bipolar_disorder_type_2_1"] == 0)
         ), :
     ]
     records.append(record)
@@ -158,7 +158,7 @@ def stratify_phenotype_cohorts(
     record["table"] = table.loc[
         (
             (table["sex_text"] == "male") &
-            (table["bipolar_disorder_type_2_1"] == 1)
+            (table["bipolar_disorder_type_2_1"] == 0)
         ), :
     ]
     records.append(record)
