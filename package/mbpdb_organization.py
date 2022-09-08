@@ -1271,9 +1271,6 @@ def write_product(
 # TODO: 4. organize chronotype variables?
 
 # TODO: TCW; 7 September 2022
-# TODO: 1. organize the BMI variable
-# TODO: 2. describe the BMI variable
-# TODO: 3. re-run the mbpdb_organization procedure
 # TODO: 4. set up and run new regressions with age, BMI covariates
 # TODO: 5. check the associations with new definition of "bipolar_disorder_type_1_2"
 
