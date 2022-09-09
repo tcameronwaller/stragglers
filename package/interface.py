@@ -47,6 +47,7 @@ import textwrap
 # Relevant.
 
 # Custom.
+import stragglers.mbpdb_prioritize_supplement
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
 import stragglers.mbpdb_regression
@@ -110,6 +111,14 @@ def define_subparser_main(subparsers=None):
         dest="mcita_organization", action="store_true",
         help=(
             "Organize information."
+        )
+    )
+    parser.add_argument(
+        "-mbpdb_prioritize_supplement", "--mbpdb_prioritize_supplement",
+        dest="mbpdb_prioritize_supplement",
+        action="store_true",
+        help=(
+            "Prioritize source of supplemental information."
         )
     )
     parser.add_argument(
@@ -242,6 +251,13 @@ def evaluate_parameters_main(arguments):
         print("... executing 'mcita_organization' procedure ...")
         # Execute procedure.
         stragglers.mcita_organization.execute_procedure(
+            path_dock=arguments.path_dock
+        )
+    if arguments.mbpdb_prioritize_supplement:
+        # Report status.
+        print("... executing 'mbpdb_prioritize_supplement' procedure ...")
+        # Execute procedure.
+        stragglers.mbpdb_prioritize_supplement.execute_procedure(
             path_dock=arguments.path_dock
         )
     if arguments.mbpdb_assembly:

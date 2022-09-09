@@ -18,7 +18,9 @@ path_directory_mayo_bipolar_phenotype=$(<"./mayo_bipolar_phenotypes.txt")
 path_directory_mayo_bipolar_genotype=$(<"./mayo_bipolar_genotype.txt")
 
 # Define paths.
+
 name_file_identifier="210421_id_matching_gwas.csv" # Identifier matching for phenotype records to GWAS1 and GWAS2 genotype records
+
 name_file_phenotype="220513_BP_phenotypes.csv" # Richard S. Pendegraft prepared and shared this file on 13 May 2022
 name_file_genetic_sex_case="MERGED.maf0.01.dosR20.8.noDups.fam" # Reference for genetic sex and case status
 path_file_identifier_source="${path_directory_mayo_bipolar_phenotype}/${name_file_identifier}"
@@ -35,6 +37,27 @@ path_directory_access="${path_directory_dock}/access/mayo_bpdb"
 path_file_identifier_product="${path_directory_access}/${name_file_identifier}"
 path_file_phenotype_product="${path_directory_access}/${name_file_phenotype}"
 path_file_genetic_sex_case_product="${path_directory_access}/${name_file_genetic_sex_case}"
+
+name_file_supplement_1="220325_BP_phenotypes.csv"
+name_file_supplement_2="211221_BP_phenotypes.csv"
+name_file_supplement_3="210902_BP_phenotypes.csv"
+name_file_supplement_4="210609_BP_phenotypes.csv"
+name_file_supplement_5="210422_BP_phenotypes.csv"
+name_file_supplement_6="210330_BP_phenotypes.csv"
+path_file_supplement_1_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_1}"
+path_file_supplement_2_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_2}"
+path_file_supplement_3_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_3}"
+path_file_supplement_4_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_4}"
+path_file_supplement_5_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_5}"
+path_file_supplement_6_source="${path_directory_mayo_bipolar_phenotype}/${name_file_supplement_6}"
+
+path_file_supplement_1_product="${path_directory_access}/${name_file_supplement_1}"
+path_file_supplement_2_product="${path_directory_access}/${name_file_supplement_2}"
+path_file_supplement_3_product="${path_directory_access}/${name_file_supplement_3}"
+path_file_supplement_4_product="${path_directory_access}/${name_file_supplement_4}"
+path_file_supplement_5_product="${path_directory_access}/${name_file_supplement_5}"
+path_file_supplement_6_product="${path_directory_access}/${name_file_supplement_6}"
+
 
 # Echo each command to console.
 set -x
@@ -65,3 +88,10 @@ fi
 cp $path_file_identifier_source $path_file_identifier_product
 cp $path_file_phenotype_source $path_file_phenotype_product
 cp $path_file_genetic_sex_case_source $path_file_genetic_sex_case_product
+
+cp $path_file_supplement_1_source $path_file_supplement_1_product
+cp $path_file_supplement_2_source $path_file_supplement_2_product
+cp $path_file_supplement_3_source $path_file_supplement_3_product
+cp $path_file_supplement_4_source $path_file_supplement_4_product
+cp $path_file_supplement_5_source $path_file_supplement_5_product
+cp $path_file_supplement_6_source $path_file_supplement_6_product
