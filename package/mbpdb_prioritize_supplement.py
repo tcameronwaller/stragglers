@@ -89,13 +89,15 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["mbpdb_assembly"] = os.path.join(path_dock, "mbpdb_assembly")
+    paths["mbpdb_prioritize_supplement"] = (
+        os.path.join(path_dock, "mbpdb_prioritize_supplement")
+    )
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["mbpdb_assembly"])
+        utility.remove_directory(path=paths["mbpdb_prioritize_supplement"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["mbpdb_assembly"]
+        path=paths["mbpdb_prioritize_supplement"]
     )
     # Return information.
     return paths
@@ -128,85 +130,80 @@ def read_source(
     """
 
     # Specify directories and files.
-    path_table_parameter_scores = os.path.join(
-        path_dock, "parameters", "stragglers",
-        "polygenic_scores", "table_mayo_bpdb.tsv"
-    )
-
-    path_table_identifiers = os.path.join(
-        path_dock, "access", "mayo_bpdb",
-        "210421_id_matching_gwas.csv"
-    )
     path_table_phenotypes = os.path.join(
-        path_dock, "access", "mayo_bpdb",
-        "220513_BP_phenotypes.csv"
+        path_dock, "access", "mayo_bpdb", "220513_BP_phenotypes.csv"
     )
-    path_table_genetic_sex_case = os.path.join(
-        path_dock, "access", "mayo_bpdb",
-        "MERGED.maf0.01.dosR20.8.noDups.fam"
+    path_table_supplement_1 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "220325_BP_phenotypes.csv"
+    )
+    path_table_supplement_2 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "211221_BP_phenotypes.csv"
+    )
+    path_table_supplement_3 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "210902_BP_phenotypes.csv"
+    )
+    path_table_supplement_4 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "210609_BP_phenotypes.csv"
+    )
+    path_table_supplement_5 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "210422_BP_phenotypes.csv"
+    )
+    path_table_supplement_6 = os.path.join(
+        path_dock, "access", "mayo_bpdb", "210330_BP_phenotypes.csv"
     )
 
     # Read information from file.
-    table_parameter_scores = pgs.read_source_collection_polygenic_scores(
-        path_table=path_table_parameter_scores,
-        report=report,
-    )
-    table_identifiers = pandas.read_csv(
-        path_table_identifiers,
-        sep=",",
-        header=0,
-        #dtype="string",
-        dtype={
-            "bib_id": "string",
-            "gwas1_sampleid": "string", # identifier of individual's genotype
-            "gwas2_sampleid": "string", # identifier of individual's genotype
-        },
-    )
-    table_identifiers.reset_index(
-        level=None,
-        inplace=True,
-        drop=True, # remove index; do not move to regular columns
-    )
     table_phenotypes = pandas.read_csv(
         path_table_phenotypes,
         sep=",",
         header=0,
         dtype="string",
     )
-    table_phenotypes.reset_index(
-        level=None,
-        inplace=True,
-        drop=True, # remove index; do not move to regular columns
+    table_supplement_1 = pandas.read_csv(
+        path_table_supplement_1,
+        sep=",",
+        header=0,
+        dtype="string",
     )
-    # https://www.cog-genomics.org/plink/2.0/formats#fam
-    table_genetic_sex_case = pandas.read_csv(
-        path_table_genetic_sex_case,
-        sep="\s+", # "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
-        header=None,
-        names=[
-            "FID", "IID", "father", "mother",
-            "sex_genotype_raw", "bipolar_disorder_genotype_raw"
-        ],
-        dtype={
-            "FID": "string",
-            "IID": "string", # identifier of individual's genotype
-            "father": "string",
-            "mother": "string",
-            "sex_genotype_raw": "string", # 1: male; 2: female; 0: unknown
-            "bipolar_disorder_genotype_raw": "string", # 1: control; 2: case;
-        },
+    table_supplement_2 = pandas.read_csv(
+        path_table_supplement_2,
+        sep=",",
+        header=0,
+        dtype="string",
     )
-    table_genetic_sex_case.reset_index(
-        level=None,
-        inplace=True,
-        drop=True, # remove index; do not move to regular columns
+    table_supplement_3 = pandas.read_csv(
+        path_table_supplement_3,
+        sep=",",
+        header=0,
+        dtype="string",
+    )
+    table_supplement_4 = pandas.read_csv(
+        path_table_supplement_4,
+        sep=",",
+        header=0,
+        dtype="string",
+    )
+    table_supplement_5 = pandas.read_csv(
+        path_table_supplement_5,
+        sep=",",
+        header=0,
+        dtype="string",
+    )
+    table_supplement_6 = pandas.read_csv(
+        path_table_supplement_6,
+        sep=",",
+        header=0,
+        dtype="string",
     )
     # Compile and return information.
     return {
-        "table_identifiers": table_identifiers,
         "table_phenotypes": table_phenotypes,
-        "table_genetic_sex_case": table_genetic_sex_case,
-        "table_parameter_scores": table_parameter_scores,
+        "table_supplement_1": table_supplement_1,
+        "table_supplement_2": table_supplement_2,
+        "table_supplement_3": table_supplement_3,
+        "table_supplement_4": table_supplement_4,
+        "table_supplement_5": table_supplement_5,
+        "table_supplement_6": table_supplement_6,
     }
 
 

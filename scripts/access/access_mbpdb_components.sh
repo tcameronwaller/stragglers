@@ -5,7 +5,7 @@
 ################################################################################
 # Notes:
 # first draft of script: TCW; 31 August 2022
-# last revision of script: TCW; 1 September 2022
+# last revision of script: TCW; 12 September 2022
 
 ################################################################################
 # Organize paths to files and directories.
@@ -27,7 +27,7 @@ path_file_identifier_source="${path_directory_mayo_bipolar_phenotype}/${name_fil
 path_file_phenotype_source="${path_directory_mayo_bipolar_phenotype}/${name_file_phenotype}"
 path_file_genetic_sex_case_source="${path_directory_mayo_bipolar_genotype}/${name_file_genetic_sex_case}"
 
-path_directory_persistence="${path_directory_storage}/phenotypes/mayo_clinic_bipolar_disorder_access_2022-09-01"
+path_directory_persistence="${path_directory_storage}/phenotypes/mayo_clinic_bipolar_disorder_access_2022-09-12"
 path_file_identifier_persistence="${path_directory_persistence}/${name_file_identifier}"
 path_file_phenotype_persistence="${path_directory_persistence}/${name_file_phenotype}"
 path_file_genetic_sex_case_persistence="${path_directory_persistence}/${name_file_genetic_sex_case}"
