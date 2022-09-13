@@ -706,11 +706,11 @@ def execute_procedure(
     print(table_merge_genotypes.columns.to_list())
 
     # Remove unnecessary columns from transformations on tables.
-    table_merge_genotypes.drop(
-        labels=["index_x", "index_y", "index",],
-        axis="columns",
-        inplace=True
-    )
+    #table_merge_genotypes.drop(
+    #    labels=["index_x", "index_y", "index",],
+    #    axis="columns",
+    #    inplace=True
+    #)
 
 
     if False:
