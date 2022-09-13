@@ -322,6 +322,9 @@ def simplify_translate_table_columns_organize_identifier(
 
     """
 
+    # Copy information in table.
+    table = table.copy(deep=True)
+    # Reduce, rename, and copy columns.
     table = reduce_table_columns(
         columns_keep=columns_keep,
         table=table,
@@ -333,6 +336,7 @@ def simplify_translate_table_columns_organize_identifier(
     )
     for column_new in columns_copy.keys():
         table[column_new] = table[columns_copy[column_new]].copy(deep=True)
+    # Organize table index identifier.
     table = organize_table_column_identifier(
         column_source=identifier_source,
         column_product=identifier_product,

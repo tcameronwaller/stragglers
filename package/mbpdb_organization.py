@@ -53,6 +53,12 @@ import promiscuity.utility as utility
 ###############################################################################
 # Functionality
 
+# TODO: TCW; 12 September 2022
+# 1. interpret the "pt_age_supplement" and "BMI_supplement" variables
+# 1.1. interpret "-9" as a missing value
+# 1.2. check that values after conversion to float are physiologically relevant
+
+
 
 ##########
 # Initialization
