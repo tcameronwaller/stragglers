@@ -53,16 +53,6 @@ import stragglers.mcita_assembly as s_mcita_ass
 ###############################################################################
 # Functionality
 
-# TODO: TCW; 12 September 2022
-# 1. copy the file from Joanna to the persistence directory
-# 2. read in the file from Joanna
-
-# 3. copy or rename the "pt_age" and "bmi" variables to "pt_age_supplement" and "BMI_supplement" respectively
-# 4. remove all but the "sample.id", "bib_id", "pt_age_supplement", and "BMI_supplement" columns
-# 5. organize the "sample.id" column as the identifier index
-# 5.1. DO NOT merge using the "bib_id" column... it has missing values for controls
-# 6. AFTER merging phenotypes and polygenic scores...
-
 
 ##########
 # Initialization
@@ -525,8 +515,8 @@ def write_product_assembly(
     pail_write["table_phenotypes"].to_csv(
         path_or_buf=path_table_phenotypes_text,
         sep="\t",
-        header=True,
-        index=False, # include index in table
+        header=True, # include header in table
+        index=False, # do not include index in table
     )
     pass
 
@@ -737,7 +727,7 @@ def execute_procedure(
     ))
     table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
         lambda row:
-            s_mcita_ass.prioritize_combination_values(
+            utility.prioritize_combination_values_string(
                 value_priority=row["gwas1_sampleid"],
                 value_spare=row["gwas2_sampleid"],
             ),

@@ -53,12 +53,6 @@ import promiscuity.utility as utility
 ###############################################################################
 # Functionality
 
-# TODO: TCW; 12 September 2022
-# 1. interpret the "pt_age_supplement" and "BMI_supplement" variables
-# 1.1. interpret "-9" as a missing value
-# 1.2. check that values after conversion to float are physiologically relevant
-
-
 
 ##########
 # Initialization
@@ -154,6 +148,8 @@ def read_source(
 #        columns=columns_type,
 #        table=table,
 #    )
+
+# Biological Sex
 
 
 def interpret_genotype_biological_sex_y(
@@ -296,7 +292,7 @@ def determine_consensus_biological_sex_y(
     return value
 
 
-def interpret_biological_sex_text(
+def determine_biological_sex_text(
     sex_y=None,
 ):
     """
@@ -366,7 +362,7 @@ def determine_biological_sex_variables(
     )
     table["sex_text"] = table.apply(
         lambda row:
-            interpret_biological_sex_text(
+            determine_biological_sex_text(
                 sex_y=row["sex_y"],
             ),
         axis="columns", # apply function to each row
@@ -402,6 +398,97 @@ def determine_biological_sex_variables(
         pass
     # Return information.
     return table
+
+
+# Age and Body Mass Index (BMI)
+
+
+def determine_age_body_mass_index_variables(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+
+    # Determine age variable.
+    table["age_main"] = table.apply(
+        lambda row:
+            utility.determine_human_physiology_age(
+                value_raw=row["pt_age"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["age_supplement"] = table.apply(
+        lambda row:
+            utility.determine_human_physiology_age(
+                value_raw=row["pt_age_supplement"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["age"] = table.apply(
+        lambda row:
+            utility.prioritize_combination_values_float(
+                value_priority=row["age_main"],
+                value_spare=row["age_supplement"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Determine body mass index (BMI) variable.
+    table["body_main"] = table.apply(
+        lambda row:
+            utility.determine_human_physiology_body_mass_index(
+                value_raw=row["BMI"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["body_supplement"] = table.apply(
+        lambda row:
+            utility.determine_human_physiology_body_mass_index(
+                value_raw=row["BMI_supplement"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["body"] = table.apply(
+        lambda row:
+            utility.prioritize_combination_values_float(
+                value_priority=row["body_main"],
+                value_spare=row["body_supplement"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_age_body_mass_index_variables()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        pass
+    # Return information.
+    return table
+
+
+# Bipolar Disorder
+
+
 
 
 def interpret_genotype_bipolar_disorder_control_case(
@@ -1315,9 +1402,14 @@ def execute_procedure(
         path_dock=path_dock,
         report=True,
     )
-    # Determine variables for biological sex.
+    # Organize variables for biological sex.
     table = determine_biological_sex_variables(
         table=source["table_phenotypes"],
+        report=True,
+    )
+    # Organize variables for age and body mass index (BMI).
+    table = determine_age_body_mass_index_variables(
+        table=table,
         report=True,
     )
 
@@ -1345,28 +1437,6 @@ def execute_procedure(
         report=True,
     )
 
-    # Organize age variable.
-    table["age"] = table["pt_age"].astype("string").copy(
-        deep=True,
-    )
-    table["age"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    table["age"] = table["age"].astype("float")
-
-    # Organize body mass index (BMI) variable.
-    table["body"] = table["BMI"].astype("string").copy(
-        deep=True,
-    )
-    table["body"].replace(
-        "",
-        numpy.nan,
-        inplace=True,
-    )
-    table["body"] = table["body"].astype("float")
-
     # Describe briefly the age of persons in different stratification cohorts.
     # Stratify phenotype records in cohorts.
     records_cohorts = bpd_strat.stratify_phenotype_cohorts(
@@ -1378,7 +1448,6 @@ def execute_procedure(
         records_cohorts=records_cohorts,
         report=True,
     )
-
 
     # Organize phenotype variables.
 
