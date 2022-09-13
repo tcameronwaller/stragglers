@@ -707,8 +707,8 @@ def execute_procedure(
     print("table after merges with PGS...")
     print(table_merge_genotypes)
     utility.print_terminal_partition(level=3)
-    print("table columns: " + str(int(table.shape[1])))
-    print("table rows: " + str(int(table.shape[0])))
+    print("table columns: " + str(int(table_merge_genotypes.shape[1])))
+    print("table rows: " + str(int(table_merge_genotypes.shape[0])))
     print("columns")
     print(table_merge_genotypes.columns.to_list())
 
