@@ -646,11 +646,11 @@ def execute_procedure(
 
     # Merge table of genetic sex and case status with table of principal
     # components across genotypes.
-    table_merge_genotypes = utility.merge_columns_tables_supplements_to_main(
-        identifier_main="identifier_genotype",
-        identifier_supplement="identifier_genotype",
-        table_main=table_genetic_sex_case,
-        tables_supplements=table_genotype_pca,
+    table_merge_genotypes = utility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_genetic_sex_case,
+        table_second=table_genotype_pca,
         report=True,
     )
 
@@ -693,13 +693,6 @@ def execute_procedure(
         report=True,
     )
 
-    # Remove unnecessary columns from transformations on tables.
-    table_merge_genotypes.drop(
-        labels=["index_x", "index_y", "index",],
-        axis="columns",
-        inplace=True
-    )
-
     # Report.
     print("...")
     print("...")
@@ -711,6 +704,13 @@ def execute_procedure(
     print("table rows: " + str(int(table_merge_genotypes.shape[0])))
     print("columns")
     print(table_merge_genotypes.columns.to_list())
+
+    # Remove unnecessary columns from transformations on tables.
+    table_merge_genotypes.drop(
+        labels=["index_x", "index_y", "index",],
+        axis="columns",
+        inplace=True
+    )
 
 
     if False:
