@@ -693,6 +693,13 @@ def execute_procedure(
         report=True,
     )
 
+    # Remove unnecessary columns from transformations on tables.
+    table_merge_genotypes.drop(
+        labels=["level_0",],
+        axis="columns",
+        inplace=True
+    )
+
     # Report.
     print("...")
     print("...")
@@ -704,13 +711,6 @@ def execute_procedure(
     print("table rows: " + str(int(table_merge_genotypes.shape[0])))
     print("columns")
     print(table_merge_genotypes.columns.to_list())
-
-    # Remove unnecessary columns from transformations on tables.
-    #table_merge_genotypes.drop(
-    #    labels=["index_x", "index_y", "index",],
-    #    axis="columns",
-    #    inplace=True
-    #)
 
 
     if False:
