@@ -561,10 +561,6 @@ def write_product(
 # Procedure
 
 
-# TODO: I still need Principal Components on genotypes...
-# "table_genotype_pca" <-- use column "ID"
-
-
 def execute_procedure(
     path_dock=None,
 ):
@@ -704,7 +700,7 @@ def execute_procedure(
     print("...")
     print("...")
     print("...")
-    print("table after merges with PGS...")
+    print("table after merges on genotype identifiers:")
     print(table_merge_genotypes)
     utility.print_terminal_partition(level=3)
     print("table columns: " + str(int(table_merge_genotypes.shape[1])))
@@ -712,52 +708,73 @@ def execute_procedure(
     print("columns")
     print(table_merge_genotypes.columns.to_list())
 
+    ##########
+    # Organize and merge together information on identifiers for phenotypes.
+
+    # Organize table of phenotype variables on cases.
+    table_phenotypes_case = (
+        s_mcita_ass.organize_table_column_identifier(
+            column_source="bib_id",
+            column_product="identifier_phenotype",
+            table=source["table_phenotypes_case"],
+            report=True,
+    ))
+
+    # Organize table of identifiers.
+    # Determine consensus combination of identifiers for genotypes.
+    # Prioritize identifiers from "GWAS1" set of genotypes.
+    table_identifiers = (
+        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+            columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
+            columns_translations={
+                "bib_id": "bib_id_match",
+            },
+            columns_copy={},
+            identifier_source="bib_id_match",
+            identifier_product="identifier_phenotype",
+            table=source["table_identifiers"],
+            report=True,
+    ))
+    table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
+        lambda row:
+            s_mcita_ass.prioritize_combination_values(
+                value_priority=row["gwas1_sampleid"],
+                value_spare=row["gwas2_sampleid"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Merge table of identifiers with table of phenotype variables on cases.
+    table_merge_phenotypes = utility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table_phenotypes_case,
+        table_second=table_identifiers,
+        report=True,
+    )
+
+    # Remove unnecessary columns from transformations on tables.
+    #table_merge_phenotypes.drop(
+    #    labels=["level_0",],
+    #    axis="columns",
+    #    inplace=True
+    #)
+
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges on phenotype identifiers:")
+    print(table_merge_phenotypes)
+    utility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
+    print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
+    print("columns")
+    print(table_merge_phenotypes.columns.to_list())
+
+
 
     if False:
-
-        ##########
-        # Organize and merge together information on identifiers for phenotypes.
-
-        # Organize table of phenotype variables on cases.
-        table_phenotypes_case = (
-            s_mcita_ass.organize_table_column_identifier(
-                column_source="bib_id",
-                column_product="identifier_phenotype",
-                table=source["table_phenotypes_case"],
-                report=True,
-        ))
-
-        # Organize table of identifiers.
-        # Determine consensus combination of identifiers for genotypes.
-        # Prioritize identifiers from "GWAS1" set of genotypes.
-        table_identifiers = (
-            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-                columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
-                columns_translations={},
-                columns_copy={},
-                identifier_source="bib_id",
-                identifier_product="identifier_phenotype",
-                table=source["table_identifiers"],
-                report=True,
-        ))
-        table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
-            lambda row:
-                s_mcita_ass.prioritize_combination_values(
-                    value_priority=row["gwas1_sampleid"],
-                    value_spare=row["gwas2_sampleid"],
-                ),
-            axis="columns", # apply function to each row
-        )
-
-        # Merge table of identifiers with table of phenotype variables on cases.
-        table_merge_phenotypes = utility.merge_columns_two_tables(
-            identifier_first="identifier_phenotype",
-            identifier_second="identifier_phenotype",
-            table_first=table_phenotypes_case,
-            table_second=table_identifiers,
-            report=True,
-        )
-
         ##########
         # Merge together information on genotypes and phenotypes.
 
