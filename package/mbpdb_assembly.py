@@ -689,7 +689,7 @@ def execute_procedure(
         report=True,
     )
 
-    # Remove unnecessary columns from transformations on tables.
+    # Remove unnecessary columns.
     table_merge_genotypes.drop(
         labels=["level_0",],
         axis="columns",
@@ -752,8 +752,7 @@ def execute_procedure(
         table_second=table_identifiers,
         report=True,
     )
-
-    # Remove unnecessary columns from transformations on tables.
+    # Remove unnecessary columns.
     #table_merge_phenotypes.drop(
     #    labels=["level_0",],
     #    axis="columns",
@@ -772,56 +771,46 @@ def execute_procedure(
     print("columns")
     print(table_merge_phenotypes.columns.to_list())
 
+    ##########
+    # Merge together information on genotypes and phenotypes.
 
+    # Merge table of phenotype variables with table of genetic sex, case
+    # status, and polygenic scores.
+    table_merge_phenotypes = s_mcita_ass.organize_table_column_identifier(
+        column_source="gwas_sampleid_consensus",
+        column_product="identifier_genotype",
+        table=table_merge_phenotypes,
+        report=True,
+    )
+    table = utility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_merge_genotypes,
+        table_second=table_merge_phenotypes,
+        report=True,
+    )
 
-    if False:
-        ##########
-        # Merge together information on genotypes and phenotypes.
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges of genotypes and phenotypes:")
+    print(table)
+    utility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table.shape[1])))
+    print("table rows: " + str(int(table.shape[0])))
+    print("columns")
+    print(table.columns.to_list())
 
-        # Merge table of phenotype variables with table of genetic sex, case
-        # status, and polygenic scores.
-        table_merge_phenotypes = s_mcita_ass.organize_table_column_identifier(
-                column_source="gwas_sampleid_consensus",
-                column_product="identifier_genotype",
-                table=table_merge_phenotypes,
-                report=True,
-        )
-        table = utility.merge_columns_two_tables(
-            identifier_first="identifier_genotype",
-            identifier_second="identifier_genotype",
-            table_first=table_merge_genotypes,
-            table_second=table_merge_phenotypes,
-            report=True,
-        )
-        # Remove unnecessary columns from transformations on tables.
-        table.drop(
-            labels=["index_x", "index_y",],
-            axis="columns",
-            inplace=True
-        )
-
-        # Report.
-        print("...")
-        print("...")
-        print("...")
-        print("table after merges with PGS...")
-        print(table)
-        utility.print_terminal_partition(level=3)
-        print("table columns: " + str(int(table.shape[1])))
-        print("table rows: " + str(int(table.shape[0])))
-        print("columns")
-        print(table.columns.to_list())
-
-
-        # Collect information.
-        pail_write = dict()
-        pail_write["mbpdb_assembly"] = dict()
-        pail_write["mbpdb_assembly"]["table_phenotypes"] = table
-        # Write product information to file.
-        write_product(
-            pail_write=pail_write,
-            paths=paths,
-        )
+    # Collect information.
+    pail_write = dict()
+    pail_write["mbpdb_assembly"] = dict()
+    pail_write["mbpdb_assembly"]["table_phenotypes"] = table
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
 
     pass
 
