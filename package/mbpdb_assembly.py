@@ -544,6 +544,9 @@ def write_product(
 # Procedure
 
 
+# TODO: I still need Principal Components on genotypes...
+
+
 def execute_procedure(
     path_dock=None,
 ):
