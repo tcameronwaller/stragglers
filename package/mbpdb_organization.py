@@ -486,9 +486,84 @@ def determine_age_body_mass_index_variables(
     return table
 
 
+# Principal Components on Genotypes
+
+
+def determine_genotype_principal_component_variables(
+    table=None,
+    report=None,
+):
+    """
+    Organizes table of information about phenotypes.
+
+    arguments:
+        table (object): Pandas data frame of information about phenotypes
+        report (bool): whether to print reports
+
+    raises:
+
+    returns:
+        (object): Pandas data frame of information about phenotypes
+
+    """
+
+    # Copy information in table.
+    table = table.copy(deep=True)
+
+    # Determine variables for Principal Components on Genotypes.
+    table["genotype_pc_1"] = table.apply(
+        lambda row:
+            utility.interpret_raw_string_value_missingness_convert_to_float(
+                value_raw=row["genotype_pc_1"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["genotype_pc_2"] = table.apply(
+        lambda row:
+            utility.interpret_raw_string_value_missingness_convert_to_float(
+                value_raw=row["genotype_pc_2"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["genotype_pc_3"] = table.apply(
+        lambda row:
+            utility.interpret_raw_string_value_missingness_convert_to_float(
+                value_raw=row["genotype_pc_3"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["genotype_pc_4"] = table.apply(
+        lambda row:
+            utility.interpret_raw_string_value_missingness_convert_to_float(
+                value_raw=row["genotype_pc_4"],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["genotype_pc_5"] = table.apply(
+        lambda row:
+            utility.interpret_raw_string_value_missingness_convert_to_float(
+                value_raw=row["genotype_pc_5"],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        name_function = (
+            "determine_genotype_principal_component_variables()"
+        )
+        print(name_function)
+        utility.print_terminal_partition(level=3)
+        pass
+    # Return information.
+    return table
+
+
+
+
 # Bipolar Disorder
-
-
 
 
 def interpret_genotype_bipolar_disorder_control_case(
@@ -1368,6 +1443,11 @@ def write_product(
 # TODO: 5. check the associations with new definition of "bipolar_disorder_type_1_2"
 
 
+# !!!!!
+# TODO: TCW; 13 September 2022
+# TODO: Organize the genotype_pc1 - genotype_pc5 variables...
+
+
 def execute_procedure(
     path_dock=None,
 ):
@@ -1412,6 +1492,13 @@ def execute_procedure(
         table=table,
         report=True,
     )
+    # Organize variables for Principal Components on Genotypes.
+    table = determine_genotype_principal_component_variables(
+        table=table,
+        report=True,
+    )
+
+
 
     # Determine logical binary indicator variables for Bipolar Disorder
     # diagnosis controls and cases.
