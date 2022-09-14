@@ -411,7 +411,7 @@ def execute_procedure(
         pail_logistic_1 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_logistic_bipolar_disorder_any_control_case"]
+                source_reference["table_logistic_marginal_bipolar_disorder_any_control_case"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
@@ -423,252 +423,11 @@ def execute_procedure(
         pail_logistic_2 = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_logistic_bipolar_disorder_1_control_case"]
+                source_reference["table_logistic_joint_bipolar_disorder_any_control_case"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
             type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_3 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_bipolar_disorder_2_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_4 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_marginal_bipolar_disorder_type_1_2"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_5 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_marginal_bipolar_disorder_any_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_6 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_marginal_bipolar_disorder_1_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_7 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_marginal_bipolar_disorder_2_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_8 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_bipolar_disorder_type_1_2"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_9 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_bipolar_disorder_any_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_10 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_bipolar_disorder_1_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-    if True:
-        pail_logistic_11 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_bipolar_disorder_2_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pass
-
-    if True:
-        pail_linear_1 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_bipolar_disorder_any_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_2 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_bipolar_disorder_1_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_3 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_bipolar_disorder_2_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_4 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_marginal_bipolar_disorder_type_1_2"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_5 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_marginal_bipolar_disorder_any_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_6 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_marginal_bipolar_disorder_1_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_7 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_marginal_bipolar_disorder_2_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_8 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_joint_bipolar_disorder_type_1_2"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_9 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_joint_bipolar_disorder_any_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_10 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_joint_bipolar_disorder_1_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
-            report=True,
-        )
-        pass
-    if True:
-        pail_linear_11 = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_linear_joint_bipolar_disorder_2_rapid_cycle"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="linear",
             report=True,
         )
         pass
@@ -679,75 +438,14 @@ def execute_procedure(
 
     # Logistic regression.
 
-    pail_write["tables"]["table_logistic_bipolar_disorder_any_control_case"] = (
+    pail_write["tables"]["table_logistic_marginal_bipolar_disorder_any_control_case"] = (
         pail_logistic_1["table"]
     )
-    pail_write["tables"]["table_logistic_bipolar_disorder_1_control_case"] = (
+    pail_write["tables"]["table_logistic_joint_bipolar_disorder_any_control_case"] = (
         pail_logistic_2["table"]
-    )
-    pail_write["tables"]["table_logistic_bipolar_disorder_2_control_case"] = (
-        pail_logistic_3["table"]
-    )
-    pail_write["tables"]["table_logistic_marginal_bipolar_disorder_type_1_2"] = (
-        pail_logistic_4["table"]
-    )
-    pail_write["tables"]["table_logistic_marginal_bipolar_disorder_any_rapid_cycle"] = (
-        pail_logistic_5["table"]
-    )
-    pail_write["tables"]["table_logistic_marginal_bipolar_disorder_1_rapid_cycle"] = (
-        pail_logistic_6["table"]
-    )
-    pail_write["tables"]["table_logistic_marginal_bipolar_disorder_2_rapid_cycle"] = (
-        pail_logistic_7["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_bipolar_disorder_type_1_2"] = (
-        pail_logistic_8["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_bipolar_disorder_any_rapid_cycle"] = (
-        pail_logistic_9["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_bipolar_disorder_1_rapid_cycle"] = (
-        pail_logistic_10["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_bipolar_disorder_2_rapid_cycle"] = (
-        pail_logistic_11["table"]
     )
 
     # Linear regression.
-
-    pail_write["tables"]["table_linear_bipolar_disorder_any_control_case"] = (
-        pail_linear_1["table"]
-    )
-    pail_write["tables"]["table_linear_bipolar_disorder_1_control_case"] = (
-        pail_linear_2["table"]
-    )
-    pail_write["tables"]["table_linear_bipolar_disorder_2_control_case"] = (
-        pail_linear_3["table"]
-    )
-    pail_write["tables"]["table_linear_marginal_bipolar_disorder_type_1_2"] = (
-        pail_linear_4["table"]
-    )
-    pail_write["tables"]["table_linear_marginal_bipolar_disorder_any_rapid_cycle"] = (
-        pail_linear_5["table"]
-    )
-    pail_write["tables"]["table_linear_marginal_bipolar_disorder_1_rapid_cycle"] = (
-        pail_linear_6["table"]
-    )
-    pail_write["tables"]["table_linear_marginal_bipolar_disorder_2_rapid_cycle"] = (
-        pail_linear_7["table"]
-    )
-    pail_write["tables"]["table_linear_joint_bipolar_disorder_type_1_2"] = (
-        pail_linear_8["table"]
-    )
-    pail_write["tables"]["table_linear_joint_bipolar_disorder_any_rapid_cycle"] = (
-        pail_linear_9["table"]
-    )
-    pail_write["tables"]["table_linear_joint_bipolar_disorder_1_rapid_cycle"] = (
-        pail_linear_10["table"]
-    )
-    pail_write["tables"]["table_linear_joint_bipolar_disorder_2_rapid_cycle"] = (
-        pail_linear_11["table"]
-    )
 
     #pail_write["tables"]["table_bipolar_disorder_linear"] = (
     #    pail_linear_1["table"]
