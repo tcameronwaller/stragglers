@@ -1443,11 +1443,6 @@ def write_product(
 # TODO: 5. check the associations with new definition of "bipolar_disorder_type_1_2"
 
 
-# !!!!!
-# TODO: TCW; 13 September 2022
-# TODO: Organize the genotype_pc1 - genotype_pc5 variables...
-
-
 def execute_procedure(
     path_dock=None,
 ):
@@ -1498,8 +1493,6 @@ def execute_procedure(
         report=True,
     )
 
-
-
     # Determine logical binary indicator variables for Bipolar Disorder
     # diagnosis controls and cases.
     table = determine_logical_binary_indicator_variables_bipolar_disorder(
@@ -1531,7 +1524,7 @@ def execute_procedure(
         report=True,
     )
     table_description = drive_collect_description_table_quantitation(
-        variables=["age", "body",],
+        variables=["age", "body", "genotype_pc_1",],
         records_cohorts=records_cohorts,
         report=True,
     )
