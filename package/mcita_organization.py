@@ -528,12 +528,12 @@ def organize_table_measurement_score_correlations(
         report=report,
     )
     entries_cohorts = (
-        utility.organize_dictionary_entries_stratification_cohorts(
+        utility.structure_from_records_to_entries(
             records=records_cohorts,
     ))
     # Report.
     if report:
-        utility.report_stratification_cohort_record_table_sizes(
+        utility.report_records_name_table_size(
             records=records_cohorts,
         )
     # Organize information for correlation comparisons.

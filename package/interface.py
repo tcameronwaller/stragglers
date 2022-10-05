@@ -47,6 +47,7 @@ import textwrap
 # Relevant.
 
 # Custom.
+import stragglers.scrap
 import stragglers.mbpdb_prioritize_supplement
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
@@ -97,6 +98,13 @@ def define_subparser_main(subparsers=None):
         help=(
             "Path to dock directory for source and product " +
             "directories and files."
+        )
+    )
+    parser.add_argument(
+        "-scrap", "--scrap", dest="scrap",
+        action="store_true",
+        help=(
+            "Scrap functionality for experimentation."
         )
     )
     parser.add_argument(
@@ -239,6 +247,13 @@ def evaluate_parameters_main(arguments):
     print("--------------------------------------------------")
     print("... call to main routine ...")
     # Execute procedure.
+    if arguments.scrap:
+        # Report status.
+        print("... executing 'scrap' procedure ...")
+        # Execute procedure.
+        stragglers.scrap.execute_procedure(
+            path_dock=arguments.path_dock
+        )
     if arguments.mcita_assembly:
         # Report status.
         print("... executing 'mcita_assembly' procedure ...")
