@@ -48,6 +48,7 @@ import statsmodels.multivariate.pca
 # Custom
 import promiscuity.utility as utility
 import promiscuity.plot as plot
+import promiscuity.scale as scale
 import uk_biobank.stratification as ukb_strat
 
 ###############################################################################
@@ -195,27 +196,59 @@ def execute_procedure(
 
     # Stratify records within separate tables for cohorts.
     records_cohorts = (
-        ukb_strat.stratify_phenotype_cohorts_set_sex_age_menopause(
+        ukb_strat.drive_stratify_phenotype_cohorts_set_description_tables(
             table=source["table_phenotypes"],
     ))
+    names_cohorts = [
+        "ancestry_white_female_male",
+        "ancestry_white_female",
+        "ancestry_white_female_menstruation_regular",
+        "ancestry_white_female_premenopause",
+        "ancestry_white_female_perimenopause",
+        "ancestry_white_female_postmenopause",
+        "ancestry_white_male",
+        "ancestry_white_male_age_low",
+        "ancestry_white_male_age_middle",
+        "ancestry_white_male_age_high",
+    ]
+    records_cohorts = utility.filter_records_by_name(
+        names=names_cohorts,
+        records=records_cohorts,
+        report=True,
+    )
     # Apply Distribution Scale Transformations to variables of interest in each
     # cohort.
     records_cohorts = (
-        ukb_strat.stratify_phenotype_cohorts_set_sex_age_menopause(
+        scale.drive_transformations_on_multiple_variables_in_cohorts(
+            variables=[
+                "body",
+                "alcohol_drinks_monthly_combination",
+                "alcohol_frequency",
+                "alcohol_auditc",
+                "vitamin_d_imputation",
+                "oestradiol_imputation",
+                "oestradiol_bioavailable_imputation",
+                "oestradiol_free_imputation",
+                "testosterone_imputation",
+                "testosterone_bioavailable_imputation",
+                "testosterone_free_imputation",
+                "steroid_globulin_imputation",
+                "albumin_imputation",
+            ],
             records_cohorts=records_cohorts,
+            report=True,
     ))
 
-
-
-    # Collect information.
-    pail_write = dict()
-    pail_write["stragglers_scrap"] = dict()
-    pail_write["stragglers_scrap"]["tables_cohorts"] = tables_cohorts
-    # Write product information to file.
-    write_product(
-        pail_write=pail_write,
-        paths=paths,
-    )
+    if False:
+        # Collect information.
+        pail_write = dict()
+        pail_write["stragglers_scrap"] = dict()
+        pail_write["stragglers_scrap"]["tables_cohorts"] = tables_cohorts
+        # Write product information to file.
+        write_product(
+            pail_write=pail_write,
+            paths=paths,
+        )
 
     pass
 
