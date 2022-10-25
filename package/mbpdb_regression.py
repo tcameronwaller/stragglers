@@ -405,10 +405,14 @@ def execute_procedure(
         report=True,
     )
 
+    # Collect information.
+    pail_write = dict()
+    pail_write["tables"] = dict()
+
     # Drive regressions.
 
     if True:
-        pail_logistic_1 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_marginal_unadjust_bipolar_disorder_any_control_case"]
@@ -418,9 +422,13 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_control_case"] = (
+            pail_regression["table"]
+        )
+
         pass
     if True:
-        pail_logistic_2 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_joint_adjust_part_bipolar_disorder_any_control_case"]
@@ -430,9 +438,12 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_control_case"] = (
+            pail_regression["table"]
+        )
         pass
     if True:
-        pail_logistic_3 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_joint_adjust_full_bipolar_disorder_any_control_case"]
@@ -442,12 +453,13 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_control_case"] = (
+            pail_regression["table"]
+        )
         pass
 
-
-
     if True:
-        pail_logistic_4 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_marginal_unadjust_bipolar_disorder_any_rapid_cycling"]
@@ -457,9 +469,12 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_rapid_cycling"] = (
+            pail_regression["table"]
+        )
         pass
     if True:
-        pail_logistic_5 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_joint_adjust_part_bipolar_disorder_any_rapid_cycling"]
@@ -469,9 +484,12 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_rapid_cycling"] = (
+            pail_regression["table"]
+        )
         pass
     if True:
-        pail_logistic_6 = stratify_cohorts_call_run_regressions(
+        pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
                 source_reference["table_logistic_joint_adjust_full_bipolar_disorder_any_rapid_cycling"]
@@ -481,42 +499,11 @@ def execute_procedure(
             type="logistic",
             report=True,
         )
+        pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_rapid_cycling"] = (
+            pail_regression["table"]
+        )
         pass
 
-
-
-
-    # Collect information.
-    pail_write = dict()
-    pail_write["tables"] = dict()
-
-    # Logistic regression.
-
-    pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_control_case"] = (
-        pail_logistic_1["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_control_case"] = (
-        pail_logistic_2["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_control_case"] = (
-        pail_logistic_3["table"]
-    )
-
-    pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_rapid_cycling"] = (
-        pail_logistic_4["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_rapid_cycling"] = (
-        pail_logistic_5["table"]
-    )
-    pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_rapid_cycling"] = (
-        pail_logistic_6["table"]
-    )
-
-    # Linear regression.
-
-    #pail_write["tables"]["table_bipolar_disorder_linear"] = (
-    #    pail_linear_1["table"]
-    #)
     # Write product information to file.
     write_product(
         pail_write=pail_write,
