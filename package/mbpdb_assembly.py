@@ -313,8 +313,11 @@ def merge_polygenic_scores_to_phenotypes(
         drop=True, # remove index; do not move to regular columns
     )
     table_genetic_sex_case["identifier_genotype"] = (
-        table_genetic_sex_case["identifier_genotype"].astype("string")
-    )
+        table_genetic_sex_case["identifier_genotype"].astype(
+            "string",
+            copy=True,
+            errors="raise",
+    ))
     table_genetic_sex_case.set_index(
         "identifier_genotype",
         append=False,
@@ -327,8 +330,11 @@ def merge_polygenic_scores_to_phenotypes(
         drop=True, # remove index; do not move to regular columns
     )
     table_identifiers["identifier_genotype"] = (
-        table_identifiers["identifier_genotype"].astype("string")
-    )
+        table_identifiers["identifier_genotype"].astype(
+            "string",
+            copy=True,
+            errors="raise",
+    ))
     table_identifiers.set_index(
         "identifier_genotype",
         append=False,
@@ -358,8 +364,10 @@ def merge_polygenic_scores_to_phenotypes(
         inplace=True,
         drop=False, # remove index; do not move to regular columns
     )
-    table["identifier_phenotype"] = (
-        table["identifier_phenotype"].astype("string")
+    table["identifier_phenotype"] = table["identifier_phenotype"].astype(
+        "string",
+        copy=True,
+        errors="raise",
     )
     table.set_index(
         "identifier_phenotype",
@@ -373,8 +381,11 @@ def merge_polygenic_scores_to_phenotypes(
         drop=True, # remove index; do not move to regular columns
     )
     table_phenotypes["identifier_phenotype"] = (
-        table_phenotypes["identifier_phenotype"].astype("string")
-    )
+        table_phenotypes["identifier_phenotype"].astype(
+            "string",
+            copy=True,
+            errors="raise",
+    ))
     table_phenotypes.set_index(
         "identifier_phenotype",
         append=False,
@@ -401,8 +412,10 @@ def merge_polygenic_scores_to_phenotypes(
         inplace=True,
         drop=False, # remove index; do not move to regular columns
     )
-    table["identifier_genotype"] = (
-        table["identifier_genotype"].astype("string")
+    table["identifier_genotype"] = table["identifier_genotype"].astype(
+        "string",
+        copy=True,
+        errors="raise",
     )
     table.set_index(
         "identifier_genotype",
@@ -419,8 +432,11 @@ def merge_polygenic_scores_to_phenotypes(
             drop=True, # remove index; do not move to regular columns
         )
         table_score["identifier_genotype"] = (
-            table_score["identifier_genotype"].astype("string")
-        )
+            table_score["identifier_genotype"].astype(
+                "string",
+                copy=True,
+                errors="raise",
+        ))
         table_score.set_index(
             "identifier_genotype",
             append=False,

@@ -234,7 +234,11 @@ def organize_table_column_identifier(
     # Copy information in table.
     table = table.copy(deep=True)
     # Convert all identifiers to type string.
-    table[column_source] = table[column_source].astype("string")
+    table[column_source] = table[column_source].astype(
+        "string",
+        copy=True,
+        errors="raise",
+    )
     # Replace any empty identifier strings with missing values.
     table[column_source].replace(
         "",
@@ -250,8 +254,16 @@ def organize_table_column_identifier(
     )
     # Convert identifiers to type string.
     # Copy identifiers.
-    table[column_source] = table[column_source].astype("string")
-    table[column_product] = table[column_source].astype("string").copy(
+    table[column_source] = table[column_source].astype(
+        "string",
+        copy=True,
+        errors="raise",
+    )
+    table[column_product] = table[column_source].astype(
+        "string",
+        copy=True,
+        errors="raise",
+    ).copy(
         deep=True,
     )
     # Remove columns.
@@ -563,11 +575,17 @@ def execute_procedure(
 
     # Combine and organize genotype identifiers for cases and controls.
     table["identifier_genotype_case"] = (
-        table["identifier_genotype_case"].astype("string")
-    )
+        table["identifier_genotype_case"].astype(
+            "string",
+            copy=True,
+            errors="raise",
+    ))
     table["identifier_genotype_control"] = (
-        table["identifier_genotype_control"].astype("string")
-    )
+        table["identifier_genotype_control"].astype(
+            "string",
+            copy=True,
+            errors="raise",
+    ))
     table["identifier_genotype_case"].replace(
         numpy.nan,
         "",
