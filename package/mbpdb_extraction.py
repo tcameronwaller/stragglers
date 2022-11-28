@@ -140,7 +140,7 @@ def execute_procedure(
     table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
         path_directory=paths["heritability"],
         file_name_pattern=".log",
-        file_name_pattern_not="",
+        file_name_pattern_not=".....",
         analysis="heritability",
         report=True,
     )
