@@ -277,18 +277,18 @@ def evaluate_parameters_main(arguments):
         stragglers.mcita_organization.execute_procedure(
             path_dock=arguments.path_dock
         )
-    if arguments.mbpdb_prioritize_supplement:
-        # Report status.
-        print("... executing 'mbpdb_prioritize_supplement' procedure ...")
-        # Execute procedure.
-        stragglers.mbpdb_prioritize_supplement.execute_procedure(
-            path_dock=arguments.path_dock
-        )
     if arguments.mbpdb_extraction:
         # Report status.
         print("... executing 'mbpdb_extraction' procedure ...")
         # Execute procedure.
         stragglers.mbpdb_extraction.execute_procedure(
+            path_dock=arguments.path_dock
+        )
+    if arguments.mbpdb_prioritize_supplement:
+        # Report status.
+        print("... executing 'mbpdb_prioritize_supplement' procedure ...")
+        # Execute procedure.
+        stragglers.mbpdb_prioritize_supplement.execute_procedure(
             path_dock=arguments.path_dock
         )
     if arguments.mbpdb_assembly:
