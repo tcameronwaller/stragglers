@@ -213,10 +213,10 @@ def execute_procedure(
         report=True,
     )
     table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-        path_directory=paths["heritability"],
+        path_directory=paths["correlation"],
         file_name_pattern=".log",
         file_name_pattern_not=".....",
-        analysis="heritability",
+        analysis="correlation",
         report=True,
     )
 
