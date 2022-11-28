@@ -49,6 +49,7 @@ import textwrap
 # Custom.
 import stragglers.scrap
 import stragglers.mbpdb_prioritize_supplement
+import stragglers.mbpdb_extraction
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
 import stragglers.mbpdb_regression
@@ -281,6 +282,13 @@ def evaluate_parameters_main(arguments):
         print("... executing 'mbpdb_prioritize_supplement' procedure ...")
         # Execute procedure.
         stragglers.mbpdb_prioritize_supplement.execute_procedure(
+            path_dock=arguments.path_dock
+        )
+    if arguments.mbpdb_extraction:
+        # Report status.
+        print("... executing 'mbpdb_extraction' procedure ...")
+        # Execute procedure.
+        stragglers.mbpdb_extraction.execute_procedure(
             path_dock=arguments.path_dock
         )
     if arguments.mbpdb_assembly:
