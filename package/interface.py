@@ -122,6 +122,14 @@ def define_subparser_main(subparsers=None):
         )
     )
     parser.add_argument(
+        "-mbpdb_extraction", "--mbpdb_extraction",
+        dest="mbpdb_extraction",
+        action="store_true",
+        help=(
+            "Extract information from reports of analyses in other programs."
+        )
+    )
+    parser.add_argument(
         "-mbpdb_prioritize_supplement", "--mbpdb_prioritize_supplement",
         dest="mbpdb_prioritize_supplement",
         action="store_true",
