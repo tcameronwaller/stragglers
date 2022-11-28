@@ -102,6 +102,73 @@ def initialize_directories(
 
 
 
+##########
+# Write
+
+
+def write_product_table(
+    name=None,
+    table=None,
+    path_directory=None,
+):
+    """
+    Writes product information in a Pandas data frame table to file.
+
+    arguments:
+        name (str): base name for file
+        table (object): Pandas data frame table
+        path_directory (str): path to directory in which to write file
+
+    raises:
+
+    returns:
+
+    """
+
+    # Specify directories and files.
+    path_table_text = os.path.join(
+        path_directory, str(name + ".tsv")
+    )
+    # Write information to file.
+    table.to_csv(
+        path_or_buf=path_table_text,
+        sep="\t",
+        header=True,
+        index=False,
+        na_rep="NA",
+    )
+    pass
+
+
+def control_write_product(
+    pail_write=None,
+    path_directory=None,
+):
+    """
+    Writes product information to file.
+
+    arguments:
+        pail_write (dict): collection of information to write to file
+        path_parent (str): full path to directory in which to write files
+
+    raises:
+
+    returns:
+
+    """
+
+    # Initialize directories.
+    utility.create_directories(
+        path=path_directory,
+    )
+    # Write each table to file.
+    for name in pail_write.keys():
+        write_product_table(
+            name=name,
+            table=pail_write[name],
+            path_directory=path_directory,
+        )
+    pass
 
 
 ###############################################################################
@@ -137,6 +204,7 @@ def execute_procedure(
         path_dock=path_dock,
     )
 
+    # Extract information from reports of analyses in LDSC.
     table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
         path_directory=paths["heritability"],
         file_name_pattern=".log",
@@ -144,6 +212,24 @@ def execute_procedure(
         analysis="heritability",
         report=True,
     )
+    table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
+        path_directory=paths["heritability"],
+        file_name_pattern=".log",
+        file_name_pattern_not=".....",
+        analysis="heritability",
+        report=True,
+    )
+
+    # Write product information to file.
+    pail_write = dict()
+    pail_write["table_heritability"] = table_heritability
+    pail_write["table_correlation"] = table_correlation
+    control_write_product(
+        pail_write=pail_write,
+        path_directory=paths["extraction"],
+    )
+
+
 
     pass
 
