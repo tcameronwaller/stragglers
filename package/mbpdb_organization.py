@@ -1,14 +1,33 @@
-
 """
+Organize information from the MBPDB project.
 
-This module contains functions for general organization of the raw extraction
-data from the UK Biobank accessions.
+Author:
 
-Combine information from multiple UK Biobank accessions.
-Integrate identifier matchings.
-Exclude individual cases (persons) who subsequently withdrew consent.
-It is also necessary to handle the somewhat awkward format of array fields.
+    T. Cameron Waller
+    tcameronwaller@gmail.com
+    Rochester, Minnesota 55904
+    United States of America
 
+License:
+
+    This file is part of Stragglers
+    (https://github.com/tcameronwaller/stragglers/).
+
+    Stragglers supports analyses on data from multiple smaller sources.
+    Copyright (C) 2022 Thomas Cameron Waller
+
+    Stragglers is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the Free
+    Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    Stragglers is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+    more details.
+
+    You should have received a copy of the GNU General Public License along
+    with Stragglers. If not, see <http://www.gnu.org/licenses/>.
 """
 
 ###############################################################################
@@ -52,6 +71,10 @@ import promiscuity.utility as utility
 
 ###############################################################################
 # Functionality
+
+# TODO: TCW; 15 December 2022
+# Introduce a new "attribution table" similar to the one in the UK Biobank project.
+# Follow the pattern of counting various values of ordinal or categorical variables within a set of cohorts.
 
 
 ##########
@@ -1166,8 +1189,9 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 ##########
 # Description
 
-# TODO: TCW; 6 September 2022
-# TODO: move these functions to the 'promiscuity.utility' module
+# TODO: TCW; 16 December 2022
+# TODO: move this process to a new module procedure?
+# TODO: call the "promiscuity.description" functions as in "uk_biobank.description".
 
 
 def create_description_table_quantitation_record(

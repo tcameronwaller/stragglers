@@ -52,6 +52,7 @@ import stragglers.mbpdb_prioritize_supplement
 import stragglers.mbpdb_extraction
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
+import stragglers.mbpdb_description
 import stragglers.mbpdb_regression
 import stragglers.mcita_assembly
 import stragglers.mcita_organization
@@ -154,20 +155,19 @@ def define_subparser_main(subparsers=None):
         )
     )
     parser.add_argument(
+        "-mbpdb_description", "--mbpdb_description",
+        dest="mbpdb_description",
+        action="store_true",
+        help=(
+            "Describe information after organization."
+        )
+    )
+    parser.add_argument(
         "-mbpdb_stratification", "--mbpdb_stratification",
         dest="mbpdb_stratification",
         action="store_true",
         help=(
             "Stratify cohorts and phenotypes for analyses."
-        )
-    )
-    parser.add_argument(
-        "-mbpdb_description", "--mbpdb_description",
-        dest="mbpdb_description",
-        action="store_true",
-        help=(
-            "Describe cohorts and phenotypes with summary statistics " +
-            "and plots."
         )
     )
     parser.add_argument(
@@ -305,18 +305,18 @@ def evaluate_parameters_main(arguments):
         stragglers.mbpdb_organization.execute_procedure(
             path_dock=arguments.path_dock
         )
-    if arguments.mbpdb_stratification:
-        # Report status.
-        print("... executing 'mbpdb_stratification' procedure ...")
-        # Execute procedure.
-        stragglers.mbpdb_stratification.execute_procedure(
-            path_dock=arguments.path_dock
-        )
     if arguments.mbpdb_description:
         # Report status.
         print("... executing 'mbpdb_description' procedure ...")
         # Execute procedure.
         stragglers.mbpdb_description.execute_procedure(
+            path_dock=arguments.path_dock
+        )
+    if arguments.mbpdb_stratification:
+        # Report status.
+        print("... executing 'mbpdb_stratification' procedure ...")
+        # Execute procedure.
+        stragglers.mbpdb_stratification.execute_procedure(
             path_dock=arguments.path_dock
         )
     if arguments.mbpdb_regression:

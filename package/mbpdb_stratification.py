@@ -52,6 +52,10 @@ import promiscuity.utility as utility
 ###############################################################################
 # Functionality
 
+# TODO: TCW; 15 December 2022
+# I need new cohort stratifications for Rapid Cycling
+# OR I need to implement at "attribution table" like I did in the UK Biobank project.
+
 
 ##########
 # Stratification of cohorts
@@ -184,6 +188,31 @@ def stratify_phenotype_cohorts(
         ), :
     ]
     records.append(record)
+
+    # Sex and Rapid Cycling in Bipolar Disorder cases (any type).
+
+    record = dict()
+    record["name"] = "female_bipolar_disorder_rapid_cycle"
+    record["table"] = table.loc[
+        (
+            (table["sex_text"] == "female") &
+            (table["bipolar_disorder_control_case"] == 1) &
+            (table["rapid_cycling"] == 1)
+        ), :
+    ]
+    records.append(record)
+
+    record = dict()
+    record["name"] = "male_bipolar_disorder_rapid_cycle"
+    record["table"] = table.loc[
+        (
+            (table["sex_text"] == "male") &
+            (table["bipolar_disorder_control_case"] == 1) &
+            (table["rapid_cycling"] == 1)
+        ), :
+    ]
+    records.append(record)
+
 
     # Report.
     if report:
