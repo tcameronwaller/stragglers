@@ -513,6 +513,43 @@ def determine_age_body_mass_index_variables(
 # Principal Components on Genotypes
 
 
+def determine_genotype_availability(
+    genotype_pc=None,
+):
+    """
+    Determine whether genotype is available for the phenotype record.
+
+    Code:
+    0: genotype is unavailable
+    1: genotype is available
+
+    arguments:
+        genotype_pc (float): value of principal component on genotypes
+
+    raises:
+
+    returns:
+        (float): interpretation value
+
+    """
+
+    # Interpret field code.
+    if (
+        (not pandas.isna(genotype_pc))
+    ):
+        # The variable has a valid value.
+        # Interpret the value.
+        # 1: genotype is available
+        interpretation = 1
+    else:
+        # Missing or uninterpretable value
+        # Interpret the value.
+        # 0: genotype is unavailable
+        interpretation = 0
+    # Return information.
+    return interpretation
+
+
 def determine_genotype_principal_component_variables(
     table=None,
     report=None,
@@ -570,6 +607,14 @@ def determine_genotype_principal_component_variables(
             ),
         axis="columns", # apply function to each row
     )
+    # Availability of genotypes.
+    table["genotype_availability"] = table.apply(
+        lambda row:
+            determine_genotype_availability(
+                genotype_pc=row["genotype_pc_1"],
+            ),
+        axis="columns", # apply function to each row
+    )
 
     # Report.
     if report:
@@ -583,8 +628,6 @@ def determine_genotype_principal_component_variables(
         pass
     # Return information.
     return table
-
-
 
 
 # Bipolar Disorder

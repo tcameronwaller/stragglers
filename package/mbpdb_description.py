@@ -197,6 +197,20 @@ def define_variables_table_attribution():
 
         pass
 
+    # Variable: "genotype_availability"
+
+    record = dict()
+    record["name"] = "genotype_availability_0"
+    record["variable"] = "genotype_availability" # cat. or discrete variable
+    record["value"] = 0 # categorical or discrete value of variable
+    records.append(record)
+
+    record = dict()
+    record["name"] = "genotype_availability_1"
+    record["variable"] = "genotype_availability" # cat. or discrete variable
+    record["value"] = 1 # categorical or discrete value of variable
+    records.append(record)
+
     # Variable: "bipolar_disorder_control_case"
 
     record = dict()
@@ -336,6 +350,8 @@ def organize_description_table_quantitation(
     # Create a table from records of quantitation.
     table_quantitation = pdesc.drive_assemble_quantitation_table(
         variables=variables,
+        variable_attribution="genotype_availability",
+        value_attribution=1,
         records_cohorts=records_cohorts,
         report=report,
     )
