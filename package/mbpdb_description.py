@@ -273,8 +273,6 @@ def organize_description_table_attribution(
 
 
 
-
-
 ##########
 # Write
 
@@ -379,7 +377,7 @@ def execute_procedure(
 
     # Stratify phenotype records in cohorts.
     records_cohorts = mb_strat.stratify_phenotype_cohorts(
-        table=table,
+        table=source["table_phenotypes"],
         report=True,
     )
     # Attribution table.
