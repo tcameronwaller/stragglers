@@ -1546,18 +1546,6 @@ def execute_procedure(
         report=True,
     )
 
-    # Describe briefly the age of persons in different stratification cohorts.
-    # Stratify phenotype records in cohorts.
-    records_cohorts = bpd_strat.stratify_phenotype_cohorts(
-        table=table,
-        report=True,
-    )
-    table_description = drive_collect_description_table_quantitation(
-        variables=["age", "body", "genotype_pc_1",],
-        records_cohorts=records_cohorts,
-        report=True,
-    )
-
     # Organize phenotype variables.
 
     # "bib_id": phenotype identifier
@@ -1571,15 +1559,12 @@ def execute_procedure(
 
     # Collect information.
     pail_write = dict()
-    pail_write["mbpdb_organization"] = dict()
-    pail_write["mbpdb_organization"]["table_phenotypes"] = table
-    pail_write["mbpdb_organization"]["table_description"] = table_description
+    pail_write["table_phenotypes"] = table
     # Write product information to file.
-    write_product(
+    pdesc.write_product_tables(
         pail_write=pail_write,
-        paths=paths,
+        path_directory=paths["mbpdb_organization"],
     )
-
     pass
 
 

@@ -286,69 +286,70 @@ def organize_description_table_attribution(
 # Table Quantitation
 
 
-
-
-##########
-# Write
-
-
-def write_product_table(
-    name=None,
-    table=None,
-    path_directory=None,
-):
+def define_variables_table_quantitation():
     """
-    Writes product information to file.
+    Defines discrete or continuous variables on ordinal, interval, or ratio
+    scales for description in quantitation table.
 
     arguments:
-        name (str): base name for file
-        table (object): table of information to write to file
-        path_directory (str): path to parent directory
 
     raises:
 
     returns:
+        (list<str>): names of variables
 
     """
 
-    # Specify directories and files.
-    path_table = os.path.join(
-        path_directory, str(name + ".tsv")
-    )
-    # Write information to file.
-    table.to_csv(
-        path_or_buf=path_table,
-        sep="\t",
-        header=True,
-        index=True,
-    )
-    pass
+    # Define variables.
+    variables = [
+        "age", "body", "genotype_pc_1",
+    ]
+    # Return information
+    return variables
 
 
-def write_product_tables(
-    pail_write=None,
-    path_directory=None,
+def organize_description_table_quantitation(
+    records_cohorts=None,
+    report=None,
 ):
     """
-    Writes product information to file.
+    Drives the assembly of a description table from records of quantitative
+    descriptive statistics on variables of interest.
+
+    These descriptive statistics are most appropriate for continuous variables
+    on interval, or ratio scales, but they can also be informative for discrete
+    variables on ordinal scales.
 
     arguments:
-        pail_write (object): information to write to file
-        path_directory (str): path to parent directory
+        records_cohorts (list<dict>): records with information about cohorts
+        report (bool): whether to print reports
 
     raises:
 
     returns:
+        (object): Pandas data frame of missingness of hormones in cohorts
 
     """
 
-    for name in pail_write.keys():
-        write_product_table(
-            name=name,
-            table=pail_write[name],
-            path_directory=path_directory,
-        )
-    pass
+    # Define variables.
+    variables = define_variables_table_quantitation()
+    # Create a table from records of quantitation.
+    table_quantitation = pdesc.drive_assemble_quantitation_table(
+        variables=variables,
+        records_cohorts=records_cohorts,
+        report=report,
+    )
+
+    # Report.
+    if report:
+        utility.print_terminal_partition(level=2)
+        print("report: ")
+        print("organize_description_table_quantitation()")
+        utility.print_terminal_partition(level=3)
+        pass
+    # Return information.
+    return table_quantitation
+
 
 
 ###############################################################################
@@ -406,6 +407,13 @@ def execute_procedure(
     #    report=True,
     #)
 
+    # Quantitation table.
+    table_quantitation = organize_description_table_quantitation(
+        records_cohorts=records_cohorts,
+        report=True,
+    )
+
+
     # Organize phenotype variables.
 
     # "bib_id": phenotype identifier
@@ -420,9 +428,9 @@ def execute_procedure(
     # Collect information.
     pail_write = dict()
     pail_write["table_attribution"] = table_attribution
-    #pail_write["table_quantitation"] = table_quantitation
+    pail_write["table_quantitation"] = table_quantitation
     # Write product information to file.
-    write_product_tables(
+    pdesc.write_product_tables(
         pail_write=pail_write,
         path_directory=paths["mbpdb_description"],
     )
