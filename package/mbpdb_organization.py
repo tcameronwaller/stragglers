@@ -820,16 +820,21 @@ def interpret_bipolar_disorder_type_diagnosis(
 
     """
 
+    # Clean character string values.
+    value_source = str(value_source).strip()
+    match_0 = str(match_0).strip()
+    match_1 = str(match_1).strip()
+    # Interpretation.
     if (
         (not pandas.isna(value_source)) and
-        (len(str(value_source)) > 0)
+        (len(str(value_source).strip()) > 0)
     ):
         # The value is non-missing and hopefully interpretable.
         # Determine whether the value matches any strings.
-        if (str(value_source) == str(match_1)):
+        if (str(value_source).strip() == str(match_1).strip()):
             # 1: "True"
             value_product = 1
-        elif (str(value_source) == str(match_0)):
+        elif (str(value_source).strip() == str(match_0).strip()):
             # 0: "No"
             value_product = 0
         else:

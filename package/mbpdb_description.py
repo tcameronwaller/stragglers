@@ -181,18 +181,21 @@ def define_variables_table_attribution():
     # General variables.
 
     # Variable: "sex_text"
+    if False:
 
-    record = dict()
-    record["name"] = "sex_text_female"
-    record["variable"] = "sex_text" # categorical or discrete variable
-    record["value"] = "female" # categorical or discrete value of variable
-    records.append(record)
+        record = dict()
+        record["name"] = "sex_text_female"
+        record["variable"] = "sex_text" # categorical or discrete variable
+        record["value"] = "female" # categorical or discrete value of variable
+        records.append(record)
 
-    record = dict()
-    record["name"] = "sex_text_male"
-    record["variable"] = "sex_text" # categorical or discrete variable
-    record["value"] = "male" # categorical or discrete value of variable
-    records.append(record)
+        record = dict()
+        record["name"] = "sex_text_male"
+        record["variable"] = "sex_text" # categorical or discrete variable
+        record["value"] = "male" # categorical or discrete value of variable
+        records.append(record)
+
+        pass
 
     # Variable: "bipolar_disorder_control_case"
 
@@ -222,8 +225,20 @@ def define_variables_table_attribution():
     record["value"] = 1
     records.append(record)
 
-
     # Variable: "bipolar_disorder_type_1_2", "bipolar_disorder_type_2_1"
+
+    record = dict()
+    record["name"] = "bipolar_disorder_type_1"
+    record["variable"] = "bipolar_disorder_type_1_2"
+    record["value"] = 0
+    records.append(record)
+
+    record = dict()
+    record["name"] = "bipolar_disorder_type_2"
+    record["variable"] = "bipolar_disorder_type_2_1"
+    record["value"] = 0
+    records.append(record)
+
 
     # Return information
     return records
