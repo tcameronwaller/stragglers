@@ -81,15 +81,23 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    paths["heritability"] = os.path.join(
-        path_dock, "bipolar_body", "gwas_heritability_ldsc",
-    )
-    paths["correlation"] = os.path.join(
-        path_dock, "bipolar_body", "gwas_genetic_correlation_ldsc",
-    )
-    paths["extraction"] = os.path.join(
-        path_dock, "bipolar_body", "extraction_ldsc",
-    )
+    if True:
+        paths["heritability"] = os.path.join(
+            path_dock, "hormone_genetics", "gwas_heritability_ldsc",
+        )
+        paths["extraction"] = os.path.join(
+            path_dock, "hormone_genetics", "extraction_ldsc",
+        )
+    if False:
+        paths["heritability"] = os.path.join(
+            path_dock, "bipolar_body", "gwas_heritability_ldsc",
+        )
+        paths["correlation"] = os.path.join(
+            path_dock, "bipolar_body", "gwas_genetic_correlation_ldsc",
+        )
+        paths["extraction"] = os.path.join(
+            path_dock, "bipolar_body", "extraction_ldsc",
+        )
     # Remove previous files to avoid version or batch confusion.
     if restore:
         utility.remove_directory(path=paths["extraction"])
@@ -212,18 +220,18 @@ def execute_procedure(
         analysis="heritability",
         report=True,
     )
-    table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-        path_directory=paths["correlation"],
-        file_name_pattern=".log",
-        file_name_pattern_not=".....",
-        analysis="correlation",
-        report=True,
-    )
+    #table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
+    #    path_directory=paths["correlation"],
+    #    file_name_pattern=".log",
+    #    file_name_pattern_not=".....",
+    #    analysis="correlation",
+    #    report=True,
+    #)
 
     # Write product information to file.
     pail_write = dict()
     pail_write["table_heritability"] = table_heritability
-    pail_write["table_correlation"] = table_correlation
+    #pail_write["table_correlation"] = table_correlation
     control_write_product(
         pail_write=pail_write,
         path_directory=paths["extraction"],
