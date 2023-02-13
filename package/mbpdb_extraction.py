@@ -103,10 +103,10 @@ def initialize_directories(
         )
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["extraction"])
+        utility.remove_directory(path=paths["extraction_heritability"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["extraction"]
+        path=paths["extraction_heritability"]
     )
     # Return information.
     return paths
