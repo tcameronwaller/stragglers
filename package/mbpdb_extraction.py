@@ -88,8 +88,8 @@ def initialize_directories(
         paths["correlation"] = os.path.join(
             path_dock, "hormone_genetics", "gwas_correlation_ldsc",
         )
-        paths["extraction_heritability"] = os.path.join(
-            path_dock, "hormone_genetics", "extraction_heritability",
+        paths["extraction_ldsc"] = os.path.join(
+            path_dock, "hormone_genetics", "extraction_ldsc",
         )
     if False:
         paths["heritability"] = os.path.join(
@@ -103,10 +103,10 @@ def initialize_directories(
         )
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["extraction_heritability"])
+        utility.remove_directory(path=paths["extraction_ldsc"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["extraction_heritability"]
+        path=paths["extraction_ldsc"]
     )
     # Return information.
     return paths
@@ -223,21 +223,21 @@ def execute_procedure(
         analysis="heritability",
         report=True,
     )
-    #table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-    #    path_directory=paths["correlation"],
-    #    file_name_pattern=".log",
-    #    file_name_pattern_not=".....",
-    #    analysis="correlation",
-    #    report=True,
-    #)
+    table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
+        path_directory=paths["correlation"],
+        file_name_pattern=".log",
+        file_name_pattern_not=".....",
+        analysis="correlation",
+        report=True,
+    )
 
     # Write product information to file.
     pail_write = dict()
     pail_write["table_heritability"] = table_heritability
-    #pail_write["table_correlation"] = table_correlation
+    pail_write["table_correlation"] = table_correlation
     control_write_product(
         pail_write=pail_write,
-        path_directory=paths["extraction_heritability"],
+        path_directory=paths["extraction_ldsc"],
     )
 
 
