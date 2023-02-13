@@ -85,8 +85,11 @@ def initialize_directories(
         paths["heritability"] = os.path.join(
             path_dock, "hormone_genetics", "gwas_heritability_ldsc",
         )
-        paths["extraction"] = os.path.join(
-            path_dock, "hormone_genetics", "extraction_ldsc",
+        paths["correlation"] = os.path.join(
+            path_dock, "hormone_genetics", "gwas_correlation_ldsc",
+        )
+        paths["extraction_heritability"] = os.path.join(
+            path_dock, "hormone_genetics", "extraction_heritability",
         )
     if False:
         paths["heritability"] = os.path.join(
@@ -234,7 +237,7 @@ def execute_procedure(
     #pail_write["table_correlation"] = table_correlation
     control_write_product(
         pail_write=pail_write,
-        path_directory=paths["extraction"],
+        path_directory=paths["extraction_heritability"],
     )
 
 
