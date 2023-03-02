@@ -83,6 +83,16 @@ def initialize_directories(
     paths["dock"] = path_dock
     if True:
         paths["heritability"] = os.path.join(
+            path_dock, "alcohol_genetics_tcw_2023-03-02", "gwas_heritability_observed_liability_scale_ldsc",
+        )
+        paths["correlation"] = os.path.join(
+            path_dock, "alcohol_genetics_tcw_2023-03-02", "gwas_correlation_ldsc",
+        )
+        paths["extraction_ldsc"] = os.path.join(
+            path_dock, "alcohol_genetics_tcw_2023-03-02", "extraction_ldsc",
+        )
+    if False:
+        paths["heritability"] = os.path.join(
             path_dock, "hormone_genetics_tcw_2023-02-17", "gwas_heritability_observed_liability_scale_ldsc",
         )
         paths["correlation"] = os.path.join(
@@ -215,26 +225,30 @@ def execute_procedure(
         path_dock=path_dock,
     )
 
-    # Extract information from reports of analyses in LDSC.
-    table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
-        path_directory=paths["heritability"],
-        file_name_pattern=".log",
-        file_name_pattern_not=".....",
-        analysis="heritability",
-        report=True,
-    )
-    #table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-    #    path_directory=paths["correlation"],
-    #    file_name_pattern=".log",
-    #    file_name_pattern_not=".....",
-    #    analysis="correlation",
-    #    report=True,
-    #)
-
-    # Write product information to file.
+    # Collection information.
     pail_write = dict()
-    pail_write["table_heritability"] = table_heritability
-    #pail_write["table_correlation"] = table_correlation
+
+    # Extract information from reports of analyses in LDSC.
+    if False:
+        table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability"],
+            file_name_pattern=".log",
+            file_name_pattern_not=".....",
+            analysis="heritability",
+            report=True,
+        )
+        pail_write["table_heritability"] = table_heritability
+    if True:
+        table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["correlation"],
+            file_name_pattern=".log",
+            file_name_pattern_not=".....",
+            analysis="correlation",
+            report=True,
+        )
+        pail_write["table_correlation"] = table_correlation
+
+    # Write information to file.
     control_write_product(
         pail_write=pail_write,
         path_directory=paths["extraction_ldsc"],
