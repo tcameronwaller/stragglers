@@ -81,7 +81,7 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    if True:
+    if False:
         paths["heritability"] = os.path.join(
             path_dock, "alcohol_genetics_tcw_2023-03-02", "gwas_heritability_observed_liability_scale_ldsc",
         )
@@ -91,15 +91,15 @@ def initialize_directories(
         paths["extraction_ldsc"] = os.path.join(
             path_dock, "alcohol_genetics_tcw_2023-03-02", "extraction_ldsc",
         )
-    if False:
+    if True:
         paths["heritability"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-17", "gwas_heritability_observed_liability_scale_ldsc",
+            path_dock, "hormone_genetics_tcw_2023-02-24", "gwas_heritability_ldsc",
         )
         paths["correlation"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-17", "gwas_correlation_ldsc",
+            path_dock, "hormone_genetics_tcw_2023-02-24", "gwas_correlation_ldsc",
         )
         paths["extraction_ldsc"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-17", "extraction_ldsc",
+            path_dock, "hormone_genetics_tcw_2023-02-24", "extraction_ldsc",
         )
     if False:
         paths["heritability"] = os.path.join(
@@ -229,7 +229,7 @@ def execute_procedure(
     pail_write = dict()
 
     # Extract information from reports of analyses in LDSC.
-    if False:
+    if True:
         table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
             path_directory=paths["heritability"],
             file_name_pattern=".log",
@@ -238,7 +238,7 @@ def execute_procedure(
             report=True,
         )
         pail_write["table_heritability"] = table_heritability
-    if True:
+    if False:
         table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
             path_directory=paths["correlation"],
             file_name_pattern=".log",
