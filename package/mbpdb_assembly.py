@@ -1,13 +1,8 @@
 
 """
 
-This module contains functions for general organization of the raw extraction
-data from the UK Biobank accessions.
-
-Combine information from multiple UK Biobank accessions.
-Integrate identifier matchings.
-Exclude individual cases (persons) who subsequently withdrew consent.
-It is also necessary to handle the somewhat awkward format of array fields.
+This module contains functions to assemble information from multiple different
+files relevant to the Mayo Clinic biobanks.
 
 """
 
@@ -16,11 +11,6 @@ It is also necessary to handle the somewhat awkward format of array fields.
 
 ###############################################################################
 # Installation and importation
-
-# Import modules from specific path without having to install a general package
-# I would have to figure out how to pass a path variable...
-# https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
-
 
 # Standard
 
@@ -120,35 +110,44 @@ def read_source(
     """
 
     # Specify directories and files.
-    path_table_parameter_scores = os.path.join(
-        path_dock, "parameters", "stragglers",
-        "polygenic_scores", "table_mayo_bpdb.tsv"
+    path_table_scores = os.path.join(
+        path_dock, "test_sbayesr_body_mass_tcw_2023-03-21",
+        "polygenic_scores_comparison", "BMI_GIANTUKB_EUR_collection",
+        "table_scores_collection.tsv"
     )
     path_table_genetic_sex_case = os.path.join(
-        path_dock, "access", "mayo_bpdb",
-        "MERGED.maf0.01.dosR20.8.noDups.fam"
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
+        "GWAS_MERGED_BPphe_wMCBBctrl.maf0.01.dosR20.8.noDups.noSM.fam"
     )
     path_table_genotype_pca = os.path.join(
-        path_dock, "access", "mayo_bpdb",
-        "Top20_PCs.csv"
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
+        "Top20_PCs_europe.csv"
     )
     path_table_identifiers = os.path.join(
-        path_dock, "access", "mayo_bpdb",
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
         "210421_id_matching_gwas.csv"
     )
     path_table_phenotypes_case = os.path.join(
-        path_dock, "access", "mayo_bpdb",
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
         "220513_BP_phenotypes.csv"
     )
     path_table_phenotypes_control = os.path.join(
-        path_dock, "access", "mayo_bpdb",
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
         "gwas_TCF7L2_bib.csv"
     )
 
     # Read information from file.
-    table_parameter_scores = pgs.read_source_collection_polygenic_scores(
-        path_table=path_table_parameter_scores,
-        report=report,
+    table_scores = pandas.read_csv(
+        path_table_scores,
+        sep="\t",
+        header=0,
+        na_values=["nan", "na", "NAN", "NA", "<nan>", "<na>", "<NAN>", "<NA>",],
+        keep_default_na=True,
+    )
+    table_scores.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
     )
     # https://www.cog-genomics.org/plink/2.0/formats#fam
     table_genetic_sex_case = pandas.read_csv(
@@ -167,7 +166,7 @@ def read_source(
             "sex_genotype_raw": "string", # 1: male; 2: female; 0: unknown
             "bipolar_disorder_genotype_raw": "string", # 1: control; 2: case;
         },
-        na_values=["<NA>"],
+        na_values=["nan", "na", "NAN", "NA", "<nan>", "<na>", "<NAN>", "<NA>",],
         keep_default_na=True,
     )
     table_genetic_sex_case.reset_index(
@@ -180,7 +179,7 @@ def read_source(
         sep=",", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
         dtype="string",
-        na_values=["<NA>"],
+        na_values=["nan", "na", "NAN", "NA", "<nan>", "<na>", "<NAN>", "<NA>",],
         keep_default_na=True,
     )
     table_genotype_pca.reset_index(
@@ -198,6 +197,8 @@ def read_source(
             "gwas1_sampleid": "string", # identifier of individual's genotype
             "gwas2_sampleid": "string", # identifier of individual's genotype
         },
+        na_values=["nan", "na", "NAN", "NA", "<nan>", "<na>", "<NAN>", "<NA>",],
+        keep_default_na=True,
     )
     table_identifiers.reset_index(
         level=None,
@@ -219,7 +220,6 @@ def read_source(
         path_table_phenotypes_control,
         sep=",", # ","; "\t"; "\s+"; "\s+|\t+|\s+\t+|\t+\s+"
         header=0,
-        #dtype="string",
         dtype={
             "sample.id": "string",
             "bib_id": "string",
@@ -235,13 +235,39 @@ def read_source(
 
     # Compile and return information.
     return {
-        "table_parameter_scores": table_parameter_scores,
+        "table_scores": table_scores,
         "table_genetic_sex_case": table_genetic_sex_case,
         "table_genotype_pca": table_genotype_pca,
         "table_identifiers": table_identifiers,
         "table_phenotypes_case": table_phenotypes_case,
         "table_phenotypes_control": table_phenotypes_control,
     }
+
+
+
+def french_fry_one_thousand(
+    rhymes_list=None,
+):
+    """
+    Prints and list of strings with prefix on each line.
+
+    arguments:
+        rhymes_list (list<str>):
+
+    raises:
+
+    returns:
+
+    """
+
+    for rhyme in rhymes_list:
+        print(str("Ben says: " + rhyme))
+        pass
+    pass
+
+
+
+
 
 
 ##########
@@ -590,233 +616,246 @@ def execute_procedure(
     # Pause procedure.
     time.sleep(5.0)
 
-    # Initialize directories.
-    paths = initialize_directories(
-        restore=True,
-        path_dock=path_dock,
-    )
-    # Read source information from file.
-    source = read_source(
-        path_dock=path_dock,
-        report=True,
-    )
 
-    ##########
-    # Organize and merge together information on identifiers for genotypes.
-
-    # Read and organize tables of polygenic scores.
-    tables_polygenic_scores = pgs.drive_read_organize_tables_polygenic_scores(
-        table_parameter_scores=source["table_parameter_scores"],
-        filter_inclusion=True,
-        report=True,
+    # Demonstrate printing a list of strings.
+    french_fry_one_thousand(
+        rhymes_list=[
+            "phone",
+            "prone",
+            "cone",
+            "clone",
+            "flown",
+            "bone",
+            "drone",
+            "shown",
+            "grown",
+            "moan",
+        ],
     )
 
-    # Organize table of genetic sex (from PLINK2 file in ".fam" format).
-    # https://www.cog-genomics.org/plink/2.0/formats#fam
-    table_genetic_sex_case = (
-        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-            columns_keep=[
-                "IID", "sex_genotype_raw", "bipolar_disorder_genotype_raw"
-            ],
-            columns_translations={},
-            columns_copy={},
-            identifier_source="IID",
-            identifier_product="identifier_genotype",
-            table=source["table_genetic_sex_case"],
+    if False:
+
+        # Initialize directories.
+        paths = initialize_directories(
+            restore=True,
+            path_dock=path_dock,
+        )
+        # Read source information from file.
+        source = read_source(
+            path_dock=path_dock,
             report=True,
-    ))
+        )
 
-    # Organize table of principal components across genotypes.
-    table_genotype_pca = (
-        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-            columns_keep=[
-                "ID", "PC1", "PC2", "PC3", "PC4", "PC5",
-            ],
-            columns_translations={
-                "PC1": "genotype_pc_1",
-                "PC2": "genotype_pc_2",
-                "PC3": "genotype_pc_3",
-                "PC4": "genotype_pc_4",
-                "PC5": "genotype_pc_5",
-            },
-            columns_copy={},
-            identifier_source="ID",
-            identifier_product="identifier_genotype",
-            table=source["table_genotype_pca"],
+        ##########
+        # Organize and merge together information on identifiers for genotypes.
+
+        # Organize table of genetic sex (from PLINK2 file in ".fam" format).
+        # https://www.cog-genomics.org/plink/2.0/formats#fam
+        table_genetic_sex_case = (
+            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+                columns_keep=[
+                    "IID", "sex_genotype_raw", "bipolar_disorder_genotype_raw"
+                ],
+                columns_translations={},
+                columns_copy={},
+                identifier_source="IID",
+                identifier_product="identifier_genotype",
+                table=source["table_genetic_sex_case"],
+                report=True,
+        ))
+
+        # Organize table of principal components across genotypes.
+        table_genotype_pca = (
+            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+                columns_keep=[
+                    "ID", "PC1", "PC2", "PC3", "PC4", "PC5",
+                ],
+                columns_translations={
+                    "PC1": "genotype_pc_1",
+                    "PC2": "genotype_pc_2",
+                    "PC3": "genotype_pc_3",
+                    "PC4": "genotype_pc_4",
+                    "PC5": "genotype_pc_5",
+                },
+                columns_copy={},
+                identifier_source="ID",
+                identifier_product="identifier_genotype",
+                table=source["table_genotype_pca"],
+                report=True,
+        ))
+
+        # Merge table of genetic sex and case status with table of principal
+        # components across genotypes.
+        table_merge_genotypes = utility.merge_columns_two_tables(
+            identifier_first="identifier_genotype",
+            identifier_second="identifier_genotype",
+            table_first=table_genetic_sex_case,
+            table_second=table_genotype_pca,
             report=True,
-    ))
+        )
 
-    # Merge table of genetic sex and case status with table of principal
-    # components across genotypes.
-    table_merge_genotypes = utility.merge_columns_two_tables(
-        identifier_first="identifier_genotype",
-        identifier_second="identifier_genotype",
-        table_first=table_genetic_sex_case,
-        table_second=table_genotype_pca,
-        report=True,
-    )
-
-    # Merge table of genetic sex and case status and principal components
-    # across genotypes with tables of polygenic scores.
-    table_merge_genotypes = utility.merge_columns_tables_supplements_to_main(
-        identifier_main="identifier_genotype",
-        identifier_supplement="identifier_genotype",
-        table_main=table_merge_genotypes,
-        tables_supplements=tables_polygenic_scores,
-        report=True,
-    )
-
-    # Organize table of phenotype variables on controls.
-    table_phenotypes_control = (
-        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-            columns_keep=[
-                "sample.id", "bib_id", "pt_age", "bmi",
-            ],
-            columns_translations={
-                "bib_id": "bib_id_supplement",
-                "pt_age": "pt_age_supplement",
-                "bmi": "BMI_supplement",
-            },
-            columns_copy={},
-            identifier_source="sample.id",
-            identifier_product="identifier_genotype",
-            table=source["table_phenotypes_control"],
+        # Merge table of genetic sex and case status and principal components
+        # across genotypes with tables of polygenic scores.
+        table_merge_genotypes = utility.merge_columns_tables_supplements_to_main(
+            identifier_main="identifier_genotype",
+            identifier_supplement="identifier_genotype",
+            table_main=table_merge_genotypes,
+            tables_supplements=tables_polygenic_scores,
             report=True,
-    ))
+        )
 
-    # Merge table of genetic sex and case status, principal components across
-    # genotypes, and polygenic scores with table of phenotype variables on
-    # controls.
-    table_merge_genotypes = utility.merge_columns_two_tables(
-        identifier_first="identifier_genotype",
-        identifier_second="identifier_genotype",
-        table_first=table_merge_genotypes,
-        table_second=table_phenotypes_control,
-        report=True,
-    )
+        # Organize table of phenotype variables on controls.
+        table_phenotypes_control = (
+            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+                columns_keep=[
+                    "sample.id", "bib_id", "pt_age", "bmi",
+                ],
+                columns_translations={
+                    "bib_id": "bib_id_supplement",
+                    "pt_age": "pt_age_supplement",
+                    "bmi": "BMI_supplement",
+                },
+                columns_copy={},
+                identifier_source="sample.id",
+                identifier_product="identifier_genotype",
+                table=source["table_phenotypes_control"],
+                report=True,
+        ))
 
-    # Remove unnecessary columns.
-    table_merge_genotypes.drop(
-        labels=["level_0",],
-        axis="columns",
-        inplace=True
-    )
-
-    # Report.
-    print("...")
-    print("...")
-    print("...")
-    print("table after merges on genotype identifiers:")
-    print(table_merge_genotypes)
-    utility.print_terminal_partition(level=3)
-    print("table columns: " + str(int(table_merge_genotypes.shape[1])))
-    print("table rows: " + str(int(table_merge_genotypes.shape[0])))
-    print("columns")
-    print(table_merge_genotypes.columns.to_list())
-
-    ##########
-    # Organize and merge together information on identifiers for phenotypes.
-
-    # Organize table of phenotype variables on cases.
-    table_phenotypes_case = (
-        s_mcita_ass.organize_table_column_identifier(
-            column_source="bib_id",
-            column_product="identifier_phenotype",
-            table=source["table_phenotypes_case"],
+        # Merge table of genetic sex and case status, principal components across
+        # genotypes, and polygenic scores with table of phenotype variables on
+        # controls.
+        table_merge_genotypes = utility.merge_columns_two_tables(
+            identifier_first="identifier_genotype",
+            identifier_second="identifier_genotype",
+            table_first=table_merge_genotypes,
+            table_second=table_phenotypes_control,
             report=True,
-    ))
+        )
 
-    # Organize table of identifiers.
-    # Determine consensus combination of identifiers for genotypes.
-    # Prioritize identifiers from "GWAS1" set of genotypes.
-    table_identifiers = (
-        s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-            columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
-            columns_translations={
-                "bib_id": "bib_id_match",
-            },
-            columns_copy={},
-            identifier_source="bib_id_match",
-            identifier_product="identifier_phenotype",
-            table=source["table_identifiers"],
+        # Remove unnecessary columns.
+        table_merge_genotypes.drop(
+            labels=["level_0",],
+            axis="columns",
+            inplace=True
+        )
+
+        # Report.
+        print("...")
+        print("...")
+        print("...")
+        print("table after merges on genotype identifiers:")
+        print(table_merge_genotypes)
+        utility.print_terminal_partition(level=3)
+        print("table columns: " + str(int(table_merge_genotypes.shape[1])))
+        print("table rows: " + str(int(table_merge_genotypes.shape[0])))
+        print("columns")
+        print(table_merge_genotypes.columns.to_list())
+
+        ##########
+        # Organize and merge together information on identifiers for phenotypes.
+
+        # Organize table of phenotype variables on cases.
+        table_phenotypes_case = (
+            s_mcita_ass.organize_table_column_identifier(
+                column_source="bib_id",
+                column_product="identifier_phenotype",
+                table=source["table_phenotypes_case"],
+                report=True,
+        ))
+
+        # Organize table of identifiers.
+        # Determine consensus combination of identifiers for genotypes.
+        # Prioritize identifiers from "GWAS1" set of genotypes.
+        table_identifiers = (
+            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+                columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
+                columns_translations={
+                    "bib_id": "bib_id_match",
+                },
+                columns_copy={},
+                identifier_source="bib_id_match",
+                identifier_product="identifier_phenotype",
+                table=source["table_identifiers"],
+                report=True,
+        ))
+        table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
+            lambda row:
+                utility.prioritize_combination_values_string(
+                    value_priority=row["gwas1_sampleid"],
+                    value_spare=row["gwas2_sampleid"],
+                ),
+            axis="columns", # apply function to each row
+        )
+
+        # Merge table of identifiers with table of phenotype variables on cases.
+        table_merge_phenotypes = utility.merge_columns_two_tables(
+            identifier_first="identifier_phenotype",
+            identifier_second="identifier_phenotype",
+            table_first=table_phenotypes_case,
+            table_second=table_identifiers,
             report=True,
-    ))
-    table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
-        lambda row:
-            utility.prioritize_combination_values_string(
-                value_priority=row["gwas1_sampleid"],
-                value_spare=row["gwas2_sampleid"],
-            ),
-        axis="columns", # apply function to each row
-    )
+        )
+        # Remove unnecessary columns.
+        #table_merge_phenotypes.drop(
+        #    labels=["level_0",],
+        #    axis="columns",
+        #    inplace=True
+        #)
 
-    # Merge table of identifiers with table of phenotype variables on cases.
-    table_merge_phenotypes = utility.merge_columns_two_tables(
-        identifier_first="identifier_phenotype",
-        identifier_second="identifier_phenotype",
-        table_first=table_phenotypes_case,
-        table_second=table_identifiers,
-        report=True,
-    )
-    # Remove unnecessary columns.
-    #table_merge_phenotypes.drop(
-    #    labels=["level_0",],
-    #    axis="columns",
-    #    inplace=True
-    #)
+        # Report.
+        print("...")
+        print("...")
+        print("...")
+        print("table after merges on phenotype identifiers:")
+        print(table_merge_phenotypes)
+        utility.print_terminal_partition(level=3)
+        print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
+        print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
+        print("columns")
+        print(table_merge_phenotypes.columns.to_list())
 
-    # Report.
-    print("...")
-    print("...")
-    print("...")
-    print("table after merges on phenotype identifiers:")
-    print(table_merge_phenotypes)
-    utility.print_terminal_partition(level=3)
-    print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
-    print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
-    print("columns")
-    print(table_merge_phenotypes.columns.to_list())
+        ##########
+        # Merge together information on genotypes and phenotypes.
 
-    ##########
-    # Merge together information on genotypes and phenotypes.
+        # Merge table of phenotype variables with table of genetic sex, case
+        # status, and polygenic scores.
+        table_merge_phenotypes = s_mcita_ass.organize_table_column_identifier(
+            column_source="gwas_sampleid_consensus",
+            column_product="identifier_genotype",
+            table=table_merge_phenotypes,
+            report=True,
+        )
+        table = utility.merge_columns_two_tables(
+            identifier_first="identifier_genotype",
+            identifier_second="identifier_genotype",
+            table_first=table_merge_genotypes,
+            table_second=table_merge_phenotypes,
+            report=True,
+        )
 
-    # Merge table of phenotype variables with table of genetic sex, case
-    # status, and polygenic scores.
-    table_merge_phenotypes = s_mcita_ass.organize_table_column_identifier(
-        column_source="gwas_sampleid_consensus",
-        column_product="identifier_genotype",
-        table=table_merge_phenotypes,
-        report=True,
-    )
-    table = utility.merge_columns_two_tables(
-        identifier_first="identifier_genotype",
-        identifier_second="identifier_genotype",
-        table_first=table_merge_genotypes,
-        table_second=table_merge_phenotypes,
-        report=True,
-    )
+        # Report.
+        print("...")
+        print("...")
+        print("...")
+        print("table after merges of genotypes and phenotypes:")
+        print(table)
+        utility.print_terminal_partition(level=3)
+        print("table columns: " + str(int(table.shape[1])))
+        print("table rows: " + str(int(table.shape[0])))
+        print("columns")
+        print(table.columns.to_list())
 
-    # Report.
-    print("...")
-    print("...")
-    print("...")
-    print("table after merges of genotypes and phenotypes:")
-    print(table)
-    utility.print_terminal_partition(level=3)
-    print("table columns: " + str(int(table.shape[1])))
-    print("table rows: " + str(int(table.shape[0])))
-    print("columns")
-    print(table.columns.to_list())
-
-    # Collect information.
-    pail_write = dict()
-    pail_write["mbpdb_assembly"] = dict()
-    pail_write["mbpdb_assembly"]["table_phenotypes"] = table
-    # Write product information to file.
-    write_product(
-        pail_write=pail_write,
-        paths=paths,
-    )
+        # Collect information.
+        pail_write = dict()
+        pail_write["mbpdb_assembly"] = dict()
+        pail_write["mbpdb_assembly"]["table_phenotypes"] = table
+        # Write product information to file.
+        write_product(
+            pail_write=pail_write,
+            paths=paths,
+        )
+        pass
 
     pass
 
