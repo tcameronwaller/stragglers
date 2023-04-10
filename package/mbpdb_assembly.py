@@ -36,7 +36,7 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
-import promiscuity.utility as utility
+import promiscuity.utility as putility
 import promiscuity.polygenic_score as pgs
 import stragglers.mcita_assembly as s_mcita_ass
 
@@ -74,9 +74,9 @@ def initialize_directories(
     paths["mbpdb_assembly"] = os.path.join(path_dock, "mbpdb_assembly")
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["mbpdb_assembly"])
+        putility.remove_directory(path=paths["mbpdb_assembly"])
     # Initialize directories.
-    utility.create_directories(
+    putility.create_directories(
         path=paths["mbpdb_assembly"]
     )
     # Return information.
@@ -244,7 +244,6 @@ def read_source(
     }
 
 
-
 def french_fry_one_thousand(
     rhymes_list=None,
 ):
@@ -259,6 +258,19 @@ def french_fry_one_thousand(
     returns:
 
     """
+
+    rhymes_list = [
+        "phone",
+        "prone",
+        "cone",
+        "clone",
+        "flown",
+        "bone",
+        "drone",
+        "shown",
+        "grown",
+        "moan",
+    ]
 
     for rhyme in rhymes_list:
         print(str("Ben says: " + rhyme))
@@ -496,10 +508,10 @@ def merge_polygenic_scores_to_phenotypes(
     #)
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         print("merge_polygenic_scores_to_phenotypes()")
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         print(table)
         print("columns")
         print(table.columns.to_list())
@@ -516,7 +528,7 @@ def merge_polygenic_scores_to_phenotypes(
 #        "2784-0.0", "2794-0.0", "2804-0.0",
 #        "2814-0.0", "3536-0.0", "3546-0.0",
 #    ]
-#    table = utility.convert_table_columns_variables_types_float(
+#    table = putility.convert_table_columns_variables_types_float(
 #        columns=columns_type,
 #        table=table,
 #    )
@@ -610,41 +622,24 @@ def execute_procedure(
     """
 
     # Report version.
-    utility.print_terminal_partition(level=1)
+    putility.print_terminal_partition(level=1)
     print(path_dock)
     print("version check: 1")
     # Pause procedure.
     time.sleep(5.0)
 
-
-    # Demonstrate printing a list of strings.
-    french_fry_one_thousand(
-        rhymes_list=[
-            "phone",
-            "prone",
-            "cone",
-            "clone",
-            "flown",
-            "bone",
-            "drone",
-            "shown",
-            "grown",
-            "moan",
-        ],
+    # Initialize directories.
+    paths = initialize_directories(
+        restore=True,
+        path_dock=path_dock,
+    )
+    # Read source information from file.
+    source = read_source(
+        path_dock=path_dock,
+        report=True,
     )
 
     if False:
-
-        # Initialize directories.
-        paths = initialize_directories(
-            restore=True,
-            path_dock=path_dock,
-        )
-        # Read source information from file.
-        source = read_source(
-            path_dock=path_dock,
-            report=True,
-        )
 
         ##########
         # Organize and merge together information on identifiers for genotypes.
@@ -686,7 +681,7 @@ def execute_procedure(
 
         # Merge table of genetic sex and case status with table of principal
         # components across genotypes.
-        table_merge_genotypes = utility.merge_columns_two_tables(
+        table_merge_genotypes = putility.merge_columns_two_tables(
             identifier_first="identifier_genotype",
             identifier_second="identifier_genotype",
             table_first=table_genetic_sex_case,
@@ -696,7 +691,7 @@ def execute_procedure(
 
         # Merge table of genetic sex and case status and principal components
         # across genotypes with tables of polygenic scores.
-        table_merge_genotypes = utility.merge_columns_tables_supplements_to_main(
+        table_merge_genotypes = putility.merge_columns_tables_supplements_to_main(
             identifier_main="identifier_genotype",
             identifier_supplement="identifier_genotype",
             table_main=table_merge_genotypes,
@@ -725,7 +720,7 @@ def execute_procedure(
         # Merge table of genetic sex and case status, principal components across
         # genotypes, and polygenic scores with table of phenotype variables on
         # controls.
-        table_merge_genotypes = utility.merge_columns_two_tables(
+        table_merge_genotypes = putility.merge_columns_two_tables(
             identifier_first="identifier_genotype",
             identifier_second="identifier_genotype",
             table_first=table_merge_genotypes,
@@ -746,7 +741,7 @@ def execute_procedure(
         print("...")
         print("table after merges on genotype identifiers:")
         print(table_merge_genotypes)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         print("table columns: " + str(int(table_merge_genotypes.shape[1])))
         print("table rows: " + str(int(table_merge_genotypes.shape[0])))
         print("columns")
@@ -781,7 +776,7 @@ def execute_procedure(
         ))
         table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
             lambda row:
-                utility.prioritize_combination_values_string(
+                putility.prioritize_combination_values_string(
                     value_priority=row["gwas1_sampleid"],
                     value_spare=row["gwas2_sampleid"],
                 ),
@@ -789,7 +784,7 @@ def execute_procedure(
         )
 
         # Merge table of identifiers with table of phenotype variables on cases.
-        table_merge_phenotypes = utility.merge_columns_two_tables(
+        table_merge_phenotypes = putility.merge_columns_two_tables(
             identifier_first="identifier_phenotype",
             identifier_second="identifier_phenotype",
             table_first=table_phenotypes_case,
@@ -809,7 +804,7 @@ def execute_procedure(
         print("...")
         print("table after merges on phenotype identifiers:")
         print(table_merge_phenotypes)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
         print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
         print("columns")
@@ -826,7 +821,7 @@ def execute_procedure(
             table=table_merge_phenotypes,
             report=True,
         )
-        table = utility.merge_columns_two_tables(
+        table = putility.merge_columns_two_tables(
             identifier_first="identifier_genotype",
             identifier_second="identifier_genotype",
             table_first=table_merge_genotypes,
@@ -840,7 +835,7 @@ def execute_procedure(
         print("...")
         print("table after merges of genotypes and phenotypes:")
         print(table)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         print("table columns: " + str(int(table.shape[1])))
         print("table rows: " + str(int(table.shape[0])))
         print("columns")
