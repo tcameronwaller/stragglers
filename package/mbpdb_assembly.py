@@ -43,6 +43,10 @@ import stragglers.mcita_assembly as s_mcita_ass
 ###############################################################################
 # Functionality
 
+# TODO: TCW; 10 April 2023
+# TODO: need to create the table_scores_collection.tsv file.
+
+
 
 ##########
 # Initialization
@@ -242,44 +246,6 @@ def read_source(
         "table_phenotypes_case": table_phenotypes_case,
         "table_phenotypes_control": table_phenotypes_control,
     }
-
-
-def french_fry_one_thousand(
-    rhymes_list=None,
-):
-    """
-    Prints and list of strings with prefix on each line.
-
-    arguments:
-        rhymes_list (list<str>):
-
-    raises:
-
-    returns:
-
-    """
-
-    rhymes_list = [
-        "phone",
-        "prone",
-        "cone",
-        "clone",
-        "flown",
-        "bone",
-        "drone",
-        "shown",
-        "grown",
-        "moan",
-    ]
-
-    for rhyme in rhymes_list:
-        print(str("Ben says: " + rhyme))
-        pass
-    pass
-
-
-
-
 
 
 ##########
@@ -639,69 +605,95 @@ def execute_procedure(
         report=True,
     )
 
+    ##########
+    # Organize and merge together information on identifiers for genotypes.
+
+    # Organize table of genetic sex (from PLINK2 file in ".fam" format).
+    # https://www.cog-genomics.org/plink/2.0/formats#fam
+    table_genetic_sex_case = (
+        putility.simplify_translate_table_columns_organize_identifier(
+            columns_keep=[
+                "IID", "sex_genotype_raw", "bipolar_disorder_genotype_raw"
+            ],
+            columns_translations={},
+            columns_copy={},
+            identifier_source="IID",
+            identifier_product="identifier_genotype",
+            table=source["table_genetic_sex_case"],
+            report=True,
+    ))
+
+    # Organize table of principal components across genotypes.
+    table_genotype_pca = (
+        putility.simplify_translate_table_columns_organize_identifier(
+            columns_keep=[
+                "ID", "PC1", "PC2", "PC3", "PC4", "PC5",
+            ],
+            columns_translations={
+                "PC1": "genotype_pc_1",
+                "PC2": "genotype_pc_2",
+                "PC3": "genotype_pc_3",
+                "PC4": "genotype_pc_4",
+                "PC5": "genotype_pc_5",
+            },
+            columns_copy={},
+            identifier_source="ID",
+            identifier_product="identifier_genotype",
+            table=source["table_genotype_pca"],
+            report=True,
+    ))
+
+    # Organize table of polygenic scores.
+    table_scores = (
+        putility.simplify_translate_table_columns_organize_identifier(
+            columns_keep=[],
+            columns_translations={},
+            columns_copy={},
+            identifier_source="identifier",
+            identifier_product="identifier_genotype",
+            table=source["table_scores"],
+            report=True,
+    ))
+
+    # Merge table of genetic sex and case status with table of principal
+    # components across genotypes.
+    table_merge_genotypes = putility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_genetic_sex_case,
+        table_second=table_genotype_pca,
+        report=True,
+    )
+
+    # Merge table of genetic sex and case status and principal components
+    # across genotypes with table of polygenic scores.
+    table_merge_genotypes = putility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_merge_genotypes,
+        table_second=table_scores,
+        report=True,
+    )
+
+    # TODO: TCW; 11 April 2023
+    # TODO: Obsolete from when there were multiple tables for scores.
+    #table_merge_genotypes = putility.merge_columns_tables_supplements_to_main(
+    #    identifier_main="identifier_genotype",
+    #    identifier_supplement="identifier_genotype",
+    #    table_main=table_merge_genotypes,
+    #    tables_supplements=tables_polygenic_scores,
+    #    report=True,
+    #)
+
+    ##########
+    # Organize information on phenotypes.
+
+
     if False:
-
-        ##########
-        # Organize and merge together information on identifiers for genotypes.
-
-        # Organize table of genetic sex (from PLINK2 file in ".fam" format).
-        # https://www.cog-genomics.org/plink/2.0/formats#fam
-        table_genetic_sex_case = (
-            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-                columns_keep=[
-                    "IID", "sex_genotype_raw", "bipolar_disorder_genotype_raw"
-                ],
-                columns_translations={},
-                columns_copy={},
-                identifier_source="IID",
-                identifier_product="identifier_genotype",
-                table=source["table_genetic_sex_case"],
-                report=True,
-        ))
-
-        # Organize table of principal components across genotypes.
-        table_genotype_pca = (
-            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
-                columns_keep=[
-                    "ID", "PC1", "PC2", "PC3", "PC4", "PC5",
-                ],
-                columns_translations={
-                    "PC1": "genotype_pc_1",
-                    "PC2": "genotype_pc_2",
-                    "PC3": "genotype_pc_3",
-                    "PC4": "genotype_pc_4",
-                    "PC5": "genotype_pc_5",
-                },
-                columns_copy={},
-                identifier_source="ID",
-                identifier_product="identifier_genotype",
-                table=source["table_genotype_pca"],
-                report=True,
-        ))
-
-        # Merge table of genetic sex and case status with table of principal
-        # components across genotypes.
-        table_merge_genotypes = putility.merge_columns_two_tables(
-            identifier_first="identifier_genotype",
-            identifier_second="identifier_genotype",
-            table_first=table_genetic_sex_case,
-            table_second=table_genotype_pca,
-            report=True,
-        )
-
-        # Merge table of genetic sex and case status and principal components
-        # across genotypes with tables of polygenic scores.
-        table_merge_genotypes = putility.merge_columns_tables_supplements_to_main(
-            identifier_main="identifier_genotype",
-            identifier_supplement="identifier_genotype",
-            table_main=table_merge_genotypes,
-            tables_supplements=tables_polygenic_scores,
-            report=True,
-        )
 
         # Organize table of phenotype variables on controls.
         table_phenotypes_control = (
-            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+            putility.simplify_translate_table_columns_organize_identifier(
                 columns_keep=[
                     "sample.id", "bib_id", "pt_age", "bmi",
                 ],
@@ -763,7 +755,7 @@ def execute_procedure(
         # Determine consensus combination of identifiers for genotypes.
         # Prioritize identifiers from "GWAS1" set of genotypes.
         table_identifiers = (
-            s_mcita_ass.simplify_translate_table_columns_organize_identifier(
+            putility.simplify_translate_table_columns_organize_identifier(
                 columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
                 columns_translations={
                     "bib_id": "bib_id_match",
