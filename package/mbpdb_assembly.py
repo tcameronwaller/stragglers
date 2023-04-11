@@ -706,11 +706,11 @@ def execute_procedure(
     )
 
     # Remove unnecessary columns.
-    table_merge_genotypes.drop(
-        labels=["level_0",],
-        axis="columns",
-        inplace=True
-    )
+    #table_merge_genotypes.drop(
+    #    labels=["level_0",],
+    #    axis="columns",
+    #    inplace=True
+    #)
 
     # Report.
     print("...")
@@ -725,113 +725,109 @@ def execute_procedure(
     print(table_merge_genotypes.columns.to_list())
 
 
-    if False:
+    ##########
+    # Organize and merge together information on identifiers for phenotypes.
 
-        ##########
-        # Organize and merge together information on identifiers for phenotypes.
-
-        # Organize table of phenotype variables on cases.
-        table_phenotypes_case = (
-            s_mcita_ass.organize_table_column_identifier(
-                column_source="bib_id",
-                column_product="identifier_phenotype",
-                table=source["table_phenotypes_case"],
-                report=True,
-        ))
-
-        # Organize table of identifiers.
-        # Determine consensus combination of identifiers for genotypes.
-        # Prioritize identifiers from "GWAS1" set of genotypes.
-        table_identifiers = (
-            putility.simplify_translate_table_columns_organize_identifier(
-                columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
-                columns_translations={
-                    "bib_id": "bib_id_match",
-                },
-                columns_copy={},
-                identifier_source="bib_id_match",
-                identifier_product="identifier_phenotype",
-                table=source["table_identifiers"],
-                report=True,
-        ))
-        table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
-            lambda row:
-                putility.prioritize_combination_values_string(
-                    value_priority=row["gwas1_sampleid"],
-                    value_spare=row["gwas2_sampleid"],
-                ),
-            axis="columns", # apply function to each row
-        )
-
-        # Merge table of identifiers with table of phenotype variables on cases.
-        table_merge_phenotypes = putility.merge_columns_two_tables(
-            identifier_first="identifier_phenotype",
-            identifier_second="identifier_phenotype",
-            table_first=table_phenotypes_case,
-            table_second=table_identifiers,
+    # Organize table of phenotype variables on cases.
+    table_phenotypes_case = (
+        s_mcita_ass.organize_table_column_identifier(
+            column_source="bib_id",
+            column_product="identifier_phenotype",
+            table=source["table_phenotypes_case"],
             report=True,
-        )
-        # Remove unnecessary columns.
-        #table_merge_phenotypes.drop(
-        #    labels=["level_0",],
-        #    axis="columns",
-        #    inplace=True
-        #)
+    ))
 
-        # Report.
-        print("...")
-        print("...")
-        print("...")
-        print("table after merges on phenotype identifiers:")
-        print(table_merge_phenotypes)
-        putility.print_terminal_partition(level=3)
-        print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
-        print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
-        print("columns")
-        print(table_merge_phenotypes.columns.to_list())
-
-        ##########
-        # Merge together information on genotypes and phenotypes.
-
-        # Merge table of phenotype variables with table of genetic sex, case
-        # status, and polygenic scores.
-        table_merge_phenotypes = s_mcita_ass.organize_table_column_identifier(
-            column_source="gwas_sampleid_consensus",
-            column_product="identifier_genotype",
-            table=table_merge_phenotypes,
+    # Organize table of identifiers.
+    # Determine consensus combination of identifiers for genotypes.
+    # Prioritize identifiers from "GWAS1" set of genotypes.
+    table_identifiers = (
+        putility.simplify_translate_table_columns_organize_identifier(
+            columns_keep=["bib_id", "gwas1_sampleid", "gwas2_sampleid",],
+            columns_translations={
+                "bib_id": "bib_id_match",
+            },
+            columns_copy={},
+            identifier_source="bib_id_match",
+            identifier_product="identifier_phenotype",
+            table=source["table_identifiers"],
             report=True,
-        )
-        table = putility.merge_columns_two_tables(
-            identifier_first="identifier_genotype",
-            identifier_second="identifier_genotype",
-            table_first=table_merge_genotypes,
-            table_second=table_merge_phenotypes,
-            report=True,
-        )
+    ))
+    table_identifiers["gwas_sampleid_consensus"] = table_identifiers.apply(
+        lambda row:
+            putility.prioritize_combination_values_string(
+                value_priority=row["gwas1_sampleid"],
+                value_spare=row["gwas2_sampleid"],
+            ),
+        axis="columns", # apply function to each row
+    )
 
-        # Report.
-        print("...")
-        print("...")
-        print("...")
-        print("table after merges of genotypes and phenotypes:")
-        print(table)
-        putility.print_terminal_partition(level=3)
-        print("table columns: " + str(int(table.shape[1])))
-        print("table rows: " + str(int(table.shape[0])))
-        print("columns")
-        print(table.columns.to_list())
+    # Merge table of identifiers with table of phenotype variables on cases.
+    table_merge_phenotypes = putility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table_phenotypes_case,
+        table_second=table_identifiers,
+        report=True,
+    )
+    # Remove unnecessary columns.
+    #table_merge_phenotypes.drop(
+    #    labels=["level_0",],
+    #    axis="columns",
+    #    inplace=True
+    #)
 
-        # Collect information.
-        pail_write = dict()
-        pail_write["mbpdb_assembly"] = dict()
-        pail_write["mbpdb_assembly"]["table_phenotypes"] = table
-        # Write product information to file.
-        write_product(
-            pail_write=pail_write,
-            paths=paths,
-        )
-        pass
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges on phenotype identifiers:")
+    print(table_merge_phenotypes)
+    putility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table_merge_phenotypes.shape[1])))
+    print("table rows: " + str(int(table_merge_phenotypes.shape[0])))
+    print("columns")
+    print(table_merge_phenotypes.columns.to_list())
 
+    ##########
+    # Merge together information on genotypes and phenotypes.
+
+    # Merge table of phenotype variables with table of genetic sex, case
+    # status, and polygenic scores.
+    table_merge_phenotypes = putility.organize_table_column_identifier(
+        column_source="gwas_sampleid_consensus",
+        column_product="identifier_genotype",
+        table=table_merge_phenotypes,
+        report=True,
+    )
+    table = putility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_merge_genotypes,
+        table_second=table_merge_phenotypes,
+        report=True,
+    )
+
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges of genotypes and phenotypes:")
+    print(table)
+    putility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table.shape[1])))
+    print("table rows: " + str(int(table.shape[0])))
+    print("columns")
+    print(table.columns.to_list())
+
+    # Collect information.
+    pail_write = dict()
+    pail_write["mbpdb_assembly"] = dict()
+    pail_write["mbpdb_assembly"]["table_phenotypes"] = table
+    # Write product information to file.
+    write_product(
+        pail_write=pail_write,
+        paths=paths,
+    )
     pass
 
 
