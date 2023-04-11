@@ -675,69 +675,57 @@ def execute_procedure(
         report=True,
     )
 
-    # TODO: TCW; 11 April 2023
-    # TODO: Obsolete from when there were multiple tables for scores.
-    #table_merge_genotypes = putility.merge_columns_tables_supplements_to_main(
-    #    identifier_main="identifier_genotype",
-    #    identifier_supplement="identifier_genotype",
-    #    table_main=table_merge_genotypes,
-    #    tables_supplements=tables_polygenic_scores,
-    #    report=True,
-    #)
+    # Organize table of phenotype variables on controls.
+    # Merge these phenotypes on identifiers for genotypes.
+    table_phenotypes_control = (
+        putility.simplify_translate_table_columns_organize_identifier(
+            columns_keep=[
+                "sample.id", "bib_id", "pt_age", "bmi",
+            ],
+            columns_translations={
+                "bib_id": "bib_id_supplement",
+                "pt_age": "pt_age_supplement",
+                "bmi": "BMI_supplement",
+            },
+            columns_copy={},
+            identifier_source="sample.id",
+            identifier_product="identifier_genotype",
+            table=source["table_phenotypes_control"],
+            report=True,
+    ))
 
-    ##########
-    # Organize information on phenotypes.
+    # Merge table of genetic sex and case status, principal components across
+    # genotypes, and polygenic scores with table of phenotype variables on
+    # controls.
+    table_merge_genotypes = putility.merge_columns_two_tables(
+        identifier_first="identifier_genotype",
+        identifier_second="identifier_genotype",
+        table_first=table_merge_genotypes,
+        table_second=table_phenotypes_control,
+        report=True,
+    )
+
+    # Remove unnecessary columns.
+    table_merge_genotypes.drop(
+        labels=["level_0",],
+        axis="columns",
+        inplace=True
+    )
+
+    # Report.
+    print("...")
+    print("...")
+    print("...")
+    print("table after merges on genotype identifiers:")
+    print(table_merge_genotypes)
+    putility.print_terminal_partition(level=3)
+    print("table columns: " + str(int(table_merge_genotypes.shape[1])))
+    print("table rows: " + str(int(table_merge_genotypes.shape[0])))
+    print("columns")
+    print(table_merge_genotypes.columns.to_list())
 
 
     if False:
-
-        # Organize table of phenotype variables on controls.
-        table_phenotypes_control = (
-            putility.simplify_translate_table_columns_organize_identifier(
-                columns_keep=[
-                    "sample.id", "bib_id", "pt_age", "bmi",
-                ],
-                columns_translations={
-                    "bib_id": "bib_id_supplement",
-                    "pt_age": "pt_age_supplement",
-                    "bmi": "BMI_supplement",
-                },
-                columns_copy={},
-                identifier_source="sample.id",
-                identifier_product="identifier_genotype",
-                table=source["table_phenotypes_control"],
-                report=True,
-        ))
-
-        # Merge table of genetic sex and case status, principal components across
-        # genotypes, and polygenic scores with table of phenotype variables on
-        # controls.
-        table_merge_genotypes = putility.merge_columns_two_tables(
-            identifier_first="identifier_genotype",
-            identifier_second="identifier_genotype",
-            table_first=table_merge_genotypes,
-            table_second=table_phenotypes_control,
-            report=True,
-        )
-
-        # Remove unnecessary columns.
-        table_merge_genotypes.drop(
-            labels=["level_0",],
-            axis="columns",
-            inplace=True
-        )
-
-        # Report.
-        print("...")
-        print("...")
-        print("...")
-        print("table after merges on genotype identifiers:")
-        print(table_merge_genotypes)
-        putility.print_terminal_partition(level=3)
-        print("table columns: " + str(int(table_merge_genotypes.shape[1])))
-        print("table rows: " + str(int(table_merge_genotypes.shape[0])))
-        print("columns")
-        print(table_merge_genotypes.columns.to_list())
 
         ##########
         # Organize and merge together information on identifiers for phenotypes.
