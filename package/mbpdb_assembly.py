@@ -528,6 +528,9 @@ def write_product_assembly(
     path_table_phenotypes_text = os.path.join(
         path_directory, "table_phenotypes.tsv"
     )
+    path_list_columns_text = os.path.join(
+        path_directory, "list_table_columns.txt"
+    )
     # Write information to file.
     pail_write["table_phenotypes"].to_pickle(
         path_table_phenotypes
@@ -537,6 +540,11 @@ def write_product_assembly(
         sep="\t",
         header=True, # include header in table
         index=False, # do not include index in table
+    )
+    putility.write_file_text_list(
+        elements=pail_write["table_phenotypes"].columns.to_list(),
+        delimiter="\n",
+        path_file=path_list_columns_text,
     )
     pass
 
