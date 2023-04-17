@@ -1,7 +1,7 @@
 execution	cohort	cohort_sort	dependence	dependence_sort	dependence_type	independence	model	model_sort	model_adjustment	model_context	model_note
-1	genotype	1	body_log	1	linear	score_bmi_sbayesr_1;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	1	1	adjust	joint	adjust joint
-1	genotype	1	body_log	1	linear	score_bmi_sbayesr_2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	2	2	adjust	joint	adjust joint
-1	genotype	1	body_log	1	linear	score_bmi_sbayesr_3;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	3	3	adjust	joint	adjust joint
-1	genotype	1	body_log	1	linear	score_bmi_ldpred2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	4	4	adjust	joint	adjust joint
-1	genotype	1	body_log	1	linear	score_bmi_ldpred2_2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	5	5	adjust	joint	adjust joint
-1	genotype	1	body_log	1	linear	score_bmi_prsice2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3	6	6	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_sbayesr_1;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_sbayesr_2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_sbayesr_3;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_ldpred2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	4	4	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_ldpred2_2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	5	5	adjust	joint	adjust joint
+1	genotype	1	body_log	1	linear	score_bmi_prsice2;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	6	6	adjust	joint	adjust joint
