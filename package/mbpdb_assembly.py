@@ -730,7 +730,7 @@ def execute_procedure(
 
     # Organize table of phenotype variables on cases.
     table_phenotypes_case = (
-        s_mcita_ass.organize_table_column_identifier(
+        putility.organize_table_column_identifier(
             column_source="bib_id",
             column_product="identifier_phenotype",
             table=source["table_phenotypes_case"],
