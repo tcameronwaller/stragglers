@@ -1466,6 +1466,9 @@ def write_product_organization(
     path_table_description_text = os.path.join(
         path_directory, "table_description.tsv"
     )
+    path_list_columns_text = os.path.join(
+        path_directory, "list_table_columns.txt"
+    )
     # Write information to file.
     pail_write["table_phenotypes"].to_pickle(
         path_table_phenotypes
@@ -1481,6 +1484,11 @@ def write_product_organization(
         sep="\t",
         header=True,
         index=False, # include index in table
+    )
+    putility.write_file_text_list(
+        elements=pail_write["table_phenotypes"].columns.to_list(),
+        delimiter="\n",
+        path_file=path_list_columns_text,
     )
     pass
 
