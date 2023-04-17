@@ -66,7 +66,7 @@ import statsmodels.multivariate.pca
 
 # Custom
 import stragglers.mbpdb_stratification as bpd_strat
-import promiscuity.utility as utility
+import promiscuity.utility as putility
 import promiscuity.scale as pscale
 import promiscuity.description as pdesc
 #import promiscuity.plot as plot
@@ -111,9 +111,9 @@ def initialize_directories(
     )
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["mbpdb_organization"])
+        putility.remove_directory(path=paths["mbpdb_organization"])
     # Initialize directories.
-    utility.create_directories(
+    putility.create_directories(
         path=paths["mbpdb_organization"]
     )
     # Return information.
@@ -169,7 +169,7 @@ def read_source(
 #        "2784-0.0", "2794-0.0", "2804-0.0",
 #        "2814-0.0", "3536-0.0", "3546-0.0",
 #    ]
-#    table = utility.convert_table_columns_variables_types_float(
+#    table = putility.convert_table_columns_variables_types_float(
 #        columns=columns_type,
 #        table=table,
 #    )
@@ -395,13 +395,13 @@ def determine_biological_sex_variables(
 
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_biological_sex_variables()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         # Stratify tables.
         table_report_female = table.loc[
             (
@@ -416,9 +416,9 @@ def determine_biological_sex_variables(
         # Count.
         count_female = table_report_female.shape[0]
         count_male = table_report_male.shape[0]
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count female: " + str(count_female))
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count male: " + str(count_male))
         pass
     # Return information.
@@ -452,21 +452,21 @@ def determine_age_body_mass_index_variables(
     # Determine age variable.
     table["age_main"] = table.apply(
         lambda row:
-            utility.determine_human_physiology_age(
+            putility.determine_human_physiology_age(
                 value_raw=row["pt_age"],
             ),
         axis="columns", # apply function to each row
     )
     table["age_supplement"] = table.apply(
         lambda row:
-            utility.determine_human_physiology_age(
+            putility.determine_human_physiology_age(
                 value_raw=row["pt_age_supplement"],
             ),
         axis="columns", # apply function to each row
     )
     table["age"] = table.apply(
         lambda row:
-            utility.prioritize_combination_values_float(
+            putility.prioritize_combination_values_float(
                 value_priority=row["age_main"],
                 value_spare=row["age_supplement"],
             ),
@@ -476,21 +476,21 @@ def determine_age_body_mass_index_variables(
     # Determine body mass index (BMI) variable.
     table["body_main"] = table.apply(
         lambda row:
-            utility.determine_human_physiology_body_mass_index(
+            putility.determine_human_physiology_body_mass_index(
                 value_raw=row["BMI"],
             ),
         axis="columns", # apply function to each row
     )
     table["body_supplement"] = table.apply(
         lambda row:
-            utility.determine_human_physiology_body_mass_index(
+            putility.determine_human_physiology_body_mass_index(
                 value_raw=row["BMI_supplement"],
             ),
         axis="columns", # apply function to each row
     )
     table["body"] = table.apply(
         lambda row:
-            utility.prioritize_combination_values_float(
+            putility.prioritize_combination_values_float(
                 value_priority=row["body_main"],
                 value_spare=row["body_supplement"],
             ),
@@ -504,13 +504,13 @@ def determine_age_body_mass_index_variables(
 
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_age_body_mass_index_variables()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         pass
     # Return information.
     return table
@@ -580,35 +580,35 @@ def determine_genotype_principal_component_variables(
     # Determine variables for Principal Components on Genotypes.
     table["genotype_pc_1"] = table.apply(
         lambda row:
-            utility.interpret_raw_string_value_missingness_convert_to_float(
+            putility.interpret_raw_string_value_missingness_convert_to_float(
                 value_raw=row["genotype_pc_1"],
             ),
         axis="columns", # apply function to each row
     )
     table["genotype_pc_2"] = table.apply(
         lambda row:
-            utility.interpret_raw_string_value_missingness_convert_to_float(
+            putility.interpret_raw_string_value_missingness_convert_to_float(
                 value_raw=row["genotype_pc_2"],
             ),
         axis="columns", # apply function to each row
     )
     table["genotype_pc_3"] = table.apply(
         lambda row:
-            utility.interpret_raw_string_value_missingness_convert_to_float(
+            putility.interpret_raw_string_value_missingness_convert_to_float(
                 value_raw=row["genotype_pc_3"],
             ),
         axis="columns", # apply function to each row
     )
     table["genotype_pc_4"] = table.apply(
         lambda row:
-            utility.interpret_raw_string_value_missingness_convert_to_float(
+            putility.interpret_raw_string_value_missingness_convert_to_float(
                 value_raw=row["genotype_pc_4"],
             ),
         axis="columns", # apply function to each row
     )
     table["genotype_pc_5"] = table.apply(
         lambda row:
-            utility.interpret_raw_string_value_missingness_convert_to_float(
+            putility.interpret_raw_string_value_missingness_convert_to_float(
                 value_raw=row["genotype_pc_5"],
             ),
         axis="columns", # apply function to each row
@@ -624,13 +624,13 @@ def determine_genotype_principal_component_variables(
 
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_genotype_principal_component_variables()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         pass
     # Return information.
     return table
@@ -820,13 +820,13 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
     )
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_logical_binary_indicator_variables_bipolar_disorder()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         # Stratify tables.
         table_report_control = table.loc[
             (
@@ -841,9 +841,9 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
         # Count.
         count_control = table_report_control.shape[0]
         count_case = table_report_case.shape[0]
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder controls: " + str(count_control))
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder cases: " + str(count_case))
         pass
     # Return information.
@@ -939,14 +939,14 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
 
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_logical_binary_indicator_variables_bipolar_disorder_" +
             "type()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         # Stratify tables.
         table_report_type_1 = table.loc[
             (
@@ -961,9 +961,9 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         # Count.
         count_type_1 = table_report_type_1.shape[0]
         count_type_2 = table_report_type_2.shape[0]
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder Type 1: " + str(count_type_1))
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("count of Bipolar Disorder Type 2: " + str(count_type_2))
         pass
     # Return information.
@@ -1078,13 +1078,13 @@ def determine_bipolar_disorder_type_control_case(
     )
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_bipolar_disorder_type_control_case()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         # Stratify tables.
         table_type_1_case = table.loc[
             (
@@ -1099,11 +1099,11 @@ def determine_bipolar_disorder_type_control_case(
         # Count.
         count_type_1_case = table_type_1_case.shape[0]
         count_type_2_case = table_type_2_case.shape[0]
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print(
             "count of Bipolar Disorder Type 1 cases: " + str(count_type_1_case)
         )
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print(
             "count of Bipolar Disorder Type 2 cases: " + str(count_type_2_case)
         )
@@ -1182,13 +1182,13 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         name_function = (
             "determine_logical_binary_indicator_variables_rapid_cycling()"
         )
         print(name_function)
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         # Stratify tables.
         table_type_1_rapid_1 = table.loc[
             (
@@ -1227,7 +1227,7 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
             "count of Bipolar Disorder Type 1, Rapid Cycling False: " +
             str(count_type_1_rapid_0)
         )
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print(
             "count of Bipolar Disorder Type 2, Rapid Cycling True: " +
             str(count_type_2_rapid_1)
@@ -1340,10 +1340,10 @@ def create_description_table_quantitation_record(
     record["confidence_95_high"] = str(round(confidence_95_high, 7))
     # Report.
     if report:
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("report: ")
         print("create_description_table_quantitation_record()")
-        utility.print_terminal_partition(level=5)
+        putility.print_terminal_partition(level=5)
         print("cohort: " + str(record["cohort"]))
         print("variable: " + str(record["variable"]))
         print(
@@ -1425,10 +1425,10 @@ def drive_collect_description_table_quantitation(
     table = table[[*columns]]
     # Report.
     if report:
-        utility.print_terminal_partition(level=2)
+        putility.print_terminal_partition(level=2)
         print("report: ")
         print("drive_collect_description_table_quantitation()")
-        utility.print_terminal_partition(level=3)
+        putility.print_terminal_partition(level=3)
         print(table)
         pass
     # Return information.
@@ -1521,7 +1521,7 @@ def execute_procedure(
     """
 
     # Report version.
-    utility.print_terminal_partition(level=1)
+    putility.print_terminal_partition(level=1)
     print(path_dock)
     print("version check: 1")
     # Pause procedure.
