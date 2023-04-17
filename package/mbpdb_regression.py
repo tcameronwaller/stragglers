@@ -324,7 +324,7 @@ def execute_procedure(
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
-            type="logistic",
+            type="linear",
             report=True,
         )
         pail_write["tables"]["table_linear_joint_adjust_body_mass_polygenic_scores"] = (
