@@ -38,7 +38,7 @@ import statsmodels.multivariate.pca
 # Custom
 import promiscuity.utility as putility
 import promiscuity.polygenic_score as pgs
-import stragglers.mcita_assembly as s_mcita_ass
+#import stragglers.mcita_assembly as s_mcita_ass
 
 ###############################################################################
 # Functionality
