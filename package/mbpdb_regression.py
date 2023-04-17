@@ -61,7 +61,7 @@ pandas.options.mode.chained_assignment = None # default = "warn"
 import networkx
 
 # Custom
-import promiscuity.utility as utility
+import promiscuity.utility as putility
 import promiscuity.regression as pro_reg
 import promiscuity.decomposition as decomp
 import stragglers.mbpdb_stratification as bpd_strat # problem when executing uk_biobank not as sub-directory...
@@ -101,9 +101,9 @@ def initialize_directories(
 
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["mbpdb_regression"])
+        putility.remove_directory(path=paths["mbpdb_regression"])
     # Initialize directories.
-    utility.create_directories(
+    putility.create_directories(
         path=paths["mbpdb_regression"]
     )
     # Return information.
@@ -178,7 +178,7 @@ def read_source_cohort_model_reference(
         path_dock, "parameters", "stragglers", "regression_cohorts_models",
     )
     # Read all files within parent directory and organize tables.
-    pail = utility.read_all_pandas_tables_files_within_parent_directory(
+    pail = putility.read_all_pandas_tables_files_within_parent_directory(
         path_directory_parent=path_directory_parent,
         types_pandas_table_read={
             "execution": "int",
@@ -250,7 +250,7 @@ def stratify_cohorts_call_run_regressions(
         table=table,
     )
     entries_cohorts = (
-        utility.structure_from_records_to_entries(
+        putility.structure_from_records_to_entries(
             records=records_cohorts,
     ))
     # Call driver for regressions.
@@ -265,101 +265,6 @@ def stratify_cohorts_call_run_regressions(
     ))
     # Return information.
     return pail
-
-
-##########
-# Write
-
-
-def write_product_table(
-    name=None,
-    table=None,
-    path_directory=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        name (str): base name for file
-        table (object): Pandas data-frame table to write to file
-        path_directory (str): path to parent directory
-
-    raises:
-
-    returns:
-
-    """
-
-    # Reset index.
-    table.reset_index(
-        level=None,
-        inplace=True,
-        drop=True,
-    )
-    # Specify directories and files.
-    path_table = os.path.join(
-        path_directory, str(name + ".tsv")
-    )
-    # Write information to file.
-    table.to_csv(
-        path_or_buf=path_table,
-        sep="\t",
-        header=True,
-        index=False,
-    )
-    pass
-
-
-def write_product_tables(
-    pail_write=None,
-    path_directory=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        pail_write (dict<object>): collection of information to write to file
-        path_directory (str): path to parent directory
-
-    raises:
-
-    returns:
-
-    """
-
-    for name in pail_write.keys():
-        write_product_table(
-            name=name,
-            table=pail_write[name],
-            path_directory=path_directory,
-        )
-    pass
-
-
-def write_product(
-    pail_write=None,
-    path_directory=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        pail_write (dict<dict<object>>): collection of information to write to
-            file
-        path_directory (str): path to parent directory
-
-    raises:
-
-    returns:
-
-    """
-
-    # Export information.
-    write_product_tables(
-        pail_write=pail_write["tables"],
-        path_directory=path_directory,
-    )
-    pass
 
 
 ###############################################################################
@@ -383,7 +288,7 @@ def execute_procedure(
     """
 
     # Report version.
-    utility.print_terminal_partition(level=1)
+    putility.print_terminal_partition(level=1)
     print(path_dock)
     print("version check: TCW, 18 August 2021")
     # Pause procedure.
@@ -427,7 +332,7 @@ def execute_procedure(
         )
 
         pass
-    if True:
+    if False:
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
@@ -442,7 +347,7 @@ def execute_procedure(
             pail_regression["table"]
         )
         pass
-    if True:
+    if False:
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
@@ -458,7 +363,7 @@ def execute_procedure(
         )
         pass
 
-    if True:
+    if False:
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
@@ -473,7 +378,7 @@ def execute_procedure(
             pail_regression["table"]
         )
         pass
-    if True:
+    if False:
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
@@ -488,7 +393,7 @@ def execute_procedure(
             pail_regression["table"]
         )
         pass
-    if True:
+    if False:
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
@@ -505,7 +410,7 @@ def execute_procedure(
         pass
 
     # Write product information to file.
-    write_product(
+    pro_reg.write_product(
         pail_write=pail_write,
         path_directory=paths["mbpdb_regression"],
     )
