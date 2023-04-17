@@ -1463,9 +1463,9 @@ def write_product_organization(
     path_table_phenotypes_text = os.path.join(
         path_directory, "table_phenotypes.tsv"
     )
-    path_table_description_text = os.path.join(
-        path_directory, "table_description.tsv"
-    )
+    #path_table_description_text = os.path.join(
+    #    path_directory, "table_description.tsv"
+    #)
     path_list_columns_text = os.path.join(
         path_directory, "list_table_columns.txt"
     )
@@ -1479,12 +1479,12 @@ def write_product_organization(
         header=True,
         index=True,
     )
-    pail_write["table_description"].to_csv(
-        path_or_buf=path_table_description_text,
-        sep="\t",
-        header=True,
-        index=False, # include index in table
-    )
+    #pail_write["table_description"].to_csv(
+    #    path_or_buf=path_table_description_text,
+    #    sep="\t",
+    #    header=True,
+    #    index=False, # include index in table
+    #)
     putility.write_file_text_list(
         elements=pail_write["table_phenotypes"].columns.to_list(),
         delimiter="\n",
