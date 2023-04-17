@@ -106,6 +106,15 @@ def stratify_phenotype_cohorts(
     # Sex and genotype.
 
     record = dict()
+    record["name"] = "genotype"
+    record["table"] = table.loc[
+        (
+            (table["genotype_availability"] == 1)
+        ), :
+    ]
+    records.append(record)
+
+    record = dict()
     record["name"] = "female_genotype"
     record["table"] = table.loc[
         (

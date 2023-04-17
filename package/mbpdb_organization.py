@@ -67,6 +67,7 @@ import statsmodels.multivariate.pca
 # Custom
 import stragglers.mbpdb_stratification as bpd_strat
 import promiscuity.utility as utility
+import promiscuity.scale as pscale
 import promiscuity.description as pdesc
 #import promiscuity.plot as plot
 
@@ -494,6 +495,11 @@ def determine_age_body_mass_index_variables(
                 value_spare=row["body_supplement"],
             ),
         axis="columns", # apply function to each row
+    )
+    table = pscale.drive_transform_variables_distribution_scale_logarithm(
+        columns=["body"],
+        suffix="_log",
+        table=table,
     )
 
     # Report.

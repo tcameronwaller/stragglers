@@ -290,7 +290,7 @@ def execute_procedure(
     # Report version.
     putility.print_terminal_partition(level=1)
     print(path_dock)
-    print("version check: TCW, 18 August 2021")
+    print("version check: TCW, 17 April 2023")
     # Pause procedure.
     time.sleep(5.0)
 
@@ -320,93 +320,17 @@ def execute_procedure(
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_logistic_marginal_unadjust_bipolar_disorder_any_control_case"]
+                source_reference["table_linear_joint_adjust_body_mass_polygenic_scores"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
             type="logistic",
             report=True,
         )
-        pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_control_case"] = (
+        pail_write["tables"]["table_linear_joint_adjust_body_mass_polygenic_scores"] = (
             pail_regression["table"]
         )
 
-        pass
-    if False:
-        pail_regression = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_adjust_part_bipolar_disorder_any_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_control_case"] = (
-            pail_regression["table"]
-        )
-        pass
-    if False:
-        pail_regression = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_adjust_full_bipolar_disorder_any_control_case"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_control_case"] = (
-            pail_regression["table"]
-        )
-        pass
-
-    if False:
-        pail_regression = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_marginal_unadjust_bipolar_disorder_any_rapid_cycling"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pail_write["tables"]["table_logistic_marginal_unadjust_bipolar_disorder_any_rapid_cycling"] = (
-            pail_regression["table"]
-        )
-        pass
-    if False:
-        pail_regression = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_adjust_part_bipolar_disorder_any_rapid_cycling"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pail_write["tables"]["table_logistic_joint_adjust_part_bipolar_disorder_any_rapid_cycling"] = (
-            pail_regression["table"]
-        )
-        pass
-    if False:
-        pail_regression = stratify_cohorts_call_run_regressions(
-            table=source["table_phenotypes"],
-            table_cohorts_models=(
-                source_reference["table_logistic_joint_adjust_full_bipolar_disorder_any_rapid_cycling"]
-            ),
-            independences_summary=None, # "None" or list of variables
-            filter_execution=True,
-            type="logistic",
-            report=True,
-        )
-        pail_write["tables"]["table_logistic_joint_adjust_full_bipolar_disorder_any_rapid_cycling"] = (
-            pail_regression["table"]
-        )
         pass
 
     # Write product information to file.
