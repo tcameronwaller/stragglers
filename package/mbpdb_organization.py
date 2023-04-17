@@ -1493,32 +1493,6 @@ def write_product_organization(
     pass
 
 
-def write_product(
-    pail_write=None,
-    paths=None,
-):
-    """
-    Writes product information to file.
-
-    arguments:
-        pail_write (dict): collection of information to write to file
-        paths (dict<str>): collection of paths to directories for procedure's
-            files
-
-    raises:
-
-    returns:
-
-    """
-
-    # Organization procedure main information.
-    write_product_organization(
-        pail_write=pail_write["mbpdb_organization"],
-        path_directory=paths["mbpdb_organization"],
-    )
-    pass
-
-
 ###############################################################################
 # Procedure
 
@@ -1619,7 +1593,7 @@ def execute_procedure(
     pail_write = dict()
     pail_write["table_phenotypes"] = table
     # Write product information to file.
-    pdesc.write_product_tables(
+    write_product_organization(
         pail_write=pail_write,
         path_directory=paths["mbpdb_organization"],
     )
