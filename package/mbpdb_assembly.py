@@ -114,9 +114,14 @@ def read_source(
     """
 
     # Specify directories and files.
+    #path_table_scores = os.path.join(
+    #    path_dock, "test_sbayesr_body_mass_tcw_2023-03-21",
+    #    "polygenic_scores_comparison", "BMI_GIANTUKB_EUR_collection",
+    #    "table_scores_collection.tsv"
+    #)
     path_table_scores = os.path.join(
-        path_dock, "test_sbayesr_body_mass_tcw_2023-03-21",
-        "polygenic_scores_comparison", "BMI_GIANTUKB_EUR_collection",
+        path_dock, "hormone_genetics_tcw_2023-02-24",
+        "sbayesr_plink_polygenic_scores_collection",
         "table_scores_collection.tsv"
     )
     path_table_genetic_sex_case = os.path.join(
