@@ -1,0 +1,25 @@
+execution	cohort	cohort_sort	dependence	dependence_sort	dependence_type	independence	model	model_sort	model_adjustment	model_context	model_note
+0	genotype	1	bipolar_disorder_control_case	1	logistic	score_32769997_zhou_2020_tsh;sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+0	genotype	1	bipolar_disorder_control_case	1	logistic	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+0	genotype	1	bipolar_disorder_control_case	1	logistic	sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+0	genotype	1	bipolar_type_1_control_case	2	logistic	score_32769997_zhou_2020_tsh;sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+0	genotype	1	bipolar_type_1_control_case	2	logistic	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+0	genotype	1	bipolar_type_1_control_case	2	logistic	sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+0	genotype	1	bipolar_type_2_control_case	3	logistic	score_32769997_zhou_2020_tsh;sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+0	genotype	1	bipolar_type_2_control_case	3	logistic	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+0	genotype	1	bipolar_type_2_control_case	3	logistic	sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+0	genotype	1	bipolar_disorder_type_1_2	4	logistic	score_32769997_zhou_2020_tsh;sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+0	genotype	1	bipolar_disorder_type_1_2	4	logistic	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+0	genotype	1	bipolar_disorder_type_1_2	4	logistic	sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+0	genotype	1	rapid_cycling	5	logistic	score_32769997_zhou_2020_tsh;sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+0	genotype	1	rapid_cycling	5	logistic	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+0	genotype	1	rapid_cycling	5	logistic	sex_y;age;body;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+1	genotype	1	body_log	6	linear	score_32769997_zhou_2020_tsh;sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+1	genotype	1	body_log	6	linear	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+1	genotype	1	body_log	6	linear	sex_y;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+1	female_genotype	2	body_log	6	linear	score_32769997_zhou_2020_tsh;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+1	female_genotype	2	body_log	6	linear	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+1	female_genotype	2	body_log	6	linear	age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null
+1	male_genotype	2	body_log	6	linear	score_32769997_zhou_2020_tsh;age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	1	1	adjust	joint	adjust joint
+1	male_genotype	2	body_log	6	linear	score_32769997_zhou_2020_tsh;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	2	2	unadjust	joint	unadjust joint
+1	male_genotype	2	body_log	6	linear	age;genotype_pc_1;genotype_pc_2;genotype_pc_3;genotype_pc_4;genotype_pc_5	3	3	adjust	null	adjust null

@@ -320,14 +320,14 @@ def execute_procedure(
         pail_regression = stratify_cohorts_call_run_regressions(
             table=source["table_phenotypes"],
             table_cohorts_models=(
-                source_reference["table_2023-04-19_tsh_polygenic_scores"]
+                source_reference["table_2023-04-24_tsh_polygenic_scores"]
             ),
             independences_summary=None, # "None" or list of variables
             filter_execution=True,
-            type="logistic",
+            type="linear",
             report=True,
         )
-        pail_write["tables"]["table_2023-04-19_tsh_polygenic_scores"] = (
+        pail_write["tables"]["table_2023-04-24_tsh_polygenic_scores"] = (
             pail_regression["table"]
         )
 
