@@ -838,13 +838,32 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
                 (table["bipolar_disorder_control_case"] == 1)
             ), :
         ]
+        table_report_case_phenotype = table.loc[
+            (
+                (table["bipolar_disorder_phenotype"] == 1)
+            ), :
+        ]
+        table_report_case_genotype = table.loc[
+            (
+                (table["bipolar_disorder_genotype"] == 1)
+            ), :
+        ]
         # Count.
         count_control = table_report_control.shape[0]
         count_case = table_report_case.shape[0]
+        count_case_phenotype = table_report_case_phenotype.shape[0]
+        count_case_genotype = table_report_case_genotype.shape[0]
         putility.print_terminal_partition(level=5)
-        print("count of Bipolar Disorder controls: " + str(count_control))
+        print("count of totals from phenotypes and genotypes:")
+        print("Bipolar Disorder (BD) controls: " + str(count_control))
+        print("Bipolar Disorder (BD) cases: " + str(count_case))
         putility.print_terminal_partition(level=5)
-        print("count of Bipolar Disorder cases: " + str(count_case))
+        print("count from phenotypes:")
+        print("Bipolar Disorder (BD) cases: " + str(count_case_phenotype))
+        putility.print_terminal_partition(level=5)
+        print("count from genotypes:")
+        print("Bipolar Disorder (BD) cases: " + str(count_case_genotype))
+        putility.print_terminal_partition(level=5)
         pass
     # Return information.
     return table
