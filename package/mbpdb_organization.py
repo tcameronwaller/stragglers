@@ -147,17 +147,17 @@ def read_source(
     """
 
     # Specify directories and files.
-    path_table_phenotypes = os.path.join(
+    path_table_merge = os.path.join(
         path_dock, "mbpdb_assembly",
-        "table_phenotypes.pickle"
+        "table_merge.pickle"
     )
     # Read information from file.
-    table_phenotypes = pandas.read_pickle(
-        path_table_phenotypes
+    table_merge = pandas.read_pickle(
+        path_table_merge
     )
     # Compile and return information.
     return {
-        "table_phenotypes": table_phenotypes,
+        "table_merge": table_merge,
     }
 
 
@@ -1476,11 +1476,11 @@ def write_product_organization(
     """
 
     # Specify directories and files.
-    path_table_phenotypes = os.path.join(
-        path_directory, "table_phenotypes.pickle"
+    path_table_merge = os.path.join(
+        path_directory, "table_merge.pickle"
     )
-    path_table_phenotypes_text = os.path.join(
-        path_directory, "table_phenotypes.tsv"
+    path_table_merge_text = os.path.join(
+        path_directory, "table_merge.tsv"
     )
     #path_table_description_text = os.path.join(
     #    path_directory, "table_description.tsv"
@@ -1489,11 +1489,11 @@ def write_product_organization(
         path_directory, "list_table_columns.txt"
     )
     # Write information to file.
-    pail_write["table_phenotypes"].to_pickle(
-        path_table_phenotypes
+    pail_write["table_merge"].to_pickle(
+        path_table_merge
     )
-    pail_write["table_phenotypes"].to_csv(
-        path_or_buf=path_table_phenotypes_text,
+    pail_write["table_merge"].to_csv(
+        path_or_buf=path_table_merge_text,
         sep="\t",
         header=True,
         index=True,
@@ -1505,7 +1505,7 @@ def write_product_organization(
     #    index=False, # include index in table
     #)
     putility.write_file_text_list(
-        elements=pail_write["table_phenotypes"].columns.to_list(),
+        elements=pail_write["table_merge"].columns.to_list(),
         delimiter="\n",
         path_file=path_list_columns_text,
     )
@@ -1559,7 +1559,7 @@ def execute_procedure(
     )
     # Organize variables for biological sex.
     table = determine_biological_sex_variables(
-        table=source["table_phenotypes"],
+        table=source["table_merge"],
         report=True,
     )
     # Organize variables for age and body mass index (BMI).
@@ -1610,7 +1610,7 @@ def execute_procedure(
 
     # Collect information.
     pail_write = dict()
-    pail_write["table_phenotypes"] = table
+    pail_write["table_merge"] = table
     # Write product information to file.
     write_product_organization(
         pail_write=pail_write,
