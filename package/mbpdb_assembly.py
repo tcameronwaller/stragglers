@@ -543,27 +543,27 @@ def write_product_assembly(
     """
 
     # Specify directories and files.
-    path_table_phenotypes = os.path.join(
-        path_directory, "table_phenotypes.pickle"
+    path_table_merge = os.path.join(
+        path_directory, "table_merge.pickle"
     )
-    path_table_phenotypes_text = os.path.join(
-        path_directory, "table_phenotypes.tsv"
+    path_table_merge_text = os.path.join(
+        path_directory, "table_merge.tsv"
     )
     path_list_columns_text = os.path.join(
         path_directory, "list_table_columns.txt"
     )
     # Write information to file.
-    pail_write["table_phenotypes"].to_pickle(
-        path_table_phenotypes
+    pail_write["table_merge"].to_pickle(
+        path_table_merge
     )
-    pail_write["table_phenotypes"].to_csv(
-        path_or_buf=path_table_phenotypes_text,
+    pail_write["table_merge"].to_csv(
+        path_or_buf=path_table_merge_text,
         sep="\t",
         header=True, # include header in table
         index=False, # do not include index in table
     )
     putility.write_file_text_list(
-        elements=pail_write["table_phenotypes"].columns.to_list(),
+        elements=pail_write["table_merge"].columns.to_list(),
         delimiter="\n",
         path_file=path_list_columns_text,
     )
@@ -757,12 +757,30 @@ def execute_procedure(
     ##########
     # Organize and merge together information on identifiers for phenotypes.
 
-    # Organize table of phenotype variables on cases.
+    # Organize tables of phenotype variables on cases.
+    # Append suffix to names of all columns in older phenotype data for cases.
+    # Append prefix to names of columns.
+    table_phenotypes_case_old = (
+        source["table_phenotypes_case_old"].add_prefix("2022-05-13_")
+    )
+    translations = dict()
+    translations["2022-05-13_bib_id"] = "bib_id"
+    table_phenotypes_case_old.rename(
+        columns=translations,
+        inplace=True,
+    )
     table_phenotypes_case_old = (
         putility.organize_table_column_identifier(
             column_source="bib_id",
             column_product="identifier_phenotype",
-            table=source["table_phenotypes_case_old"],
+            table=table_phenotypes_case_old,
+            report=True,
+    ))
+    table_phenotypes_case_new = (
+        putility.organize_table_column_identifier(
+            column_source="bib_id",
+            column_product="identifier_phenotype",
+            table=source["table_phenotypes_case_new"],
             report=True,
     ))
 
@@ -794,8 +812,15 @@ def execute_procedure(
     table_merge_phenotypes = putility.merge_columns_two_tables(
         identifier_first="identifier_phenotype",
         identifier_second="identifier_phenotype",
-        table_first=table_phenotypes_case_old,
-        table_second=table_identifiers,
+        table_first=table_identifiers,
+        table_second=table_phenotypes_case_old,
+        report=True,
+    )
+    table_merge_phenotypes = putility.merge_columns_two_tables(
+        identifier_first="identifier_phenotype",
+        identifier_second="identifier_phenotype",
+        table_first=table_merge_phenotypes,
+        table_second=table_phenotypes_case_new,
         report=True,
     )
     # Remove unnecessary columns.
@@ -851,7 +876,7 @@ def execute_procedure(
     # Collect information.
     pail_write = dict()
     pail_write["mbpdb_assembly"] = dict()
-    pail_write["mbpdb_assembly"]["table_phenotypes"] = table
+    pail_write["mbpdb_assembly"]["table_merge"] = table
     # Write product information to file.
     write_product(
         pail_write=pail_write,
