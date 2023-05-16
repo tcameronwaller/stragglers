@@ -136,9 +136,13 @@ def read_source(
         path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
         "210421_id_matching_gwas.csv"
     )
-    path_table_phenotypes_case = os.path.join(
+    path_table_phenotypes_case_old = os.path.join(
         path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
         "220513_BP_phenotypes.csv"
+    )
+    path_table_phenotypes_case_new = os.path.join(
+        path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
+        "thyroid_prs.csv"
     )
     path_table_phenotypes_control = os.path.join(
         path_dock, "phenotypes_mayo_bipolar_disorder_1_2_merge",
@@ -214,13 +218,24 @@ def read_source(
         inplace=True,
         drop=True, # remove index; do not move to regular columns
     )
-    table_phenotypes_case = pandas.read_csv(
-        path_table_phenotypes_case,
+    table_phenotypes_case_old = pandas.read_csv(
+        path_table_phenotypes_case_old,
         sep=",",
         header=0,
         dtype="string",
     )
-    table_phenotypes_case.reset_index(
+    table_phenotypes_case_old.reset_index(
+        level=None,
+        inplace=True,
+        drop=True, # remove index; do not move to regular columns
+    )
+    table_phenotypes_case_new = pandas.read_csv(
+        path_table_phenotypes_case_new,
+        sep=",",
+        header=0,
+        dtype="string",
+    )
+    table_phenotypes_case_new.reset_index(
         level=None,
         inplace=True,
         drop=True, # remove index; do not move to regular columns
@@ -248,7 +263,8 @@ def read_source(
         "table_genetic_sex_case": table_genetic_sex_case,
         "table_genotype_pca": table_genotype_pca,
         "table_identifiers": table_identifiers,
-        "table_phenotypes_case": table_phenotypes_case,
+        "table_phenotypes_case_old": table_phenotypes_case_old,
+        "table_phenotypes_case_new": table_phenotypes_case_new,
         "table_phenotypes_control": table_phenotypes_control,
     }
 
@@ -742,11 +758,11 @@ def execute_procedure(
     # Organize and merge together information on identifiers for phenotypes.
 
     # Organize table of phenotype variables on cases.
-    table_phenotypes_case = (
+    table_phenotypes_case_old = (
         putility.organize_table_column_identifier(
             column_source="bib_id",
             column_product="identifier_phenotype",
-            table=source["table_phenotypes_case"],
+            table=source["table_phenotypes_case_old"],
             report=True,
     ))
 
@@ -778,7 +794,7 @@ def execute_procedure(
     table_merge_phenotypes = putility.merge_columns_two_tables(
         identifier_first="identifier_phenotype",
         identifier_second="identifier_phenotype",
-        table_first=table_phenotypes_case,
+        table_first=table_phenotypes_case_old,
         table_second=table_identifiers,
         report=True,
     )
