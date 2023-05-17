@@ -381,7 +381,7 @@ def determine_biological_sex_variables(
         lambda row:
             determine_consensus_biological_sex_y(
                 sex_genotype_raw=row["sex_genotype_raw"],
-                sex_phenotype_raw=row["gender"],
+                sex_phenotype_raw=row["2022-05-13_gender"],
             ),
         axis="columns", # apply function to each row
     )
@@ -453,7 +453,7 @@ def determine_age_body_mass_index_variables(
     table["age_main"] = table.apply(
         lambda row:
             putility.determine_human_physiology_age(
-                value_raw=row["pt_age"],
+                value_raw=row["2022-05-13_pt_age"],
             ),
         axis="columns", # apply function to each row
     )
@@ -474,10 +474,12 @@ def determine_age_body_mass_index_variables(
     )
 
     # Determine body mass index (BMI) variable.
+    # 2022-05-13: "2022-05-13_BMI"
+    # 2023-04-25: "bmi"
     table["body_main"] = table.apply(
         lambda row:
             putility.determine_human_physiology_body_mass_index(
-                value_raw=row["BMI"],
+                value_raw=row["bmi"],
             ),
         axis="columns", # apply function to each row
     )
@@ -638,6 +640,9 @@ def determine_genotype_principal_component_variables(
 
 # Bipolar Disorder
 
+# TODO: TCW; 17 May 2023
+# TODO: I could clean up and simplify these interpretation functions.
+
 
 def interpret_genotype_bipolar_disorder_control_case(
     value_source=None,
@@ -687,6 +692,7 @@ def interpret_genotype_bipolar_disorder_control_case(
     return value_product
 
 
+# TCW; 17 May 2023; OBSOLETE; too complex and messy
 def interpret_phenotype_bipolar_disorder_control_case(
     value_source=None,
     strings_case=None,
@@ -708,6 +714,8 @@ def interpret_phenotype_bipolar_disorder_control_case(
 
     """
 
+    # Clean character string values.
+    value_source = str(value_source).strip()
     if (
         (not pandas.isna(value_source)) and
         (len(str(value_source)) > 0)
@@ -871,16 +879,18 @@ def determine_logical_binary_indicator_variables_bipolar_disorder(
 
 def interpret_bipolar_disorder_type_diagnosis(
     value_source=None,
-    match_0=None,
-    match_1=None,
+    matches_0=None,
+    matches_1=None,
 ):
     """
     Inteprets whether the diagnosis type of bipolar disorder.
 
     arguments:
         value_source (str): raw value as character string
-        match_0 (str): character string match for logical binary value zero
-        match_1 (str): character string match for logical binary value one
+        matches_0 (list<str>): character strings match for logical binary value
+            zero
+        matches_1 (list<str>): character strings match for logical binary value
+            one
 
     raises:
 
@@ -891,19 +901,17 @@ def interpret_bipolar_disorder_type_diagnosis(
 
     # Clean character string values.
     value_source = str(value_source).strip()
-    match_0 = str(match_0).strip()
-    match_1 = str(match_1).strip()
     # Interpretation.
     if (
         (not pandas.isna(value_source)) and
-        (len(str(value_source).strip()) > 0)
+        (len(str(value_source)) > 0)
     ):
         # The value is non-missing and hopefully interpretable.
         # Determine whether the value matches any strings.
-        if (str(value_source).strip() == str(match_1).strip()):
+        if (str(value_source) in matches_1):
             # 1: "True"
             value_product = 1
-        elif (str(value_source).strip() == str(match_0).strip()):
+        elif (str(value_source) in matches_0):
             # 0: "No"
             value_product = 0
         else:
@@ -941,8 +949,8 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         lambda row:
             interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
-                match_0="BIPOLAR_I",
-                match_1="BIPOLAR_II",
+                matches_0=["BIPOLAR_I",],
+                matches_1=["BIPOLAR_II",],
             ),
         axis="columns", # apply function to each row
     )
@@ -950,12 +958,22 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         lambda row:
             interpret_bipolar_disorder_type_diagnosis(
                 value_source=row["scid_dx"],
-                match_0="BIPOLAR_II",
-                match_1="BIPOLAR_I",
+                matches_0=["BIPOLAR_II",],
+                matches_1=["BIPOLAR_I",],
             ),
         axis="columns", # apply function to each row
     )
-
+    table["bipolar_disorder_type_2_other"] = table.apply(
+        lambda row:
+            interpret_bipolar_disorder_type_diagnosis(
+                value_source=row["scid_dx"],
+                matches_0=[
+                    "BIPOLAR_I", "SCHIZOAFFECTIVE_BIPOLAR_TYPE", "OTHER",
+                ],
+                matches_1=["BIPOLAR_II",],
+            ),
+        axis="columns", # apply function to each row
+    )
     # Report.
     if report:
         putility.print_terminal_partition(level=2)
@@ -987,14 +1005,6 @@ def determine_logical_binary_indicator_variables_bipolar_disorder_type(
         pass
     # Return information.
     return table
-
-
-# TODO: TCW; 20 June 2022
-# TODO: I need some sort of interpretation function
-# TODO: I need to feed the Bipolar Disorder control-case variable
-# TODO: I also need to feed in the Bipolar Disorder type variable...
-# TODO: then use AND logic
-# TODO: controls are controls
 
 
 def interpret_bipolar_disorder_type_control_case(
@@ -1147,6 +1157,8 @@ def interpret_bipolar_disorder_rapid_cycling(
 
     """
 
+    # Clean character string values.
+    value_source = str(value_source).strip()
     # Interpret field code.
     if (
         (not pandas.isna(value_source)) and
@@ -1191,10 +1203,12 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
     # Copy information in table.
     table = table.copy(deep=True)
     # Interpret diagnosis type of bipolar disorder.
+    # 2022-05-13: "2022-05-13_rc"
+    # 2023-04-25: "rapidcycling"
     table["rapid_cycling"] = table.apply(
         lambda row:
             interpret_bipolar_disorder_rapid_cycling(
-                value_source=row["rc"],
+                value_source=row["rapidcycling"],
             ),
         axis="columns", # apply function to each row
     )
@@ -1573,29 +1587,99 @@ def execute_procedure(
         report=True,
     )
 
-    # Determine logical binary indicator variables for Bipolar Disorder
-    # diagnosis controls and cases.
-    table = determine_logical_binary_indicator_variables_bipolar_disorder(
-        table=table,
-        report=True,
+    # Test simpler interpretations.
+    table["test_bd_case_phenotype"] = table.apply(
+        lambda row:
+            putility.interpret_character_to_float_one_match_zero_any_other(
+                value=row["scid_dx"],
+                matches_one=[
+                    "BIPOLAR_I", "BIPOLAR_II",
+                    "SCHIZOAFFECTIVE_BIPOLAR_TYPE", "OTHER",
+                ],
+            ),
+        axis="columns", # apply function to each row
     )
-    # Determine logical binary indicator variables for type of Bipolar Disorder
-    # diagnosis.
-    table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
-        table=table,
-        report=True,
+    table["test_bd_case_genotype"] = table.apply(
+        lambda row:
+            interpret_genotype_bipolar_disorder_control_case(
+                value_source=row["bipolar_disorder_genotype_raw"],
+            ),
+        axis="columns", # apply function to each row
     )
-    # Determine logical binary indicator variables for Bipolar Disorder
-    # diagnosis type controls and cases.
-    table = determine_bipolar_disorder_type_control_case(
-        table=table,
-        report=True,
+    table["test_bd_case_combination"] = table.apply(
+        lambda row:
+            putility.prioritize_combination_values_float(
+                value_priority=row["test_bd_case_genotype"],
+                value_spare=row["test_bd_case_phenotype"],
+            ),
+        axis="columns", # apply function to each row
     )
-    # Determine variables for rapid cycling as a phenotype of Bipolar Disorder.
-    table = determine_logical_binary_indicator_variables_rapid_cycling(
-        table=table,
-        report=True,
+    table["test_bd_case_control"] = table.apply(
+        lambda row:
+            putility.interpret_float_to_one_match_zero_any_other(
+                value=row["test_bd_case_combination"],
+                matches_one=[1, 1.0],
+            ),
+        axis="columns", # apply function to each row
     )
+    table["test_bd1_case"] = table.apply(
+        lambda row:
+            putility.interpret_character_to_float_one_match_zero_any_other(
+                value=row["scid_dx"],
+                matches_one=[
+                    "BIPOLAR_I",
+                ],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["test_bd2_case"] = table.apply(
+        lambda row:
+            putility.interpret_character_to_float_one_match_zero_any_other(
+                value=row["scid_dx"],
+                matches_one=[
+                    "BIPOLAR_II",
+                ],
+            ),
+        axis="columns", # apply function to each row
+    )
+    table["test_bd2_bd_other"] = table.apply(
+        lambda row:
+            interpret_character_to_float_one_zero_match_missing_any_other(
+                value=row["scid_dx"],
+                matches_zero=[
+                    "BIPOLAR_I", "SCHIZOAFFECTIVE_BIPOLAR_TYPE", "OTHER",
+                ],
+                matches_one=["BIPOLAR_II",],
+            ),
+        axis="columns", # apply function to each row
+    )
+
+
+    # Potentially obsolete (too complex and messy; TCW; 17 May 2023)
+    if False:
+        # Determine logical binary indicator variables for Bipolar Disorder
+        # diagnosis controls and cases.
+        table = determine_logical_binary_indicator_variables_bipolar_disorder(
+            table=table,
+            report=True,
+        )
+        # Determine logical binary indicator variables for type of Bipolar Disorder
+        # diagnosis.
+        table = determine_logical_binary_indicator_variables_bipolar_disorder_type(
+            table=table,
+            report=True,
+        )
+        # Determine logical binary indicator variables for Bipolar Disorder
+        # diagnosis type controls and cases.
+        table = determine_bipolar_disorder_type_control_case(
+            table=table,
+            report=True,
+        )
+        # Determine variables for rapid cycling as a phenotype of Bipolar Disorder.
+        table = determine_logical_binary_indicator_variables_rapid_cycling(
+            table=table,
+            report=True,
+        )
 
     # Organize phenotype variables.
 
