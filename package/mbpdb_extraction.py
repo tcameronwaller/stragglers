@@ -243,6 +243,9 @@ def execute_procedure(
         lambda name: (name != "logs"),
         names_directories
     ))
+    print("--------------------")
+    print(names_directories_ldsc)
+    print("--------------------")
 
     # Write each table to file.
     for name_directory in names_directories_ldsc:
