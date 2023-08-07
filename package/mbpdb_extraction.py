@@ -249,8 +249,13 @@ def execute_procedure(
 
     # Write each table to file.
     for name_directory in names_directories_ldsc:
+
+        path_directory = os.path.join(
+            paths["correlation"], name_directory,
+        )
+
         table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["correlation"],
+            path_directory=path_directory,
             file_name_pattern=".log",
             file_name_pattern_not=".....",
             analysis="correlation",
