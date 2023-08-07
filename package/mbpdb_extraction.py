@@ -261,7 +261,7 @@ def execute_procedure(
             analysis="correlation",
             report=True,
         )
-        pail_write[name_directory] = table_correlation
+        pail_write[str("table_" + name_directory)] = table_correlation
 
 
 
