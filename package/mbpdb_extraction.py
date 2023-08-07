@@ -46,8 +46,8 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
-import promiscuity.utility as utility
-import promiscuity.extraction as pextr
+import partner.utility as utility
+import partner.extraction as pextr
 import stragglers.mcita_assembly as s_mcita_ass
 
 ###############################################################################
