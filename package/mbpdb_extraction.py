@@ -86,7 +86,7 @@ def initialize_directories(
             path_dock, "ldsc_gwas_disorders_tcw_2023-08-02", "6_gwas_correlation_ldsc",
         )
         paths["extraction_ldsc"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-02", "6_gwas_correlation_ldsc",
+            path_dock, "ldsc_gwas_disorders_tcw_2023-08-02", "6_gwas_correlation_ldsc_extraction",
         )
     if False:
         paths["heritability"] = os.path.join(
