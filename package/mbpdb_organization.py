@@ -66,10 +66,10 @@ import statsmodels.multivariate.pca
 
 # Custom
 import stragglers.mbpdb_stratification as bpd_strat
-import promiscuity.utility as putility
-import promiscuity.scale as pscale
-import promiscuity.description as pdesc
-#import promiscuity.plot as plot
+import partner.utility as putility
+import partner.scale as pscale
+import partner.description as pdesc
+#import partner.plot as plot
 
 ###############################################################################
 # Functionality
@@ -1279,7 +1279,7 @@ def determine_logical_binary_indicator_variables_rapid_cycling(
 
 # TODO: TCW; 16 December 2022
 # TODO: move this process to a new module procedure?
-# TODO: call the "promiscuity.description" functions as in "uk_biobank.description".
+# TODO: call the "partner.description" functions as in "uk_biobank.description".
 
 
 def create_description_table_quantitation_record(

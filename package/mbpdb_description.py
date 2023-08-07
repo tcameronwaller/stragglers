@@ -66,9 +66,9 @@ import statsmodels.multivariate.pca
 
 # Custom
 import stragglers.mbpdb_stratification as mb_strat
-import promiscuity.utility as utility
-import promiscuity.description as pdesc
-#import promiscuity.plot as plot
+import partner.utility as utility
+import partner.description as pdesc
+#import partner.plot as plot
 
 ###############################################################################
 # Functionality

@@ -46,9 +46,9 @@ import scipy.linalg
 import statsmodels.multivariate.pca
 
 # Custom
-import promiscuity.utility as utility
-import promiscuity.plot as plot
-import promiscuity.scale as scale
+import partner.utility as utility
+import partner.plot as plot
+import partner.scale as scale
 import uk_biobank.stratification as ukb_strat
 
 ###############################################################################

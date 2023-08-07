@@ -47,9 +47,9 @@ import statsmodels.multivariate.pca
 
 # Custom
 import uk_biobank.organization as ukb_org
-import promiscuity.utility as utility
-import promiscuity.polygenic_score as pgs
-#import promiscuity.plot as plot
+import partner.utility as utility
+import partner.polygenic_score as pgs
+#import partner.plot as plot
 
 ###############################################################################
 # Functionality
