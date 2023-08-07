@@ -239,8 +239,13 @@ def execute_procedure(
     names_directories = utility.extract_subdirectory_names(
         path=paths["correlation"]
     )
+    names_directories_ldsc = list(filter(
+        lambda name: (name != "logs"),
+        names_directories
+    ))
+
     # Write each table to file.
-    for name_directory in names_directories:
+    for name_directory in names_directories_ldsc:
         table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
             path_directory=paths["correlation"],
             file_name_pattern=".log",
