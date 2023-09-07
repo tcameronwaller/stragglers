@@ -105,7 +105,9 @@ def initialize_directories(
 
     # Remove previous files to avoid version or batch confusion.
     if restore:
-        utility.remove_directory(path=paths["extraction_ldsc"])
+        utility.remove_directory(path=paths["correlation_extraction"])
+        utility.remove_directory(path=paths["heritability_biomarkers_extraction"])
+        utility.remove_directory(path=paths["heritability_disorders_extraction"])
     # Initialize directories.
     utility.create_directories(
         path=paths["correlation_extraction"]
@@ -233,7 +235,7 @@ def execute_procedure(
     # Manage extraction of information about SNP heritability.
 
     if True:
-        # Collection information.
+        # Collect information.
         pail_write_heritability_biomarkers = dict()
         # Extract information from reports of analyses in LDSC.
         table_heritability_biomarkers = pextr.read_extract_from_all_ldsc_files_in_directory(
@@ -251,7 +253,7 @@ def execute_procedure(
         )
 
     if True:
-        # Collection information.
+        # Collect information.
         pail_write_heritability_disorders = dict()
         # Extract information from reports of analyses in LDSC.
         table_heritability_disorders = pextr.read_extract_from_all_ldsc_files_in_directory(
@@ -271,11 +273,9 @@ def execute_procedure(
     ##########
     # Manage extraction of information about genetic correlation.
 
-    if False:
-
-        # Collection information.
+    if True:
+        # Collect information.
         pail_write_correlation = dict()
-
         # Extract names of child directories within parent directory.
         names_directories = utility.extract_subdirectory_names(
             path=paths["correlation"]
@@ -287,14 +287,11 @@ def execute_procedure(
         print("--------------------")
         print(names_directories_ldsc)
         print("--------------------")
-
         # Write each table to file.
         for name_directory in names_directories_ldsc:
-
             path_directory = os.path.join(
                 paths["correlation"], name_directory,
             )
-
             table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
                 path_directory=path_directory,
                 file_name_pattern=".log",
@@ -303,7 +300,6 @@ def execute_procedure(
                 report=True,
             )
             pail_write_correlation[str("table_" + name_directory)] = table_correlation
-
         # Write information to file.
         control_write_product(
             pail_write=pail_write_correlation,
