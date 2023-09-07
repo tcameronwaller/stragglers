@@ -85,45 +85,36 @@ def initialize_directories(
         paths["correlation"] = os.path.join(
             path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "6_gwas_correlation_ldsc",
         )
-        paths["extraction_ldsc"] = os.path.join(
+        paths["correlation_extraction"] = os.path.join(
             path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "6_gwas_correlation_ldsc_extraction",
         )
-    if False:
-        paths["heritability"] = os.path.join(
-            path_dock, "alcohol_genetics_tcw_2023-03-02", "gwas_heritability_observed_liability_scale_ldsc",
+    if True:
+        paths["heritability_biomarkers"] = os.path.join(
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc",
         )
-        paths["correlation"] = os.path.join(
-            path_dock, "alcohol_genetics_tcw_2023-03-02", "gwas_correlation_ldsc",
+        paths["heritability_biomarkers_extraction"] = os.path.join(
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc_extraction",
         )
-        paths["extraction_ldsc"] = os.path.join(
-            path_dock, "alcohol_genetics_tcw_2023-03-02", "extraction_ldsc",
+    if True:
+        paths["heritability_disorders"] = os.path.join(
+            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc",
         )
-    if False:
-        paths["heritability"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-24", "gwas_heritability_ldsc",
+        paths["heritability_disorders_extraction"] = os.path.join(
+            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc_extraction",
         )
-        paths["correlation"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-24", "gwas_correlation_ldsc",
-        )
-        paths["extraction_ldsc"] = os.path.join(
-            path_dock, "hormone_genetics_tcw_2023-02-24", "extraction_ldsc",
-        )
-    if False:
-        paths["heritability"] = os.path.join(
-            path_dock, "bipolar_body", "gwas_heritability_ldsc",
-        )
-        paths["correlation"] = os.path.join(
-            path_dock, "bipolar_body", "gwas_genetic_correlation_ldsc",
-        )
-        paths["extraction"] = os.path.join(
-            path_dock, "bipolar_body", "extraction_ldsc",
-        )
+
     # Remove previous files to avoid version or batch confusion.
     if restore:
         utility.remove_directory(path=paths["extraction_ldsc"])
     # Initialize directories.
     utility.create_directories(
-        path=paths["extraction_ldsc"]
+        path=paths["correlation_extraction"]
+    )
+    utility.create_directories(
+        path=paths["heritability_biomarkers_extraction"]
+    )
+    utility.create_directories(
+        path=paths["heritability_disorders_extraction"]
     )
     # Return information.
     return paths
@@ -231,67 +222,93 @@ def execute_procedure(
         restore=True,
         path_dock=path_dock,
     )
+    #paths["correlation"]
+    #paths["correlation_extraction"]
+    #paths["heritability_biomarkers"]
+    #paths["heritability_biomarkers_extraction"]
+    #paths["heritability_disorders"]
+    #paths["heritability_disorders_extraction"]
 
-    # Collection information.
-    pail_write = dict()
+    ##########
+    # Manage extraction of information about SNP heritability.
 
-    # Extract names of child directories within parent directory.
-    names_directories = utility.extract_subdirectory_names(
-        path=paths["correlation"]
-    )
-    names_directories_ldsc = list(filter(
-        lambda name: (name != "logs"),
-        names_directories
-    ))
-    print("--------------------")
-    print(names_directories_ldsc)
-    print("--------------------")
-
-    # Write each table to file.
-    for name_directory in names_directories_ldsc:
-
-        path_directory = os.path.join(
-            paths["correlation"], name_directory,
-        )
-
-        table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=path_directory,
-            file_name_pattern=".log",
-            file_name_pattern_not=".....",
-            analysis="correlation",
-            report=True,
-        )
-        pail_write[str("table_" + name_directory)] = table_correlation
-
-
-
-    # Extract information from reports of analyses in LDSC.
-    if False:
-        table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["heritability"],
+    if True:
+        # Collection information.
+        pail_write_heritability_biomarkers = dict()
+        # Extract information from reports of analyses in LDSC.
+        table_heritability_biomarkers = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability_biomarkers"],
             file_name_pattern=".log",
             file_name_pattern_not=".....",
             analysis="heritability",
             report=True,
         )
-        pail_write["table_heritability"] = table_heritability
-    if False:
-        table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["correlation"],
+        pail_write_heritability_biomarkers["table_heritability"] = table_heritability_biomarkers
+        # Write information to file.
+        control_write_product(
+            pail_write=pail_write_heritability_biomarkers,
+            path_directory=paths["heritability_biomarkers_extraction"],
+        )
+
+    if True:
+        # Collection information.
+        pail_write_heritability_disorders = dict()
+        # Extract information from reports of analyses in LDSC.
+        table_heritability_disorders = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability_disorders"],
             file_name_pattern=".log",
             file_name_pattern_not=".....",
-            analysis="correlation",
+            analysis="heritability",
             report=True,
         )
-        pail_write["table_correlation"] = table_correlation
+        pail_write_heritability_disorders["table_heritability"] = table_heritability_disorders
+        # Write information to file.
+        control_write_product(
+            pail_write=pail_write_heritability_disorders,
+            path_directory=paths["heritability_disorders_extraction"],
+        )
 
-    # Write information to file.
-    control_write_product(
-        pail_write=pail_write,
-        path_directory=paths["extraction_ldsc"],
-    )
+    ##########
+    # Manage extraction of information about genetic correlation.
 
+    if False:
 
+        # Collection information.
+        pail_write_correlation = dict()
+
+        # Extract names of child directories within parent directory.
+        names_directories = utility.extract_subdirectory_names(
+            path=paths["correlation"]
+        )
+        names_directories_ldsc = list(filter(
+            lambda name: (name != "logs"),
+            names_directories
+        ))
+        print("--------------------")
+        print(names_directories_ldsc)
+        print("--------------------")
+
+        # Write each table to file.
+        for name_directory in names_directories_ldsc:
+
+            path_directory = os.path.join(
+                paths["correlation"], name_directory,
+            )
+
+            table_correlation = pextr.read_extract_from_all_ldsc_files_in_directory(
+                path_directory=path_directory,
+                file_name_pattern=".log",
+                file_name_pattern_not=".....",
+                analysis="correlation",
+                report=True,
+            )
+            pail_write_correlation[str("table_" + name_directory)] = table_correlation
+
+        # Write information to file.
+        control_write_product(
+            pail_write=pail_write_correlation,
+            path_directory=paths["correlation_extraction"],
+        )
 
     pass
 
