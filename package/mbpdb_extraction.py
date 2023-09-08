@@ -92,6 +92,9 @@ def initialize_directories(
         paths["heritability_biomarkers"] = os.path.join(
             path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc",
         )
+        paths["heritability_biomarkers_no_liability"] = os.path.join(
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc_no_liability",
+        )
         paths["heritability_biomarkers_extraction"] = os.path.join(
             path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc_extraction",
         )
@@ -246,6 +249,15 @@ def execute_procedure(
             report=True,
         )
         pail_write_heritability_biomarkers["table_heritability"] = table_heritability_biomarkers
+        # Extract information from reports of analyses in LDSC.
+        table_heritability_biomarkers_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability_biomarkers_no_liability"],
+            file_name_pattern=".log",
+            file_name_pattern_not=".....",
+            analysis="heritability",
+            report=True,
+        )
+        pail_write_heritability_biomarkers["table_heritability_no_liability"] = table_heritability_biomarkers_no_liability
         # Write information to file.
         control_write_product(
             pail_write=pail_write_heritability_biomarkers,
