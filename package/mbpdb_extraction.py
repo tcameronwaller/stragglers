@@ -248,7 +248,7 @@ def execute_procedure(
             analysis="heritability",
             report=True,
         )
-        pail_write_heritability_biomarkers["table_heritability"] = table_heritability_biomarkers
+        pail_write_heritability_biomarkers["table_biomarkers_heritability"] = table_heritability_biomarkers
         # Extract information from reports of analyses in LDSC.
         table_heritability_biomarkers_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
             path_directory=paths["heritability_biomarkers_no_liability"],
@@ -257,7 +257,7 @@ def execute_procedure(
             analysis="heritability",
             report=True,
         )
-        pail_write_heritability_biomarkers["table_heritability_no_liability"] = table_heritability_biomarkers_no_liability
+        pail_write_heritability_biomarkers["table_biomarkers_heritability_no_liability"] = table_heritability_biomarkers_no_liability
         # Write information to file.
         control_write_product(
             pail_write=pail_write_heritability_biomarkers,
@@ -275,7 +275,7 @@ def execute_procedure(
             analysis="heritability",
             report=True,
         )
-        pail_write_heritability_disorders["table_heritability"] = table_heritability_disorders
+        pail_write_heritability_disorders["table_disorders_heritability"] = table_heritability_disorders
         # Write information to file.
         control_write_product(
             pail_write=pail_write_heritability_disorders,
