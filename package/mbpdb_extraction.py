@@ -90,13 +90,13 @@ def initialize_directories(
         )
     if True:
         paths["heritability_biomarkers"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc",
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc",
         )
         paths["heritability_biomarkers_no_liability"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc_no_liability",
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc_no_liability",
         )
         paths["heritability_biomarkers_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-06-06", "5_gwas_heritability_ldsc_extraction",
+            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc_extraction",
         )
     if True:
         paths["heritability_disorders"] = os.path.join(
@@ -293,7 +293,7 @@ def execute_procedure(
             path=paths["correlation"]
         )
         names_directories_ldsc = list(filter(
-            lambda name: (name != "logs"),
+            lambda name: (name != "batch"),
             names_directories
         ))
         print("--------------------")
