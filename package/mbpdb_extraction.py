@@ -102,6 +102,9 @@ def initialize_directories(
         paths["heritability_disorders"] = os.path.join(
             path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc",
         )
+        paths["heritability_disorders_no_liability"] = os.path.join(
+            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc_no_liability",
+        )
         paths["heritability_disorders_extraction"] = os.path.join(
             path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc_extraction",
         )
@@ -276,6 +279,15 @@ def execute_procedure(
             report=True,
         )
         pail_write_heritability_disorders["table_disorders_heritability"] = table_heritability_disorders
+        # Extract information from reports of analyses in LDSC.
+        table_heritability_disorders_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability_disorders_no_liability"],
+            file_name_pattern=".log",
+            file_name_pattern_not=".....",
+            analysis="heritability",
+            report=True,
+        )
+        pail_write_heritability_disorders["table_disorders_heritability_no_liability"] = table_heritability_disorders_no_liability
         # Write information to file.
         control_write_product(
             pail_write=pail_write_heritability_disorders,
