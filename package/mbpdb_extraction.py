@@ -81,7 +81,7 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    if True:
+    if False:
         paths["correlation"] = os.path.join(
             path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "6_gwas_correlation_ldsc",
         )
@@ -97,7 +97,7 @@ def initialize_directories(
         paths["heritability_extraction"] = os.path.join(
             path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc_extraction",
         )
-    if False:
+    if True:
         paths["correlation"] = os.path.join(
             path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "6_gwas_correlation_ldsc",
         )
