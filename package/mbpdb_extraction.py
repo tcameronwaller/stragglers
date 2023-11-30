@@ -83,46 +83,47 @@ def initialize_directories(
     paths["dock"] = path_dock
     if True:
         paths["correlation"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "6_gwas_correlation_ldsc",
+            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "6_gwas_correlation_ldsc",
         )
         paths["correlation_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "6_gwas_correlation_ldsc_extraction",
+            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "6_gwas_correlation_ldsc_extraction",
         )
-    if True:
-        paths["heritability_biomarkers"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc",
+        paths["heritability"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc",
         )
-        paths["heritability_biomarkers_no_liability"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc_no_liability",
+        paths["heritability_no_liability"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc_no_liability",
         )
-        paths["heritability_biomarkers_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_biomarkers_tcw_2023-09-29", "5_gwas_heritability_ldsc_extraction",
+        paths["heritability_extraction"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc_extraction",
         )
-    if True:
-        paths["heritability_disorders"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc",
+    if False:
+        paths["correlation"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "6_gwas_correlation_ldsc",
         )
-        paths["heritability_disorders_no_liability"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc_no_liability",
+        paths["correlation_extraction"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "6_gwas_correlation_ldsc_extraction",
         )
-        paths["heritability_disorders_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_disorders_tcw_2023-08-31", "5_gwas_heritability_ldsc_extraction",
+        paths["heritability"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc",
+        )
+        paths["heritability_no_liability"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc_no_liability",
+        )
+        paths["heritability_extraction"] = os.path.join(
+            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc_extraction",
         )
 
     # Remove previous files to avoid version or batch confusion.
     if restore:
         utility.remove_directory(path=paths["correlation_extraction"])
-        utility.remove_directory(path=paths["heritability_biomarkers_extraction"])
-        utility.remove_directory(path=paths["heritability_disorders_extraction"])
+        utility.remove_directory(path=paths["heritability_extraction"])
     # Initialize directories.
     utility.create_directories(
         path=paths["correlation_extraction"]
     )
     utility.create_directories(
-        path=paths["heritability_biomarkers_extraction"]
-    )
-    utility.create_directories(
-        path=paths["heritability_disorders_extraction"]
+        path=paths["heritability_extraction"]
     )
     # Return information.
     return paths
@@ -242,56 +243,29 @@ def execute_procedure(
 
     if True:
         # Collect information.
-        pail_write_heritability_biomarkers = dict()
+        pail_write_heritability = dict()
         # Extract information from reports of analyses in LDSC.
-        table_heritability_biomarkers = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["heritability_biomarkers"],
+        table_heritability = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability"],
             file_name_pattern=".log",
             file_name_pattern_not=".....",
             analysis="heritability",
             report=True,
         )
-        pail_write_heritability_biomarkers["table_biomarkers_heritability"] = table_heritability_biomarkers
+        pail_write_heritability["table_heritability"] = table_heritability
         # Extract information from reports of analyses in LDSC.
-        table_heritability_biomarkers_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["heritability_biomarkers_no_liability"],
+        table_heritability_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
+            path_directory=paths["heritability_no_liability"],
             file_name_pattern=".log",
             file_name_pattern_not=".....",
             analysis="heritability",
             report=True,
         )
-        pail_write_heritability_biomarkers["table_biomarkers_heritability_no_liability"] = table_heritability_biomarkers_no_liability
+        pail_write_heritability["table_heritability_no_liability"] = table_heritability_no_liability
         # Write information to file.
         control_write_product(
-            pail_write=pail_write_heritability_biomarkers,
-            path_directory=paths["heritability_biomarkers_extraction"],
-        )
-
-    if True:
-        # Collect information.
-        pail_write_heritability_disorders = dict()
-        # Extract information from reports of analyses in LDSC.
-        table_heritability_disorders = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["heritability_disorders"],
-            file_name_pattern=".log",
-            file_name_pattern_not=".....",
-            analysis="heritability",
-            report=True,
-        )
-        pail_write_heritability_disorders["table_disorders_heritability"] = table_heritability_disorders
-        # Extract information from reports of analyses in LDSC.
-        table_heritability_disorders_no_liability = pextr.read_extract_from_all_ldsc_files_in_directory(
-            path_directory=paths["heritability_disorders_no_liability"],
-            file_name_pattern=".log",
-            file_name_pattern_not=".....",
-            analysis="heritability",
-            report=True,
-        )
-        pail_write_heritability_disorders["table_disorders_heritability_no_liability"] = table_heritability_disorders_no_liability
-        # Write information to file.
-        control_write_product(
-            pail_write=pail_write_heritability_disorders,
-            path_directory=paths["heritability_disorders_extraction"],
+            pail_write=pail_write_heritability,
+            path_directory=paths["heritability_extraction"],
         )
 
     ##########
