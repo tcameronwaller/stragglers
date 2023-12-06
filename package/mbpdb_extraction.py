@@ -81,37 +81,21 @@ def initialize_directories(
     paths = dict()
     # Define paths to directories.
     paths["dock"] = path_dock
-    if False:
-        paths["correlation"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "6_gwas_correlation_ldsc",
-        )
-        paths["correlation_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "6_gwas_correlation_ldsc_extraction",
-        )
-        paths["heritability"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc",
-        )
-        paths["heritability_no_liability"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc_no_liability",
-        )
-        paths["heritability_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_prior_1", "5_gwas_heritability_ldsc_extraction",
-        )
     if True:
         paths["correlation"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "6_gwas_correlation_ldsc",
+            path_dock, "gwas_2023-11-26_ldsc_2023-12-04", "6_gwas_correlation_ldsc",
         )
         paths["correlation_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "6_gwas_correlation_ldsc_extraction",
+            path_dock, "gwas_2023-11-26_ldsc_2023-12-04", "6_gwas_correlation_ldsc_extraction",
         )
         paths["heritability"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc",
+            path_dock, "gwas_2023-11-26_ldsc_2023-12-04", "5_gwas_heritability_ldsc",
         )
         paths["heritability_no_liability"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc_no_liability",
+            path_dock, "gwas_2023-11-26_ldsc_2023-12-04", "5_gwas_heritability_ldsc_no_liability",
         )
         paths["heritability_extraction"] = os.path.join(
-            path_dock, "ldsc_gwas_tcw_2023-11-26_bypass_1", "5_gwas_heritability_ldsc_extraction",
+            path_dock, "gwas_2023-11-26_ldsc_2023-12-04", "5_gwas_heritability_ldsc_extraction",
         )
 
     # Remove previous files to avoid version or batch confusion.
