@@ -83,19 +83,19 @@ def initialize_directories(
     paths["dock"] = path_dock
     if True:
         paths["correlation"] = os.path.join(
-            path_dock, "gwas_2023-12-19_alcohol_sex_test_ldsc_2023-12-19", "6_gwas_correlation_ldsc",
+            path_dock, "gwas_2023-12-30_ldsc_2024-01-08", "6_gwas_correlation_ldsc_primary_secondary",
         )
         paths["correlation_extraction"] = os.path.join(
-            path_dock, "gwas_2023-12-19_alcohol_sex_test_ldsc_2023-12-19", "6_gwas_correlation_ldsc_extraction",
+            path_dock, "gwas_2023-12-30_ldsc_2024-01-08", "6_gwas_correlation_ldsc_primary_secondary_extraction",
         )
         paths["heritability"] = os.path.join(
-            path_dock, "gwas_2023-12-19_alcohol_sex_test_ldsc_2023-12-19", "5_gwas_heritability_ldsc",
+            path_dock, "gwas_2023-12-30_ldsc_2024-01-08", "5_gwas_heritability_ldsc",
         )
         paths["heritability_no_liability"] = os.path.join(
-            path_dock, "gwas_2023-12-19_alcohol_sex_test_ldsc_2023-12-19", "5_gwas_heritability_ldsc_no_liability",
+            path_dock, "gwas_2023-12-30_ldsc_2024-01-08", "5_gwas_heritability_ldsc_no_liability",
         )
         paths["heritability_extraction"] = os.path.join(
-            path_dock, "gwas_2023-12-19_alcohol_sex_test_ldsc_2023-12-19", "5_gwas_heritability_ldsc_extraction",
+            path_dock, "gwas_2023-12-30_ldsc_2024-01-08", "5_gwas_heritability_ldsc_extraction",
         )
 
     # Remove previous files to avoid version or batch confusion.
