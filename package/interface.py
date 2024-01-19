@@ -49,7 +49,6 @@ import textwrap
 # Custom.
 import stragglers.scrap
 import stragglers.mbpdb_prioritize_supplement
-import stragglers.mbpdb_extraction
 import stragglers.mbpdb_assembly
 import stragglers.mbpdb_organization
 import stragglers.mbpdb_description
@@ -121,14 +120,6 @@ def define_subparser_main(subparsers=None):
         dest="mcita_organization", action="store_true",
         help=(
             "Organize information."
-        )
-    )
-    parser.add_argument(
-        "-mbpdb_extraction", "--mbpdb_extraction",
-        dest="mbpdb_extraction",
-        action="store_true",
-        help=(
-            "Extract information from reports of analyses in other programs."
         )
     )
     parser.add_argument(
@@ -275,13 +266,6 @@ def evaluate_parameters_main(arguments):
         print("... executing 'mcita_organization' procedure ...")
         # Execute procedure.
         stragglers.mcita_organization.execute_procedure(
-            path_dock=arguments.path_dock
-        )
-    if arguments.mbpdb_extraction:
-        # Report status.
-        print("... executing 'mbpdb_extraction' procedure ...")
-        # Execute procedure.
-        stragglers.mbpdb_extraction.execute_procedure(
             path_dock=arguments.path_dock
         )
     if arguments.mbpdb_prioritize_supplement:
